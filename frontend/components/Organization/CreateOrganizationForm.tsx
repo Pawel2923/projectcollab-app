@@ -1,0 +1,119 @@
+"use client";
+
+import * as Form from "@radix-ui/react-form";
+import { CheckIcon, Loader2Icon, PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useActionState, useEffect } from "react";
+
+import createOrganization from "@/actions/createOrganization";
+import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useServerValidation } from "@/hooks/useServerValidation";
+import { cn } from "@/lib/utils";
+
+const FORM_FIELDS = ["name"] as const;
+
+export function CreateOrganizationForm({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [state, formAction, pending] = useActionState(createOrganization, null);
+  const { serverErrors, clearServerErrors } = useServerValidation(
+    FORM_FIELDS,
+    state,
+  );
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.ok) {
+      router.refresh();
+    }
+  }, [state, router]);
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Utwórz nową organizację</CardTitle>
+          <CardDescription>
+            Utwórz nową organizację, aby współpracować ze swoim zespołem
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {state?.ok ? (
+            <div className="text-center py-4">
+              <CheckIcon className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Organizacja została pomyślnie utworzona!
+              </p>
+            </div>
+          ) : (
+            <Form.Root
+              action={formAction}
+              onSubmit={clearServerErrors}
+              onClearServerErrors={clearServerErrors}
+            >
+              <div className="grid gap-6">
+                <Form.Field
+                  name="name"
+                  className="grid gap-2"
+                  serverInvalid={serverErrors.name.isInvalid}
+                >
+                  <Form.Label asChild>
+                    <div className="flex items-center">
+                      <Label htmlFor="name">Nazwa organizacji</Label>
+                    </div>
+                  </Form.Label>
+                  <Form.Control asChild>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Wprowadź nazwę organizacji"
+                      autoComplete="organization"
+                      required
+                    />
+                  </Form.Control>
+                  <Form.Message match="valueMissing" asChild>
+                    <TypographyInvalid>
+                      Nazwa organizacji jest wymagana
+                    </TypographyInvalid>
+                  </Form.Message>
+                  {serverErrors.name.isInvalid && (
+                    <Form.Message asChild>
+                      <TypographyInvalid>
+                        {serverErrors.name.message}
+                      </TypographyInvalid>
+                    </Form.Message>
+                  )}
+                </Form.Field>
+
+                {serverErrors.form?.isInvalid && (
+                  <TypographyInvalid>
+                    {serverErrors.form.message}
+                  </TypographyInvalid>
+                )}
+
+                <Form.Submit asChild>
+                  <Button type="submit" className="w-full" disabled={pending}>
+                    <PlusIcon className="w-4 h-4 mr-2" />
+                    Utwórz organizację
+                    {pending && <Loader2Icon className="animate-spin ml-2" />}
+                  </Button>
+                </Form.Submit>
+              </div>
+            </Form.Root>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -1,0 +1,17 @@
+knpu_oauth2_client:
+    clients:
+        # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
+        google:
+            type: google
+            client_id: "%env(OAUTH_GOOGLE_CLIENT_ID)%"
+            client_secret: "%env(OAUTH_GOOGLE_CLIENT_SECRET)%"
+            redirect_route: auth_oauth_check
+            redirect_params: { provider: google }
+        microsoft-entra-id:
+            type: azure
+            client_id: "%env(OAUTH_MICROSOFT_CLIENT_ID)%"
+            client_secret: "%env(OAUTH_MICROSOFT_CLIENT_SECRET)%"
+            redirect_route: auth_oauth_check
+            redirect_params: { provider: microsoft-entra-id }
+            tenant: common
+            default_end_point_version: "2.0"

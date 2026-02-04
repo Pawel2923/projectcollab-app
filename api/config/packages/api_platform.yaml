@@ -1,0 +1,21 @@
+api_platform:
+  title: API for ProjectCollab
+  version: 1.0.0
+  # Mercure integration, remove if unwanted
+  mercure:
+    include_type: true
+  # Good defaults for REST APIs
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: ["Content-Type", "Authorization", "Origin"]
+    pagination_enabled: true
+    pagination_client_enabled: true
+    pagination_client_items_per_page: true
+    pagination_items_per_page: 30
+  use_symfony_listeners: true
+  swagger:
+    api_keys:
+      JWT:
+        name: Authorization
+        type: header

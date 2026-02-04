@@ -1,0 +1,140 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    google.client_id: '%env(GOOGLE_CLIENT_ID)%'
+    google.client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+    
+    microsoft.client_id: '%env(MICROSOFT_CLIENT_ID)%'
+    microsoft.client_secret: '%env(MICROSOFT_CLIENT_SECRET)%'
+    
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    bind:
+      $microsoftGraphClient: '@microsoft.graph.client' 
+  
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+  
+  App\State\Auth\UserPasswordProcessor:
+    bind:
+      $processor: '@api_platform.doctrine.orm.state.persist_processor'
+  
+  App\State\Organization\OrganizationCollectionProvider:
+    arguments:
+      $collectionProvider: '@api_platform.doctrine.orm.state.collection_provider'
+  
+  App\OpenApi\DocsFactory:
+    decorates: 'api_platform.openapi.factory'
+    arguments:
+      - '@App\OpenApi\DocsFactory.inner'
+  
+  # Issue filters
+  issue.order_filter:
+    parent: 'api_platform.doctrine.orm.order_filter'
+    arguments:
+      $properties:
+        createdAt: ~
+        title: ~
+        priority: ~
+        key: ~
+        endDate: ~
+    tags: ['api_platform.filter']
+  
+  issue.search_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      $properties:
+        title: 'partial'
+        key: 'exact'
+        description: 'partial'
+    tags: ['api_platform.filter']
+  
+  issue.exact_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      $properties:
+        priority: 'exact'
+        status: 'exact'
+        type: 'exact'
+        resolution: 'exact'
+        reporter: 'exact'
+        assignees: 'exact'
+        project.organization: 'exact'
+        issueSprints.sprint: 'exact'
+    tags: ['api_platform.filter']
+  
+  issue.exists_filter:
+    parent: 'api_platform.doctrine.orm.exists_filter'
+    arguments:
+      $properties:
+        issueSprints: ~
+    tags: ['api_platform.filter']
+  
+  issue.date_filter:
+    parent: 'api_platform.doctrine.orm.date_filter'
+    arguments:
+      $properties:
+        createdAt: ~
+        updatedAt: ~
+        startDate: ~
+        endDate: ~
+    tags: ['api_platform.filter']
+  
+  issue.range_filter:
+    parent: 'api_platform.doctrine.orm.range_filter'
+    arguments:
+      $properties:
+        estimated: ~
+        loggedTime: ~
+    tags: ['api_platform.filter']
+  
+  # User filters
+  user.search_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      $properties:
+        email: 'partial'
+        username: 'partial'
+    tags: ['api_platform.filter']
+
+  # Google Client service
+  Google\Client:
+    arguments:
+      $config:
+        client_id: '%google.client_id%'
+        client_secret: '%google.client_secret%'
+    calls:
+      - [ setAccessType, [ 'offline' ] ]
+      - [ setPrompt, [ 'consent' ] ]
+
+  # Microsoft Graph Client
+  microsoft.graph.client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: [ 'Symfony\Component\HttpClient\HttpClient', 'create' ]
+    arguments:
+      - base_uri: 'https://graph.microsoft.com/v1.0/'
+        headers:
+          Content-Type: 'application/json'
+          
+  
+
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones
+  
+  App\EventListener\AuthenticationSuccessListener:
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
+    arguments:
+      $mercureSecret: '%env(MERCURE_JWT_SECRET)%'
