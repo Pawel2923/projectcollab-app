@@ -2,14 +2,14 @@
 
 import React from "react";
 
-import type { GroupedChats } from "@/lib/types/api";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { useSidebarClasses } from "../hooks/useSidebarClasses";
 import { CollapseButton } from "./SideNav/CollapseButton";
 import { useSideNavData, useSideNavState } from "./SideNav/SideNavContext";
 import { SideNavHeader } from "./SideNav/SideNavHeader";
 import { SideNavList } from "./SideNav/SideNavList";
-import type { NavigationItem } from "./SideNav/types";
 
 interface SideNavProps {
   expandButtonClickHandler?: () => void;

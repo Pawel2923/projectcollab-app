@@ -3,28 +3,15 @@
 import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import type { Collection } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
-
-type IssueStatusEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
-
-type IssueTypeEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
-
-type ResolutionEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
+import type { Collection } from "@/types/api/collection";
+import type {
+  IssueResolution,
+  IssueStatus,
+  IssueType,
+} from "@/types/api/issue";
 
 const getFieldLabel = (field: string): string => {
   const labels: Record<string, string> = {
@@ -94,9 +81,9 @@ const getValueLabel = (field: string, value: string | string[]): string => {
 const getValueLabelFromEntities = (
   field: string,
   value: string | string[],
-  issueStatuses: IssueStatusEntity[],
-  issueTypes: IssueTypeEntity[],
-  resolutions: ResolutionEntity[],
+  issueStatuses: IssueStatus[],
+  issueTypes: IssueType[],
+  resolutions: IssueResolution[],
 ): string => {
   if (Array.isArray(value)) {
     return value.join(", ");
@@ -126,18 +113,18 @@ export function ActiveFilters() {
   const issuesOptions = useIssuesOptions();
 
   // State for entity lookups
-  const [issueStatuses, setIssueStatuses] = useState<IssueStatusEntity[]>([]);
-  const [issueTypes, setIssueTypes] = useState<IssueTypeEntity[]>([]);
-  const [resolutions, setResolutions] = useState<ResolutionEntity[]>([]);
+  const [issueStatuses, setIssueStatuses] = useState<IssueStatus[]>([]);
+  const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
+  const [resolutions, setResolutions] = useState<IssueResolution[]>([]);
 
   // Fetch entities once when component mounts
   useEffect(() => {
     const fetchEntities = async () => {
       try {
         const [statusesRes, typesRes, resolutionsRes] = await Promise.all([
-          clientApiGet<Collection<IssueStatusEntity>>("/issue_statuses"),
-          clientApiGet<Collection<IssueTypeEntity>>("/issue_types"),
-          clientApiGet<Collection<ResolutionEntity>>("/resolutions"),
+          clientApiGet<Collection<IssueStatus>>("/issue_statuses"),
+          clientApiGet<Collection<IssueType>>("/issue_types"),
+          clientApiGet<Collection<IssueResolution>>("/resolutions"),
         ]);
 
         const statusesData =

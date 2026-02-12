@@ -8,12 +8,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { GroupedChats } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { getNavigationItems } from "./constants";
 import { useSideNavData } from "./SideNavContext";
-import type { NavigationItem } from "./types";
 
 interface MobileSideNavProps {
   navigationItems?: NavigationItem[];

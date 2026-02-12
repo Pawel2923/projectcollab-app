@@ -14,8 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useProjectOverview } from "@/hooks/useProjectOverview";
-import type { Issue, IssueStatus } from "@/lib/types/api";
 import { formatDateTime } from "@/lib/utils/issueUtils";
+import type { Issue, IssueStatus } from "@/types/api/issue";
 
 interface OverviewTabProps {
   issues: Issue[];

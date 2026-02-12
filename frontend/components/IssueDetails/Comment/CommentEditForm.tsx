@@ -6,7 +6,7 @@ import React, { useActionState, useEffect, useRef } from "react";
 
 import updateComment from "@/actions/updateComment";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import type { Comment } from "@/lib/types/api";
+import type { IssueComment } from "@/types/api/issue-metadata";
 
 import { TypographyInvalid } from "../../typography/TypographyInvalid";
 import { Button } from "../../ui/button";
@@ -15,7 +15,7 @@ import { FormTextarea } from "../../ui/Form/FormTextarea";
 const FORM_FIELDS = ["content"] as const;
 
 interface CommentEditFormProps {
-  comment: Comment;
+  comment: IssueComment;
   setIsEditing: (isEditing: boolean) => void;
   onCommentUpdated?: () => void;
 }

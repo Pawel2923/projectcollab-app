@@ -10,9 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAlert } from "@/hooks/useAlert";
-import type { Sprint } from "@/lib/types/api";
-import { SprintStatusEnum } from "@/lib/types/api";
 import { formatDateTime } from "@/lib/utils/dateHelpers";
+import type { Sprint } from "@/types/api/sprint";
+import { SprintStatusEnum } from "@/types/api/sprint";
 
 import { DeleteSprintDialog } from "../Project/DeleteSprintDialog";
 import {

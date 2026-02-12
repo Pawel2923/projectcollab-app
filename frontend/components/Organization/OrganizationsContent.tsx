@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Organization } from "@/lib/types/api";
+import type { Organization } from "@/types/api/organization";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

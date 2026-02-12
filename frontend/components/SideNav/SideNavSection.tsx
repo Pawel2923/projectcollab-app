@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/accordion";
 import { setSectionExpanded } from "@/lib/services/sideNavCookieService";
 import { cn } from "@/lib/utils";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { SideNavItem } from "./SideNavItem";
-import type { NavigationItem } from "./types";
 
 interface SideNavSectionProps {
   title: string;

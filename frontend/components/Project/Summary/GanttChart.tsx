@@ -14,8 +14,9 @@ import {
 import { useGanttData } from "@/lib/hooks/useGanttData";
 import { useGanttState } from "@/lib/hooks/useGanttState";
 import { useGanttTimeline } from "@/lib/hooks/useGanttTimeline";
-import type { Issue, IssueStatus, Sprint } from "@/lib/types/api";
 import type { ViewMode } from "@/lib/types/gantt";
+import type { Issue, IssueStatus } from "@/types/api/issue";
+import type { Sprint } from "@/types/api/sprint";
 
 interface GanttChartProps {
   issues: Issue[];

@@ -5,9 +5,9 @@ import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/lib/services/accessTokenService";
-import type { Sprint } from "@/lib/types/api";
-import { SprintStatusEnum } from "@/lib/types/api";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { Sprint } from "@/types/api/sprint";
+import { SprintStatusEnum } from "@/types/api/sprint";
 
 const schema = z.object({
   sprintId: z.string().min(1, "ID sprintu jest wymagane"),

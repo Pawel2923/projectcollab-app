@@ -6,8 +6,9 @@ import getEntityRole from "@/actions/getEntityRole";
 import { PageHeader } from "@/components/PageHeader";
 import ProjectSettingsContent from "@/components/Project/ProjectSettingsContent";
 import { getCurrentUser } from "@/lib/services/userService";
-import type { Collection, Project, ProjectMember } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Project, ProjectMember } from "@/types/api/project";
 
 export async function generateMetadata({
   params,

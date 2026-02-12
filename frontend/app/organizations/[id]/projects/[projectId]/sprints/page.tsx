@@ -5,8 +5,10 @@ import { PageHeader } from "@/components/PageHeader";
 import { AddSprintDialog } from "@/components/Sprint/AddSprintDialog";
 import { ProductBacklog } from "@/components/Sprint/ProductBacklog";
 import { SprintsList } from "@/components/Sprint/SprintsList";
-import type { Collection, Project, Sprint } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Project } from "@/types/api/project";
+import type { Sprint } from "@/types/api/sprint";
 
 export async function generateMetadata({
   params,

@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { Sprint } from "@/lib/types/api";
+import type { Sprint } from "@/types/api/sprint";
 
 import {
   Accordion,

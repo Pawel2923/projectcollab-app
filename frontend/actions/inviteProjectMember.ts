@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAccessToken } from "@/lib/services/accessTokenService";
-import type { ProjectMember } from "@/lib/types/api";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { ProjectMember } from "@/types/api/project";
 
 import type { ActionResult } from "./types/ActionResult";
 

@@ -7,6 +7,7 @@ import { deleteAttachment } from "@/actions/deleteAttachment";
 import { uploadAttachment } from "@/actions/uploadAttachment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { extractIdFromIri } from "@/lib/utils/iri";
+import type { IssueDetails } from "@/types/api/issue";
 
 import {
   Accordion,
@@ -28,7 +29,6 @@ import {
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { EmptyRelationCopy } from "./EmptyRelationCopy";
-import type { IssueDetails } from "./types";
 
 interface IssueAttachmentsProps {
   issue: IssueDetails;

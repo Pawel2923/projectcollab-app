@@ -4,8 +4,10 @@ import React from "react";
 import { OrganizationSummary } from "@/components/Organization/OrganizationSummary";
 import { PageHeader } from "@/components/PageHeader";
 import { getAccessTokenReadOnly } from "@/lib/services/pageTokenService";
-import type { Chat, Organization, Project } from "@/lib/types/api";
 import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import type { Chat } from "@/types/api/chat";
+import type { Organization } from "@/types/api/organization";
+import type { Project } from "@/types/api/project";
 
 export default async function OrganizationOverviewPage({
   params,

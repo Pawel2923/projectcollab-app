@@ -18,10 +18,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Issue } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useOrganization } from "@/store/OrganizationContext";
+import type { Issue, IssueResolution, IssueStatus } from "@/types/api/issue";
+import type { User } from "@/types/api/user";
 
 import { AssigneeAvatar } from "../AssigneeAvatar";
 
@@ -32,24 +33,6 @@ interface IssueRowProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   projectId: string;
-}
-
-interface IssueStatusEntity {
-  "@id": string;
-  id: number;
-  value: string;
-}
-
-interface ResolutionEntity {
-  "@id": string;
-  id: number;
-  value: string;
-}
-
-interface UserEntity {
-  "@id": string;
-  id: string;
-  email: string;
 }
 
 export function IssueRow({
@@ -68,7 +51,7 @@ export function IssueRow({
   const { data: statusResult } = useQuery({
     queryKey: ["issueStatus", issue.status],
     queryFn: async () => {
-      return await clientApiGet<IssueStatusEntity>(issue.status);
+      return await clientApiGet<IssueStatus>(issue.status);
     },
     enabled: !!issue.status,
     staleTime: 5 * 60 * 1000,
@@ -79,7 +62,7 @@ export function IssueRow({
     queryKey: ["resolution", issue.resolution],
     queryFn: async () => {
       return issue.resolution
-        ? await clientApiGet<ResolutionEntity>(issue.resolution)
+        ? await clientApiGet<IssueResolution>(issue.resolution)
         : null;
     },
     enabled: !!issue.resolution,
@@ -91,7 +74,7 @@ export function IssueRow({
     queryKey: ["user", issue.reporter],
     queryFn: async () => {
       return issue.reporter
-        ? await clientApiGet<UserEntity>(issue.reporter?.["@id"] || "")
+        ? await clientApiGet<User>(issue.reporter?.["@id"] || "")
         : null;
     },
     enabled: !!issue.reporter,

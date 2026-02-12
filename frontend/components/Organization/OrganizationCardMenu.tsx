@@ -6,8 +6,8 @@ import React, { useState } from "react";
 
 import { DeleteOrganizationDialog } from "@/components/Organization/DeleteOrganizationDialog";
 import { useEntityRole } from "@/hooks/useEntityRole";
-import type { OrganizationMember } from "@/lib/types/api";
 import { hasPermission } from "@/lib/utils/permissions";
+import type { OrganizationMember } from "@/types/api/organization";
 
 import { Button } from "../ui/button";
 import {

@@ -4,8 +4,9 @@ import React from "react";
 import { ChatWindow } from "@/components/Chat/ChatWindow";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { getCurrentUser } from "@/lib/services/userService";
-import type { Chat, Collection, Message } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Chat, Message } from "@/types/api/chat";
+import type { Collection } from "@/types/api/collection";
 
 export default async function ChatPage({
   params,

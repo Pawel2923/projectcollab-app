@@ -5,17 +5,14 @@ import { ChatsSideNav } from "@/components/Chat/ChatsSideNav";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { TopNav } from "@/components/TopNav";
 import { getCurrentUser } from "@/lib/services/userService";
-import type {
-  Chat,
-  ChatLinkedResources,
-  Collection,
-  Issue,
-  OrganizationMember,
-  Project,
-  ProjectMember,
-  Sprint,
-} from "@/lib/types/api";
 import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import type { Chat } from "@/types/api/chat";
+import type { Collection } from "@/types/api/collection";
+import type { Issue } from "@/types/api/issue";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { Project, ProjectMember } from "@/types/api/project";
+import type { Sprint } from "@/types/api/sprint";
+import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 export const dynamic = "force-dynamic";
 

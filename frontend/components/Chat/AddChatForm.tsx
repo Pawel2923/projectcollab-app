@@ -12,7 +12,8 @@ import React, {
 import createChat from "@/actions/createChat";
 import { useAlert } from "@/hooks/useAlert";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import type { ChatLinkedResources, OrganizationMember } from "@/lib/types/api";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 import { TypographyInvalid } from "../typography/TypographyInvalid";
 import { Badge } from "../ui/badge";

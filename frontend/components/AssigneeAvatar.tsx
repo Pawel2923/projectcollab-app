@@ -3,10 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-import type { User } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { getUserInitials } from "@/lib/utils/userUtils";
+import type { User } from "@/types/api/user";
 
 import { Avatar } from "./Avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";

@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { getAccessToken } from "@/lib/services/accessTokenService";
 import { getCurrentUser } from "@/lib/services/userService";
-import type { OrganizationMember } from "@/lib/types/api";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { OrganizationMember } from "@/types/api/organization";
 
 import type { ActionResult } from "./types/ActionResult";
 

@@ -9,10 +9,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { IssueTag } from "@/lib/types/api";
+import type { IssueDetails, IssueTag } from "@/types/api/issue";
 
 import { Label } from "../../ui/label";
-import type { IssueDetails } from "../types";
 import { AddIssueTagPopover } from "./AddIssueTagPopover";
 
 interface IssueTagsProps {

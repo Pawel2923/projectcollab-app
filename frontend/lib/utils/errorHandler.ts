@@ -1,11 +1,14 @@
-import type { ApiPlatformError, ErrorCode } from "@/lib/types/errors";
-import { AppError, isApiPlatformError, isAppError } from "@/lib/types/errors";
 import { Err, type Result } from "@/lib/types/result";
 import {
   getMessageText,
   getMessageTitle,
   translateSymfonyValidation,
 } from "@/lib/utils/messageMapper/messageMapper";
+import type { ApiPlatformError } from "@/types/api/api-platform-error";
+import { isApiPlatformError } from "@/types/api/api-platform-error";
+
+import type { ErrorCode } from "../types/errors";
+import { AppError, isAppError } from "../types/errors";
 
 /**
  * Enhanced error handler for API calls

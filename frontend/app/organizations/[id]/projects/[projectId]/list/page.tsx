@@ -7,9 +7,9 @@ import { Filter } from "@/components/Issue/Filter";
 import { Sort } from "@/components/Issue/Sort";
 import { ListIssues } from "@/components/List/ListIssues";
 import { PageHeader } from "@/components/PageHeader";
-import type { Project } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
+import type { Project } from "@/types/api/project";
 
 export async function generateMetadata({
   params,

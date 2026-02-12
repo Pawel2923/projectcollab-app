@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Sprint } from "../types/api";
+import type { Sprint } from "@/types/api/sprint";
 
 export const useGanttState = (sprints: Sprint[]) => {
   const [expandedSprints, setExpandedSprints] = useState<

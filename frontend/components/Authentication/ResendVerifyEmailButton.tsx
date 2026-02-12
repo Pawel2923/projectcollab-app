@@ -6,8 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { isApiPlatformError } from "@/lib/types/errors";
 import { mapMessage } from "@/lib/utils/messageMapper/messageMapper";
+import { isApiPlatformError } from "@/types/api/api-platform-error";
 
 export function ResendVerifyEmailButton() {
   const [isPending, setIsPending] = useState(false);

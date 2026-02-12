@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Issue } from "@/lib/types/api";
+import type { Issue } from "@/types/api/issue";
 
 import { IssueRow } from "./IssueRow";
 

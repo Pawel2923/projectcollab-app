@@ -23,18 +23,17 @@ import { SelectGroup, SelectItem } from "@/components/ui/select";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import type {
-  Collection,
-  Comment,
-  ProjectMember,
-  Sprint,
-  User,
-} from "@/lib/types/api";
 import { AppError } from "@/lib/types/errors";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getDefaultMessage } from "@/lib/utils/errorHandler";
 import { buildResourceIri, extractIdFromIri } from "@/lib/utils/iri";
 import { formatEstimatedTime, isValidTimeString } from "@/lib/utils/issueUtils";
+import type { Collection } from "@/types/api/collection";
+import type { IssueDetails as IssueDetailsType } from "@/types/api/issue";
+import type { IssueComment } from "@/types/api/issue-metadata";
+import type { ProjectMember } from "@/types/api/project";
+import type { Sprint } from "@/types/api/sprint";
+import type { User } from "@/types/api/user";
 
 import { IssuePriority } from "../Issue/IssuePriority";
 import { ComboBox } from "../ui/combobox";
@@ -50,16 +49,16 @@ import { IssueRelations } from "./IssueRelations";
 import { IssueSprints } from "./IssueSprints";
 import { MainIssueInfo } from "./MainIssueInfo";
 import { IssueTags } from "./Tag/IssueTags";
-import type { IssueDetails, SelectOption } from "./types";
+import type { SelectOption } from "./types";
 
 type IssueDetailsProps = {
   organizationId: string;
   projectId: string;
-  issue: IssueDetails;
+  issue: IssueDetailsType;
   statusOptions: SelectOption[];
   typeOptions: SelectOption[];
   resolutionOptions: SelectOption[];
-  comments?: Collection<Comment>;
+  comments?: Collection<IssueComment>;
   projectMembers?: ProjectMember[];
   sprints?: Sprint[];
 };
@@ -106,7 +105,7 @@ export function IssueDetails({
   const { showError, showSuccess } = useErrorHandler();
   const router = useRouter();
 
-  useMercureObserver<IssueDetails>({
+  useMercureObserver<IssueDetailsType>({
     topics: [`/projects/${projectId}/issues`],
     onUpdate: (updatedIssue) => {
       if (updatedIssue["@id"] === issue["@id"]) {

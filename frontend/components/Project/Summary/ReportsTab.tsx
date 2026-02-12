@@ -37,7 +37,7 @@ import {
   generateReport,
   getReports,
 } from "@/lib/services/reportService";
-import type { Report } from "@/lib/types/api";
+import type { Report } from "@/types/api/report";
 
 export function ReportsTab() {
   const params = useParams();

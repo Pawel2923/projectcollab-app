@@ -3,9 +3,10 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Collection, Comment } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
+import type { Collection } from "@/types/api/collection";
+import type { IssueComment } from "@/types/api/issue-metadata";
 
 import {
   Card,
@@ -20,7 +21,7 @@ import { IssueCommentContainer } from "./IssueCommentContainer";
 
 interface IssueCommentsProps {
   issueId: string;
-  initialComments?: Collection<Comment>;
+  initialComments?: Collection<IssueComment>;
 }
 
 export function Comments({ issueId, initialComments }: IssueCommentsProps) {
@@ -33,7 +34,7 @@ export function Comments({ issueId, initialComments }: IssueCommentsProps) {
   } = useQuery({
     queryKey: ["comments", issueId],
     queryFn: async () => {
-      const result = await clientApiGet<Collection<Comment>>(
+      const result = await clientApiGet<Collection<IssueComment>>(
         `/comments?issueId=${issueId}`,
       );
       return result && isOk(result) ? result.value : null;

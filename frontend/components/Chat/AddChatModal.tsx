@@ -11,7 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { ChatLinkedResources, OrganizationMember } from "@/lib/types/api";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 import { AddChatForm } from "./AddChatForm";
 

@@ -2,8 +2,8 @@
 
 import { getAccessToken } from "@/lib/services/accessTokenService";
 import { getCurrentUser } from "@/lib/services/userService";
-import type { Collection } from "@/lib/types/api";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { Collection } from "@/types/api/collection";
 
 import type { ActionResult } from "./types/ActionResult";
 

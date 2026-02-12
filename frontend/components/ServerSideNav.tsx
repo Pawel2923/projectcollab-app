@@ -1,9 +1,9 @@
 import React from "react";
 
-import type { GroupedChats } from "@/lib/types/api";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { ExpandableSideNav } from "./ExpandableSideNav";
-import type { NavigationItem } from "./SideNav/types";
 
 interface ServerSideNavProps {
   contentId: string;

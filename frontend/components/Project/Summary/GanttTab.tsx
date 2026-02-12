@@ -9,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Issue, IssueStatus, Sprint } from "@/lib/types/api";
 import type { ViewMode } from "@/lib/types/gantt";
+import type { Issue, IssueStatus } from "@/types/api/issue";
+import type { Sprint } from "@/types/api/sprint";
 
 import { GanttChart } from "./GanttChart";
 import { GanttScopeButton } from "./GanttScopeButton";

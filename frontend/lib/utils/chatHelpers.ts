@@ -1,9 +1,9 @@
 import { Hash, User, Users } from "lucide-react";
 import React from "react";
 
-import type { NavigationItem } from "@/components/SideNav/types";
-
-import type { Chat, GroupedChats } from "../types/api";
+import type { Chat } from "@/types/api/chat";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 /**
  * Gets display name for a direct chat by showing other participants' names. If chat has a name, returns that.

@@ -1,4 +1,5 @@
-import type { Issue } from "../types/api";
+import type { Issue } from "@/types/api/issue";
+
 import type { ViewMode } from "../types/gantt";
 
 interface TimelineConfig {

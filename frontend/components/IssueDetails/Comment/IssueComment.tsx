@@ -3,8 +3,8 @@ import React from "react";
 
 import { formatDateTime } from "@/lib/utils/issueUtils";
 import { getUserInitials } from "@/lib/utils/userUtils";
+import type { IssueComment } from "@/types/api/issue-metadata";
 
-import type { Comment } from "../../../lib/types/api";
 import { Avatar } from "../../Avatar";
 import { Button } from "../../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
@@ -12,7 +12,7 @@ import { DeleteCommentModal } from "./DeleteCommentModal";
 import { EditCommentButton } from "./EditCommentButton";
 
 interface IssueCommentProps {
-  comment: Comment;
+  comment: IssueComment;
   setIsEditing: (isEditing: boolean) => void;
   onCommentUpdated?: () => void;
 }

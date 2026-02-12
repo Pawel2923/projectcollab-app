@@ -5,8 +5,7 @@ import { SettingsIcon } from "@/assets/icons/SettingsIcon";
 import { SprintIcon } from "@/assets/icons/SprintIcon";
 import { StarIcon } from "@/assets/icons/StarIcon";
 import { TableIcon } from "@/assets/icons/TableIcon";
-
-import type { NavigationItem } from "./types";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 export type ContentType = "project" | "chat";
 

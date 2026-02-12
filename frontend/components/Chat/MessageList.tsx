@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { MentionData } from "@/lib/services/mentionService";
-import type { ChatMember, Message } from "@/lib/types/api";
+import type { ChatMember, Message } from "@/types/api/chat";
 
 import { DateSeparator } from "./DateSeparator";
 import { MessageItem } from "./MessageItem";

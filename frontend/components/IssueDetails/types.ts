@@ -1,5 +1,3 @@
-export type { IssueDetails } from "@/lib/types/api";
-
 export type SelectOption = {
   id: string;
   label: string;

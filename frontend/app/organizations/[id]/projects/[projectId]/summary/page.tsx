@@ -3,15 +3,12 @@ import React from "react";
 
 import { PageHeader } from "@/components/PageHeader";
 import { SummaryTabs } from "@/components/Project/Summary/SummaryTabs";
-import type {
-  Collection,
-  Issue,
-  IssueStatus,
-  Project,
-  Sprint,
-  UserOAuthProviders,
-} from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Issue, IssueStatus } from "@/types/api/issue";
+import type { Project } from "@/types/api/project";
+import type { Sprint } from "@/types/api/sprint";
+import type { UserOAuthProviders } from "@/types/api/user";
 
 export async function generateMetadata({
   params,

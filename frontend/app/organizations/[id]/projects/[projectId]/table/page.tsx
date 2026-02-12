@@ -8,10 +8,12 @@ import { Sort } from "@/components/Issue/Sort";
 import { PageHeader } from "@/components/PageHeader";
 import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
-import type { Collection, Issue, Project } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getIssueStatusObjects } from "@/lib/utils/issueStatusUtils";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
+import type { Collection } from "@/types/api/collection";
+import type { Issue } from "@/types/api/issue";
+import type { Project } from "@/types/api/project";
 
 export async function generateMetadata({
   params,

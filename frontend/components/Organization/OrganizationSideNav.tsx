@@ -4,7 +4,7 @@ import { Building2, FolderKanban, MessageSquare, Users } from "lucide-react";
 import React from "react";
 
 import { ServerSideNav } from "@/components/ServerSideNav";
-import type { NavigationItem } from "@/components/SideNav/types";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 interface OrganizationSideNavProps {
   organizationId: string;

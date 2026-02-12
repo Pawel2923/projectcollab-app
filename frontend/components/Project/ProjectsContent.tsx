@@ -6,7 +6,7 @@ import React, { useMemo, useState } from "react";
 
 import { CreateProjectForm } from "@/components/Organization/CreateProjectForm";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Project } from "@/lib/types/api";
+import type { Project } from "@/types/api/project";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

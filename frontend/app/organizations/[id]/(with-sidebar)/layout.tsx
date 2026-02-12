@@ -4,10 +4,10 @@ import React from "react";
 
 import { OrganizationSideNav } from "@/components/Organization/OrganizationSideNav";
 import { TopNav } from "@/components/TopNav";
-import type { Organization } from "@/lib/types/api";
 import { generateAcronym } from "@/lib/utils/acronymUtils";
 import { apiGet } from "@/lib/utils/apiClient";
 import { OrganizationProvider } from "@/store/OrganizationContext";
+import type { Organization } from "@/types/api/organization";
 
 export async function generateMetadata({
   params,

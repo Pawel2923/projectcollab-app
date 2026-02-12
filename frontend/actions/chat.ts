@@ -1,9 +1,9 @@
 "use server";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import type { Message } from "@/lib/types/api";
 import { apiCall } from "@/lib/utils/apiClient";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { Message } from "@/types/api/chat";
 
 export async function sendMessage(
   chatId: string,

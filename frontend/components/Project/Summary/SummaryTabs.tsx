@@ -7,7 +7,8 @@ import { GanttTab } from "@/components/Project/Summary/GanttTab";
 import { OverviewTab } from "@/components/Project/Summary/OverviewTab";
 import { ReportsTab } from "@/components/Project/Summary/ReportsTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Issue, IssueStatus, Sprint } from "@/lib/types/api";
+import type { Issue, IssueStatus } from "@/types/api/issue";
+import type { Sprint } from "@/types/api/sprint";
 
 interface SummaryTabsProps {
   issues: Issue[];

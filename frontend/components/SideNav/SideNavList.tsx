@@ -2,14 +2,14 @@
 
 import React from "react";
 
-import type { GroupedChats } from "@/lib/types/api";
 import { useOrganization } from "@/store/OrganizationContext";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { getNavigationItems } from "./constants";
 import { useSideNavData } from "./SideNavContext";
 import { SideNavItem } from "./SideNavItem";
 import { SideNavSection } from "./SideNavSection";
-import type { NavigationItem } from "./types";
 
 interface SideNavListProps {
   isExpanded: boolean;
@@ -28,8 +28,11 @@ export function SideNavList({
 }: SideNavListProps) {
   const organization = useOrganization();
   const organizationIdFromContext = organization?.organizationId;
-  const { contentType, contentId, organizationId: organizationIdFromData } =
-    useSideNavData();
+  const {
+    contentType,
+    contentId,
+    organizationId: organizationIdFromData,
+  } = useSideNavData();
   const organizationId = organizationIdFromData || organizationIdFromContext;
 
   // Handle grouped chats for chat content type

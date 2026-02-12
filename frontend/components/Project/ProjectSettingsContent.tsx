@@ -9,10 +9,11 @@ import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import type { ProjectRole } from "@/lib/constants/roleHierarchy";
-import type { Collection, Project, ProjectMember } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiCall, clientApiGet } from "@/lib/utils/clientApiClient";
 import { hasPermission } from "@/lib/utils/permissions";
+import type { Collection } from "@/types/api/collection";
+import type { Project, ProjectMember } from "@/types/api/project";
 
 import {
   AlertDialog,

@@ -1,6 +1,8 @@
 "use server";
 
-import type { Collection, IssueStatus } from "../types/api";
+import type { Collection } from "@/types/api/collection";
+import type { IssueStatus } from "@/types/api/issue";
+
 import { apiGet } from "./apiClient";
 
 /**

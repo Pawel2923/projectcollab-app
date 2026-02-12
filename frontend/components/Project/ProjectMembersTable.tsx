@@ -22,8 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ProjectRole } from "@/lib/constants/roleHierarchy";
-import type { ProjectMember } from "@/lib/types/api";
 import { formatDateTime } from "@/lib/utils/issueUtils";
+import type { ProjectMember } from "@/types/api/project";
 
 interface ProjectMembersTableProps {
   members: ProjectMember[];

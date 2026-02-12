@@ -1,4 +1,5 @@
-import type { User } from "../types/api";
+import type { User } from "@/types/api/user";
+
 import type { AppError } from "../types/errors";
 import { Ok, type Result } from "../types/result";
 import { apiGet } from "../utils/apiClient";

@@ -1,4 +1,5 @@
-import type { Issue, IssueStatus, Sprint } from "../types/api";
+import type { Issue, IssueStatus } from "@/types/api/issue";
+import type { Sprint } from "@/types/api/sprint";
 
 export const useGanttData = (
   issues: Issue[],

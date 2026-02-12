@@ -3,7 +3,8 @@
 import { CornerDownRight } from "lucide-react";
 import React from "react";
 
-import type { Message, UserWithOnlyEmailAndName } from "@/lib/types/api";
+import type { Message } from "@/types/api/chat";
+import type { UserWithOnlyEmailAndName } from "@/types/api/user";
 
 export interface ReplyIndicatorProps {
   parentMessage: Message;

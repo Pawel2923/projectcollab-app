@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Chat, Collection } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import {
   handleSessionExpired,
   refreshSession,
 } from "@/lib/utils/clientTokenRefresh";
+import type { Chat } from "@/types/api/chat";
+import type { Collection } from "@/types/api/collection";
 
 interface UseChatUpdatesOptions {
   organizationId: string;

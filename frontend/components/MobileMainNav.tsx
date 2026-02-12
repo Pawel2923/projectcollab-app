@@ -9,10 +9,11 @@ import { Avatar } from "@/components/Avatar";
 import { AddChatModal } from "@/components/Chat/AddChatModal";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
 import { UserSettings } from "@/components/UserSettings";
-import type { ChatLinkedResources, OrganizationMember } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
 import { getUserInitials } from "@/lib/utils/userUtils";
 import { useUserContext } from "@/store/UserContext";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 type MobileMainNavProps = {
   organizationId?: string;
@@ -65,6 +66,7 @@ const MobileAddTrigger = React.forwardRef<
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     label: string;
     disabled?: boolean;
+    className?: string;
   }
 >(({ label, disabled = false, className, ...props }, ref) => (
   <button
@@ -112,7 +114,9 @@ export function MobileMainNav({
   const projectsHref = organizationId
     ? `${organizationPath}/projects`
     : "/organizations";
-  const chatsHref = organizationId ? `${organizationPath}/chats` : "/organizations";
+  const chatsHref = organizationId
+    ? `${organizationPath}/chats`
+    : "/organizations";
   const overviewHref = organizationId
     ? `${organizationPath}/overview`
     : "/organizations";
@@ -126,9 +130,7 @@ export function MobileMainNav({
     : pathname.includes("/chats");
   const isSearchActive = pathname.startsWith("/search");
 
-  const showAddChat = Boolean(
-    organizationId && isChatPage && chatResources,
-  );
+  const showAddChat = Boolean(organizationId && isChatPage && chatResources);
 
   let addButton: React.ReactNode | null;
   if (projectId) {

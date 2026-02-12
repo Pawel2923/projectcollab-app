@@ -1,9 +1,9 @@
 import React from "react";
 
 import { formatDateTime } from "@/lib/utils/issueUtils";
+import type { IssueDetails } from "@/types/api/issue";
 
 import { InfoRow } from "./InfoRow";
-import type { IssueDetails } from "./types";
 
 export function IssueMetadata({ issue }: { issue: IssueDetails }) {
   return (

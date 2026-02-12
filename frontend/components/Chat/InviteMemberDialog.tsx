@@ -6,8 +6,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import inviteChatMember from "@/actions/inviteChatMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import type { ChatMember, OrganizationMember } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { ChatMember } from "@/types/api/chat";
+import type { OrganizationMember } from "@/types/api/organization";
 
 import { Avatar } from "../Avatar";
 import { Button } from "../ui/button";

@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import type { Issue, IssueStatus } from "@/lib/types/api";
+import type { Issue, IssueStatus } from "@/types/api/issue";
 
 interface UseProjectOverviewProps {
   issues: Issue[];

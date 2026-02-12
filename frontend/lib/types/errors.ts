@@ -1,7 +1,8 @@
+import type { ApiPlatformViolation } from "@/types/api/api-platform-error";
+
 /**
  * Centralized error types and interfaces for consistent error handling
  */
-
 export type ErrorCode =
   | "VALIDATION_ERROR"
   | "UNAUTHORIZED"
@@ -18,30 +19,6 @@ export type ErrorCode =
   | "UNKNOWN_ERROR";
 
 export type ErrorSeverity = "error" | "warning" | "info";
-
-/**
- * API Platform error format (422 validation error)
- */
-export interface ApiPlatformViolation {
-  propertyPath: string;
-  message: string;
-  code?: string;
-}
-
-export interface ApiPlatformError {
-  "@context"?: string;
-  "@id"?: string;
-  "@type"?: string;
-  status: number;
-  violations?: ApiPlatformViolation[];
-  detail?: string;
-  description?: string;
-  type?: string;
-  title?: string;
-  instance?: string;
-  message?: string;
-  error?: string;
-}
 
 /**
  * Application error class with enhanced metadata
@@ -110,16 +87,4 @@ export class AppError extends Error {
  */
 export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError;
-}
-
-/**
- * Type guard to check if error is API Platform error
- */
-export function isApiPlatformError(error: unknown): error is ApiPlatformError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof (error as ApiPlatformError).status === "number"
-  );
 }

@@ -4,8 +4,8 @@ import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/lib/services/accessTokenService";
-import type { Comment } from "@/lib/types/api";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { IssueComment } from "@/types/api/issue-metadata";
 
 const schema = z.object({
   commentIri: z.string().min(1, "ID zadania jest wymagane"),
@@ -27,7 +27,7 @@ type CreateCommentData =
 export default async function createComment(
   _initialState: unknown,
   formData: CreateCommentData,
-): Promise<ActionResult<Comment>> {
+): Promise<ActionResult<IssueComment>> {
   try {
     const validated = schema.safeParse(
       formData instanceof FormData

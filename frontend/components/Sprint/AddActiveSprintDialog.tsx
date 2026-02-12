@@ -10,14 +10,12 @@ import React, {
 import updateSprintStatus from "@/actions/updateSprintStatus";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import {
-  type Collection,
-  type Sprint,
-  SprintStatusEnum,
-} from "@/lib/types/api";
 import { AppError } from "@/lib/types/errors";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useOrganization } from "@/store/OrganizationContext";
+import type { Collection } from "@/types/api/collection";
+import type { Sprint } from "@/types/api/sprint";
+import { SprintStatusEnum } from "@/types/api/sprint";
 
 import { Button } from "../ui/button";
 import type { ComboBoxItem } from "../ui/combobox";

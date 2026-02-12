@@ -5,8 +5,8 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import type { ProjectMember } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { ProjectMember } from "@/types/api/project";
 
 import {
   Card,

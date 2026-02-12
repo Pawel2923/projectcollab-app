@@ -11,10 +11,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import type { Collection, Issue } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { cn } from "@/lib/utils";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Issue } from "@/types/api/issue";
 
 import { Input } from "../ui/input";
 

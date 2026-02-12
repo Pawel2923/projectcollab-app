@@ -4,9 +4,10 @@ import React from "react";
 import MembersPageContent from "@/components/Organization/MembersPageContent";
 import { PageHeader } from "@/components/PageHeader";
 import { getCurrentUser } from "@/lib/services/userService";
-import type { Collection, OrganizationMember } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import { hasPermission } from "@/lib/utils/permissions";
+import type { Collection } from "@/types/api/collection";
+import type { OrganizationMember } from "@/types/api/organization";
 
 interface PageProps {
   params: Promise<{

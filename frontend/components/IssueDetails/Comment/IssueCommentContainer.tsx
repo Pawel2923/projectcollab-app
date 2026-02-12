@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 
-import type { Comment } from "@/lib/types/api";
+import type { IssueComment as IssueCommentType } from "@/types/api/issue-metadata";
 
 import { CommentEditForm } from "./CommentEditForm";
 import { IssueComment } from "./IssueComment";
 
 interface IssueCommentContainerProps {
-  comment: Comment;
+  comment: IssueCommentType;
   onCommentUpdated?: () => void;
 }
 

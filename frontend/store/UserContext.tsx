@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-import type { User } from "@/lib/types/api";
+import type { User } from "@/types/api/user";
 
 export interface UserContextType {
   user: User | null;

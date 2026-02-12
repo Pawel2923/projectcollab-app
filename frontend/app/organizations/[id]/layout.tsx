@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import React from "react";
 
-import type { Organization } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import { OrganizationProvider } from "@/store/OrganizationContext";
+import type { Organization } from "@/types/api/organization";
 
 export async function generateMetadata({
   params,

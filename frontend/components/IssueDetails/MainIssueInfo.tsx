@@ -1,11 +1,11 @@
 import React from "react";
 
 import type { ServerErrors } from "@/hooks/useServerValidation";
+import type { IssueDetails } from "@/types/api/issue";
 
 import { FormField } from "../ui/Form/FormField";
 import { FormTextarea } from "../ui/Form/FormTextarea";
 import { Input } from "../ui/input";
-import type { IssueDetails } from "./types";
 
 interface MainIssueInfoProps {
   issue: IssueDetails;

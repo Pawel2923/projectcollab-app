@@ -3,9 +3,9 @@ import React from "react";
 
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { TopNav } from "@/components/TopNav";
-import type { Project } from "@/lib/types/api";
 import { generateAcronym } from "@/lib/utils/acronymUtils";
 import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import type { Project } from "@/types/api/project";
 
 export default async function ProjectsLayout({
   children,

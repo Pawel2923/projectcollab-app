@@ -4,15 +4,6 @@ import React from "react";
 import { IssueDetails } from "@/components/IssueDetails/IssueDetails";
 import type { SelectOption } from "@/components/IssueDetails/types";
 import { getAccessTokenReadOnly } from "@/lib/services/pageTokenService";
-import type {
-  Collection,
-  Comment,
-  IssueDetails as IssueDetailsResource,
-  IssueStatus,
-  IssueType,
-  ProjectMember,
-  Sprint,
-} from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
 import { extractIdFromIri } from "@/lib/utils/iri";
 
@@ -23,6 +14,16 @@ type Resolution = {
 };
 
 import type { Metadata } from "next";
+
+import type { Collection } from "@/types/api/collection";
+import type {
+  IssueDetails as IssueDetailsType,
+  IssueStatus,
+  IssueType,
+} from "@/types/api/issue";
+import type { IssueComment } from "@/types/api/issue-metadata";
+import type { ProjectMember } from "@/types/api/project";
+import type { Sprint } from "@/types/api/sprint";
 
 export async function generateMetadata({
   params,
@@ -39,7 +40,7 @@ export async function generateMetadata({
     };
   }
 
-  const issueResponse = await fetchWithAuth<IssueDetailsResource>(
+  const issueResponse = await fetchWithAuth<IssueDetailsType>(
     `${apiUrl}/issues/${issueId}`,
     token,
   );
@@ -73,7 +74,7 @@ export default async function IssuePage({
     throw new Error("Brak konfiguracji adresu API");
   }
 
-  const issueResponse = await fetchWithAuth<IssueDetailsResource>(
+  const issueResponse = await fetchWithAuth<IssueDetailsType>(
     `${apiUrl}/issues/${issueId}`,
     token,
   );
@@ -107,7 +108,7 @@ export default async function IssuePage({
     `${apiUrl}/resolutions`,
     token,
   );
-  const commentsResponse = await fetchWithAuth<Collection<Comment>>(
+  const commentsResponse = await fetchWithAuth<Collection<IssueComment>>(
     `${apiUrl}/comments?issueId=${issueId}`,
     token,
   );

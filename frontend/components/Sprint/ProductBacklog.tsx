@@ -6,9 +6,10 @@ import React from "react";
 
 import { IssuesTable } from "@/components/List/IssuesTable";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Collection, Issue } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Issue } from "@/types/api/issue";
 
 interface ProductBacklogProps {
   projectId: string;

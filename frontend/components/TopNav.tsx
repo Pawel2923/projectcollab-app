@@ -6,8 +6,9 @@ import React, { useEffect, useState } from "react";
 
 import { ProjectCollabLogotype } from "@/assets/img/ProjectCollabLogotype";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
-import type { ChatLinkedResources, OrganizationMember } from "@/lib/types/api";
 import { OrganizationProvider } from "@/store/OrganizationContext";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 import { AddChatModal } from "./Chat/AddChatModal";
 import { InteractiveSearchInput } from "./InteractiveSearchInput";

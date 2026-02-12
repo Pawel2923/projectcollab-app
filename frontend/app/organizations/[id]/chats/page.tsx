@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 import { getCurrentUser } from "@/lib/services/userService";
-import type { Chat, Collection } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Chat } from "@/types/api/chat";
+import type { Collection } from "@/types/api/collection";
 
 export default async function ChatsPage({
   params,

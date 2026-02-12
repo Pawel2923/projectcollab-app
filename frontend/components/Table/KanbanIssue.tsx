@@ -2,8 +2,8 @@ import { useDraggable } from "@dnd-kit/core";
 import Link from "next/link";
 import React from "react";
 
-import type { Issue } from "@/lib/types/api";
 import { formatEstimatedTime, formatTimestamp } from "@/lib/utils/issueUtils";
+import type { Issue } from "@/types/api/issue";
 
 import { AssigneeAvatar } from "../AssigneeAvatar";
 import { IssuePriority } from "../Issue/IssuePriority";

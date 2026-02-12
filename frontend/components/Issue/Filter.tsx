@@ -21,28 +21,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Collection } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
-
-type IssueStatusEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
-
-type IssueTypeEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
-
-type ResolutionEntity = {
-  "@id": string;
-  id: number;
-  value: string;
-};
+import type { Collection } from "@/types/api/collection";
+import type {
+  IssueResolution,
+  IssueStatus,
+  IssueType,
+} from "@/types/api/issue";
 
 export function Filter({ projectId }: { projectId?: string | number }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,9 +59,9 @@ export function Filter({ projectId }: { projectId?: string | number }) {
   const [draftFilters, setDraftFilters] = useState<IssueFilterOption[]>([]);
 
   // State for fetched entity values
-  const [issueStatuses, setIssueStatuses] = useState<IssueStatusEntity[]>([]);
-  const [issueTypes, setIssueTypes] = useState<IssueTypeEntity[]>([]);
-  const [resolutions, setResolutions] = useState<ResolutionEntity[]>([]);
+  const [issueStatuses, setIssueStatuses] = useState<IssueStatus[]>([]);
+  const [issueTypes, setIssueTypes] = useState<IssueType[]>([]);
+  const [resolutions, setResolutions] = useState<IssueResolution[]>([]);
   const [isLoadingEntities, setIsLoadingEntities] = useState(false);
 
   // Fetch entity values when dialog opens
@@ -86,13 +73,9 @@ export function Filter({ projectId }: { projectId?: string | number }) {
       const urlParams = projectId ? `?project=${projectId}` : "";
       try {
         const [statusesRes, typesRes, resolutionsRes] = await Promise.all([
-          clientApiGet<Collection<IssueStatusEntity>>(
-            `/issue_statuses${urlParams}`,
-          ),
-          clientApiGet<Collection<IssueTypeEntity>>(`/issue_types${urlParams}`),
-          clientApiGet<Collection<ResolutionEntity>>(
-            `/resolutions${urlParams}`,
-          ),
+          clientApiGet<Collection<IssueStatus>>(`/issue_statuses${urlParams}`),
+          clientApiGet<Collection<IssueType>>(`/issue_types${urlParams}`),
+          clientApiGet<Collection<IssueResolution>>(`/resolutions${urlParams}`),
         ]);
 
         const statusesData =

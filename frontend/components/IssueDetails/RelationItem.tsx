@@ -1,8 +1,8 @@
 import Link from "next/link";
 import React from "react";
 
-import type { IssueReference } from "@/lib/types/api";
 import { extractIdFromIri } from "@/lib/utils/iri";
+import type { IssueReference } from "@/types/api/issue";
 
 type RelationItemProps = {
   reference: IssueReference;

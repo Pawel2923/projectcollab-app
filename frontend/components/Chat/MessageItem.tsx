@@ -4,12 +4,9 @@ import React from "react";
 
 import { Avatar } from "@/components/Avatar";
 import type { MentionData } from "@/lib/services/mentionService";
-import type {
-  ChatMember,
-  Message,
-  UserWithOnlyEmailAndName,
-} from "@/lib/types/api";
 import { getUserInitials } from "@/lib/utils/userUtils";
+import type { ChatMember, Message } from "@/types/api/chat";
+import type { UserWithOnlyEmailAndName } from "@/types/api/user";
 
 import { MessageContent } from "./MessageContent";
 import { MessageMenu } from "./MessageMenu";

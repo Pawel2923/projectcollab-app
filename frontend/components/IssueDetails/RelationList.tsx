@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { IssueReference } from "@/lib/types/api";
+import type { IssueReference } from "@/types/api/issue";
 
 import { EmptyRelationCopy } from "./EmptyRelationCopy";
 import { RelationItem } from "./RelationItem";

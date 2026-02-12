@@ -3,8 +3,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { setSideNavExpanded } from "@/lib/services/sideNavCookieService";
-import type { GroupedChats } from "@/lib/types/api";
 import { useOrganization } from "@/store/OrganizationContext";
+import type { GroupedChats } from "@/types/ui/grouped-chats";
+import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { SideNav } from "./SideNav";
 import { MobileSideNav } from "./SideNav/MobileSideNav";
@@ -12,7 +13,6 @@ import {
   SideNavDataProvider,
   SideNavStateProvider,
 } from "./SideNav/SideNavContext";
-import type { NavigationItem } from "./SideNav/types";
 
 interface ExpandableSideNavProps {
   initialIsExpanded?: boolean;

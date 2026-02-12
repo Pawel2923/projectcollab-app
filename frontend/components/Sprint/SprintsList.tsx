@@ -4,9 +4,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import type { Collection, Sprint } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Sprint } from "@/types/api/sprint";
 
 import { Accordion } from "../ui/accordion";
 import { ActiveSprintsListContainer } from "./ActiveSprintsListContainer";

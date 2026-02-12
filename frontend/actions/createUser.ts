@@ -4,8 +4,8 @@ import { z } from "zod";
 
 import login from "@/actions/login";
 import type { ActionResult } from "@/actions/types/ActionResult";
-import type { User } from "@/actions/types/User";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import type { User } from "@/types/api/user";
 
 const schema = z.object({
   email: z.email(),

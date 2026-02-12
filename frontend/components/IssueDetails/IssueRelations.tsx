@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import type { IssueDetails } from "@/types/api/issue";
+
 import { IssueSelector } from "../Issue/IssueSelector";
 import {
   Accordion,
@@ -9,7 +11,6 @@ import {
 } from "../ui/accordion";
 import { Label } from "../ui/label";
 import { RelationList } from "./RelationList";
-import type { IssueDetails } from "./types";
 
 interface IssueRelationsProps {
   organizationId: string;

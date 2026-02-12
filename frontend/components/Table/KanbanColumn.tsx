@@ -2,8 +2,9 @@ import { useDroppable } from "@dnd-kit/core";
 import { Inbox } from "lucide-react";
 import React from "react";
 
-import type { Collection, Issue } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
+import type { Collection } from "@/types/api/collection";
+import type { Issue } from "@/types/api/issue";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { KanbanIssue } from "./KanbanIssue";

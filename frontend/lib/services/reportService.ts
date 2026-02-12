@@ -1,4 +1,6 @@
-import type { Collection, Report } from "../types/api";
+import type { Collection } from "@/types/api/collection";
+import type { Report } from "@/types/api/report";
+
 import type { AppError } from "../types/errors";
 import { Ok, type Result } from "../types/result";
 import { apiDelete, apiGet, apiPost } from "../utils/apiClient";

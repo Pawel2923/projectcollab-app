@@ -10,10 +10,11 @@ import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import type { OrganizationRole } from "@/lib/constants/roleHierarchy";
-import type { Collection, OrganizationMember } from "@/lib/types/api";
 import { isOk } from "@/lib/types/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { hasPermission } from "@/lib/utils/permissions";
+import type { Collection } from "@/types/api/collection";
+import type { OrganizationMember } from "@/types/api/organization";
 
 import {
   AlertDialog,

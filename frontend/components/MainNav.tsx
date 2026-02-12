@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useRecentProjects } from "@/hooks/useRecentProjects";
-import type { Collection, Project } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
 import { useOrganization } from "@/store/OrganizationContext";
+import type { Collection } from "@/types/api/collection";
+import type { Project } from "@/types/api/project";
 
 export function MainNav({
   organizationId: propOrganizationId,

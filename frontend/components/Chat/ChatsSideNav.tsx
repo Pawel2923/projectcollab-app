@@ -5,8 +5,8 @@ import React from "react";
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useChatUpdates } from "@/hooks/useChatUpdates";
-import type { Chat } from "@/lib/types/api";
 import { categorizeChatsByType } from "@/lib/utils/chatHelpers";
+import type { Chat } from "@/types/api/chat";
 
 interface ChatsSideNavProps {
   organizationId: string;

@@ -1,11 +1,11 @@
-import type React from "react";
+import type { ReactNode } from "react";
 
-import type { Chat } from "@/lib/types/api";
+import type { Chat } from "../api/chat";
 
 export interface NavigationItem {
   href: string;
   label: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   delay?: string;
   chat?: Chat;
 }

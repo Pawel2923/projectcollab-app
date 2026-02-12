@@ -6,8 +6,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import inviteOrganizationMember from "@/actions/inviteOrganizationMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import type { OrganizationMember, User } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { OrganizationMember } from "@/types/api/organization";
+import type { User } from "@/types/api/user";
 
 import { Avatar } from "../Avatar";
 import { Button } from "../ui/button";

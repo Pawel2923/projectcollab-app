@@ -4,7 +4,8 @@ import { X } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import type { Message, UserWithOnlyEmailAndName } from "@/lib/types/api";
+import type { Message } from "@/types/api/chat";
+import type { UserWithOnlyEmailAndName } from "@/types/api/user";
 
 export interface ReplyPreviewProps {
   message: Message;

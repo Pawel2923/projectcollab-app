@@ -13,8 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Chat, Organization, Project } from "@/lib/types/api";
 import { formatDistanceToNow } from "@/lib/utils/dateHelpers";
+import type { Chat } from "@/types/api/chat";
+import type { Organization } from "@/types/api/organization";
+import type { Project } from "@/types/api/project";
 
 interface OrganizationSummaryProps {
   organization: Organization;

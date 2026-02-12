@@ -7,7 +7,7 @@ import { sendMessage } from "@/actions/chat";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import type { ChatMember, Message } from "@/lib/types/api";
+import type { ChatMember, Message } from "@/types/api/chat";
 
 import { ReplyPreview } from "./ReplyPreview";
 

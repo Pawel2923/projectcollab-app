@@ -3,8 +3,9 @@ import React from "react";
 import { OrganizationsContent } from "@/components/Organization/OrganizationsContent";
 import { PageHeader } from "@/components/PageHeader";
 import { TopNav } from "@/components/TopNav";
-import type { Collection, Organization } from "@/lib/types/api";
 import { apiGet } from "@/lib/utils/apiClient";
+import type { Collection } from "@/types/api/collection";
+import type { Organization } from "@/types/api/organization";
 
 export default async function OrganizationsPage({
   searchParams,

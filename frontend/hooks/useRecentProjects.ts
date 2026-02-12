@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import type { Project } from "@/lib/types/api";
+import type { Project } from "@/types/api/project";
 
 const STORAGE_KEY = "projectcollab:recent-projects";
 const MAX_RECENT_PROJECTS = 10;

@@ -42,7 +42,9 @@ export async function GET(req: NextRequest) {
     );
 
     return addAlertAndGetResponse(
-      NextResponse.redirect(data.isVerified ? new URL("/", baseUrl) : returnUrl),
+      NextResponse.redirect(
+        data.isVerified ? new URL("/", baseUrl) : returnUrl,
+      ),
       {
         title,
         description,
