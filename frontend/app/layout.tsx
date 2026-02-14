@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import React from "react";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ErrorBoundary } from "@/error/ErrorBoundary";
 import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { getAlerts } from "@/lib/services/alertService";
 import { AlertProvider } from "@/store/AlertProvider";

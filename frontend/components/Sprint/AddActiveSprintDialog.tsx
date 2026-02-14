@@ -8,9 +8,9 @@ import React, {
 } from "react";
 
 import updateSprintStatus from "@/actions/updateSprintStatus";
+import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { AppError } from "@/lib/types/errors";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Collection } from "@/types/api/collection";

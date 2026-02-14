@@ -1,4 +1,4 @@
-import type { AppError } from "@/lib/types/errors";
+import type { AppError } from "@/error/app-error";
 import { Ok, type Result } from "@/lib/types/result";
 import { toErrorResult } from "@/lib/utils/errorHandler";
 

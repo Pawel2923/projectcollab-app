@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import React from "react";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ActiveFilters } from "@/components/Issue/ActiveFilters";
 import { Filter } from "@/components/Issue/Filter";
 import { Sort } from "@/components/Issue/Sort";
 import { PageHeader } from "@/components/PageHeader";
 import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
+import { ErrorBoundary } from "@/error/ErrorBoundary";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getIssueStatusObjects } from "@/lib/utils/issueStatusUtils";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";

@@ -20,10 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectGroup, SelectItem } from "@/components/ui/select";
+import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { AppError } from "@/lib/types/errors";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getDefaultMessage } from "@/lib/utils/errorHandler";
 import { buildResourceIri, extractIdFromIri } from "@/lib/utils/iri";

@@ -1,5 +1,5 @@
+import { AppError } from "@/error/app-error";
 import { getAccessToken } from "@/lib/services/accessTokenService";
-import { AppError } from "@/lib/types/errors";
 import { handleApiError } from "@/lib/utils/errorHandler";
 import { parseJsonCode } from "@/lib/utils/messageMapper/jsonCodeParser";
 

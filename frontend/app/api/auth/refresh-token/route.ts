@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
-import { AppError } from "@/lib/types/errors";
+import { AppError } from "@/error/app-error";
 import { handleApiError } from "@/lib/utils/errorHandler";
 
 export async function POST() {

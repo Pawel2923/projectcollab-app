@@ -7,8 +7,8 @@ import {
 import type { ApiPlatformError } from "@/types/api/api-platform-error";
 import { isApiPlatformError } from "@/types/api/api-platform-error";
 
-import type { ErrorCode } from "../types/errors";
-import { AppError, isAppError } from "../types/errors";
+import type { ErrorCode } from "../../error/app-error";
+import { AppError } from "../../error/app-error";
 
 /**
  * Enhanced error handler for API calls
@@ -24,7 +24,7 @@ export function handleApiError(
   message?: string;
   violations?: Array<{ propertyPath: string; message: string }>;
 } {
-  if (isAppError(error)) {
+  if (error instanceof AppError) {
     logError(error);
     return {
       ok: false,
@@ -113,7 +113,7 @@ export function toErrorResult(
   error: unknown,
   context: string = "API call",
 ): Result<never, AppError> {
-  if (isAppError(error)) {
+  if (error instanceof AppError) {
     logError(error);
     return Err(error);
   }

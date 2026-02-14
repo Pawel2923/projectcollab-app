@@ -5,8 +5,8 @@ import type { ErrorInfo, ReactNode } from "react";
 import React, { Component } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { AppError, ErrorCode } from "@/lib/types/errors";
-import { isAppError } from "@/lib/types/errors";
+import type { ErrorCode } from "@/error/app-error";
+import { AppError } from "@/error/app-error";
 import { getErrorTitle } from "@/lib/utils/errorHandler";
 import { translateSymfonyValidation } from "@/lib/utils/messageMapper/messageMapper";
 
@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    const appError = isAppError(error) ? error : undefined;
+    const appError = error instanceof AppError ? error : undefined;
     return { hasError: true, error, appError };
   }
 
@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error("Error caught by boundary:", error, errorInfo);
 
     // Log AppError details if available
-    if (isAppError(error)) {
+    if (error instanceof AppError) {
       console.error("AppError details:", {
         code: error.code,
         status: error.status,

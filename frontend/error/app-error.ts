@@ -21,7 +21,7 @@ export type ErrorCode =
 export type ErrorSeverity = "error" | "warning" | "info";
 
 /**
- * Application error class with enhanced metadata
+ * Application error class with enhanced metadatas
  */
 export class AppError extends Error {
   readonly code: ErrorCode;
@@ -80,11 +80,4 @@ export class AppError extends Error {
       stack: this.stack,
     };
   }
-}
-
-/**
- * Type guard to check if error is AppError
- */
-export function isAppError(error: unknown): error is AppError {
-  return error instanceof AppError;
 }

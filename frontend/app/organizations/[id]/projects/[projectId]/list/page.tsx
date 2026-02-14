@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import React from "react";
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ActiveFilters } from "@/components/Issue/ActiveFilters";
 import { Filter } from "@/components/Issue/Filter";
 import { Sort } from "@/components/Issue/Sort";
 import { ListIssues } from "@/components/List/ListIssues";
 import { PageHeader } from "@/components/PageHeader";
+import { ErrorBoundary } from "@/error/ErrorBoundary";
 import { apiGet } from "@/lib/utils/apiClient";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Project } from "@/types/api/project";

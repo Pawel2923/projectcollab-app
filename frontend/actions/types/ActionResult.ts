@@ -1,4 +1,4 @@
-import type { ErrorCode } from "@/lib/types/errors";
+import type { ErrorCode } from "@/error/app-error";
 import type { ApiPlatformViolation } from "@/types/api/api-platform-error";
 
 export type FailedActionResult<T = object | undefined> = {

@@ -21,8 +21,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { AppError } from "@/lib/types/errors";
 import { getDefaultMessage } from "@/lib/utils/errorHandler";
 import type { IssueDetails } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";

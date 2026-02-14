@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import React, { useCallback } from "react";
 
+import type { ErrorCode } from "@/error/app-error";
+import { AppError } from "@/error/app-error";
 import { useAlert } from "@/hooks/useAlert";
-import type { ErrorCode } from "@/lib/types/errors";
-import { AppError, isAppError } from "@/lib/types/errors";
 import {
   formatValidationErrors,
   getErrorTitle,
@@ -33,7 +33,7 @@ export function useErrorHandler() {
     ) => {
       let appError: AppError;
 
-      if (isAppError(error)) {
+      if (error instanceof AppError) {
         appError = error;
       } else if (
         typeof error === "object" &&

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { AppError } from "@/lib/types/errors";
+import { AppError } from "@/error/app-error";
 import { createErrorFromResponse } from "@/lib/utils/errorHandler";
 
 /**
