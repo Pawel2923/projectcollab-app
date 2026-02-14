@@ -1,6 +1,6 @@
 import type { Issue } from "@/types/api/issue";
 
-import type { ViewMode } from "../types/gantt";
+import type { GanttViewMode } from "../../types/ui/gantt-view-mode";
 
 interface TimelineConfig {
   days: number;
@@ -9,7 +9,7 @@ interface TimelineConfig {
   headerLabel: string;
 }
 
-export const useGanttTimeline = (viewMode: ViewMode, now?: number) => {
+export const useGanttTimeline = (viewMode: GanttViewMode, now?: number) => {
   const startDate = now ? new Date(now) : new Date();
   startDate.setDate(startDate.getDate() - 7);
 

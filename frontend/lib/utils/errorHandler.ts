@@ -1,4 +1,4 @@
-import { Err, type Result } from "@/lib/types/result";
+import { Err, type Result } from "@/error/result";
 import {
   getMessageText,
   getMessageTitle,

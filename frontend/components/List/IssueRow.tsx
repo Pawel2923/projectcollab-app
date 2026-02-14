@@ -18,7 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Issue, IssueResolution, IssueStatus } from "@/types/api/issue";

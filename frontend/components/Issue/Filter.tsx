@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";

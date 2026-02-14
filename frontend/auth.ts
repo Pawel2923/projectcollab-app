@@ -7,8 +7,8 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 
-import type { Result } from "@/lib/types/result";
-import { Err, Ok } from "@/lib/types/result";
+import type { Result } from "@/error/result";
+import { Err, Ok } from "@/error/result";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api";
 

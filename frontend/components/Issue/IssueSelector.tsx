@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { cn } from "@/lib/utils";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";

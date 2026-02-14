@@ -3,7 +3,7 @@
 import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";

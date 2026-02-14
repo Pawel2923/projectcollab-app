@@ -9,7 +9,7 @@ import React from "react";
 import { updateIssueStatus } from "@/actions/updateIssueStatus";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { extractIdFromIri } from "@/lib/utils/iri";
 import { getMessageText } from "@/lib/utils/messageMapper/messageMapper";

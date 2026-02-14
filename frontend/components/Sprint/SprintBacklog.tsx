@@ -6,7 +6,7 @@ import React from "react";
 
 import { IssuesTable } from "@/components/List/IssuesTable";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";

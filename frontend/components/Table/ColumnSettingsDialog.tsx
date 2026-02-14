@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { isOk } from "@/lib/types/result";
+import { isOk } from "@/error/result";
 import { clientApiCall, clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";
 import type { IssueStatus, IssueType } from "@/types/api/issue";

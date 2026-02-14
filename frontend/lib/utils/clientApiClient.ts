@@ -1,5 +1,5 @@
 import type { AppError } from "@/error/app-error";
-import { Ok, type Result } from "@/lib/types/result";
+import { Ok, type Result } from "@/error/result";
 import { toErrorResult } from "@/lib/utils/errorHandler";
 
 interface ClientApiCallOptions {

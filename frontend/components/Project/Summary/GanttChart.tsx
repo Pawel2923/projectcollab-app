@@ -14,9 +14,9 @@ import {
 import { useGanttData } from "@/lib/hooks/useGanttData";
 import { useGanttState } from "@/lib/hooks/useGanttState";
 import { useGanttTimeline } from "@/lib/hooks/useGanttTimeline";
-import type { ViewMode } from "@/lib/types/gantt";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import type { GanttViewMode } from "@/types/ui/gantt-view-mode";
 
 interface GanttChartProps {
   issues: Issue[];
@@ -24,7 +24,7 @@ interface GanttChartProps {
   statuses: IssueStatus[];
   now?: number;
   selectedSprintId: string;
-  viewMode: ViewMode;
+  viewMode: GanttViewMode;
 }
 
 export function GanttChart({

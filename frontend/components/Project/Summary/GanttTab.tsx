@@ -9,9 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { ViewMode } from "@/lib/types/gantt";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import type { GanttViewMode } from "@/types/ui/gantt-view-mode";
 
 import { GanttChart } from "./GanttChart";
 import { GanttScopeButton } from "./GanttScopeButton";
@@ -36,7 +36,7 @@ export function GanttTab({
 }: GanttTabProps) {
   const [selectedSprintId, setSelectedSprintId] = useState<string>("all");
 
-  const [viewMode, setViewMode] = useState<ViewMode>("week");
+  const [viewMode, setViewMode] = useState<GanttViewMode>("week");
 
   return (
     <div className="space-y-4 bg-background p-4 rounded-lg border border-border">
