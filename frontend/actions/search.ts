@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "@/lib/services/accessTokenService";
+import { getAccessToken } from "@/services/accessTokenService";
 
 export type SearchResults = {
   issues: Array<{

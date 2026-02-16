@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { MentionData } from "@/lib/services/mentionService";
+import type { MentionData } from "@/services/mentionService";
 import type { ChatMember, Message } from "@/types/api/chat";
 
 import { DateSeparator } from "./DateSeparator";

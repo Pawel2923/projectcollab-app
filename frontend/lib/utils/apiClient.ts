@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { getAccessTokenReadOnly } from "@/lib/services/pageTokenService";
+import { getAccessTokenReadOnly } from "@/services/pageTokenService";
 
 interface ApiCallOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";

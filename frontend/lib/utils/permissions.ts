@@ -1,4 +1,4 @@
-import { type Role, ROLE_HIERARCHY } from "@/lib/constants/roleHierarchy";
+import { type Role, ROLE_HIERARCHY } from "@/constants/roleHierarchy";
 
 /**
  * Check if user's role has the required permission level

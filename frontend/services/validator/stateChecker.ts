@@ -2,7 +2,7 @@ import type {
   ActionResult,
   FailedActionResult,
 } from "@/actions/types/ActionResult";
-import { isConstraint } from "@/lib/services/validator/constraintParser";
+import { isConstraint } from "@/services/validator/constraintParser";
 
 import type { Constraint } from "./types/constraintTypes";
 

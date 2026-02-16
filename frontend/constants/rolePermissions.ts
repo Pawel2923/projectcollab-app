@@ -137,25 +137,6 @@ export const CHAT_ROLE_PERMISSIONS: Record<
 };
 
 /**
- * Get all permissions for a role (base + inherited)
- */
-export function getAllPermissions(
-  role: ProjectRole | OrganizationRole | ChatRole,
-  entityType: "project" | "organization" | "chat",
-): string[] {
-  const permissions =
-    entityType === "project"
-      ? PROJECT_ROLE_PERMISSIONS[role as ProjectRole]
-      : entityType === "organization"
-        ? ORGANIZATION_ROLE_PERMISSIONS[role as OrganizationRole]
-        : CHAT_ROLE_PERMISSIONS[role as ChatRole];
-
-  if (!permissions) return [];
-
-  return [...permissions.base];
-}
-
-/**
  * Get permission description for tooltip
  */
 export function getPermissionDescription(

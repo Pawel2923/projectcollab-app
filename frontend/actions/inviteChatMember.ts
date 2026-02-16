@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { getAccessToken } from "@/lib/services/accessTokenService";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import { getAccessToken } from "@/services/accessTokenService";
 import type { ChatMember } from "@/types/api/chat";
 
 import type { ActionResult } from "./types/ActionResult";

@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 
 import { deleteMessage } from "@/actions/chat";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useMentionData } from "@/hooks/useMentionData";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { useMentionData } from "@/lib/hooks/useMentionData";
 import { apiGet } from "@/lib/utils/apiClient";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";

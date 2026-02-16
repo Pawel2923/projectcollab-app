@@ -2,8 +2,8 @@
 
 import { ApiError } from "next/dist/server/api-utils";
 
-import { getAccessToken } from "@/lib/services/accessTokenService";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import { getAccessToken } from "@/services/accessTokenService";
 
 import type { ActionResult } from "./types/ActionResult";
 

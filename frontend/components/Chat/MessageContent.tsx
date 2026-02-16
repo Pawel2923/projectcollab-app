@@ -1,7 +1,7 @@
 import React from "react";
 
-import type { MentionData } from "@/lib/services/mentionService";
 import { parseMentions } from "@/lib/utils/mentionUtils";
+import type { MentionData } from "@/services/mentionService";
 
 import { Mention } from "./Mention";
 

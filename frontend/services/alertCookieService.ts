@@ -2,7 +2,7 @@
 
 import type { Alert } from "@/store/AlertContext";
 
-import { getCookie } from "../utils/cookieUtil";
+import { getCookie } from "../lib/utils/cookieUtil";
 
 const ALERT_COOKIE = "pc_alerts";
 

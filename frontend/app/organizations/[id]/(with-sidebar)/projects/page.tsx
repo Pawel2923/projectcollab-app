@@ -3,8 +3,8 @@ import React from "react";
 
 import { PageHeader } from "@/components/PageHeader";
 import { ProjectsContent } from "@/components/Project/ProjectsContent";
-import { getAccessTokenReadOnly } from "@/lib/services/pageTokenService";
 import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import { getAccessTokenReadOnly } from "@/services/pageTokenService";
 
 export default async function ProjectsPage({
   params,

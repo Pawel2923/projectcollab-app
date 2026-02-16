@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { ProjectRole } from "@/lib/constants/roleHierarchy";
+import type { ProjectRole } from "@/constants/roleHierarchy";
 import { formatDateTime } from "@/lib/utils/issueUtils";
 import type { ProjectMember } from "@/types/api/project";
 

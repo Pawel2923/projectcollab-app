@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { getCurrentUser } from "@/lib/services/userService";
 import { match } from "@/error/result";
+import { getCurrentUser } from "@/services/userService";
 import { UserProvider } from "@/store/UserContext";
 
 export default async function OrganizationsLayout({

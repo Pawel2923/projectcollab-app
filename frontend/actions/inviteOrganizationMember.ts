@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { getAccessToken } from "@/lib/services/accessTokenService";
-import { getCurrentUser } from "@/lib/services/userService";
 import { handleApiError } from "@/lib/utils/errorHandler";
+import { getAccessToken } from "@/services/accessTokenService";
+import { getCurrentUser } from "@/services/userService";
 import type { OrganizationMember } from "@/types/api/organization";
 
 import type { ActionResult } from "./types/ActionResult";

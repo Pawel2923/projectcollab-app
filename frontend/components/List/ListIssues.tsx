@@ -4,8 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { isOk } from "@/error/result";
+import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { buildQueryParams } from "@/lib/utils/queryParamsBuilder";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";

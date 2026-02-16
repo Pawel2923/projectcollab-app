@@ -6,9 +6,9 @@ import React from "react";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/error/ErrorBoundary";
-import { QueryProvider } from "@/lib/providers/QueryProvider";
-import { getAlerts } from "@/lib/services/alertService";
+import { getAlerts } from "@/services/alertService";
 import { AlertProvider } from "@/store/AlertProvider";
+import { QueryProvider } from "@/store/QueryProvider";
 
 const inter = Inter({
   variable: "--font-inter",

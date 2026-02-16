@@ -1,9 +1,9 @@
 import type { User } from "@/types/api/user";
 
-import type { AppError } from "../../error/app-error";
-import { Ok, type Result } from "../../error/result";
-import { apiGet } from "../utils/apiClient";
-import { toErrorResult } from "../utils/errorHandler";
+import type { AppError } from "../error/app-error";
+import { Ok, type Result } from "../error/result";
+import { apiGet } from "../lib/utils/apiClient";
+import { toErrorResult } from "../lib/utils/errorHandler";
 
 export async function getCurrentUser(): Promise<Result<User, AppError>> {
   try {

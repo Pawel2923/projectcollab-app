@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { addAlertAndGetResponse } from "@/lib/services/alertService";
 import { mapMessage } from "@/lib/utils/messageMapper/messageMapper";
+import { addAlertAndGetResponse } from "@/services/alertService";
 
 type VerifyEmailParams = {
   signature: string;

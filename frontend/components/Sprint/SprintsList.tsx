@@ -3,8 +3,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
-import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { isOk } from "@/error/result";
+import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";
 import type { Sprint } from "@/types/api/sprint";

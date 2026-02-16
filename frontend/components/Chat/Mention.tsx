@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { MentionChat, MentionIssue } from "@/lib/services/mentionService";
+import type { MentionChat, MentionIssue } from "@/services/mentionService";
 import type { Chat } from "@/types/api/chat";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";

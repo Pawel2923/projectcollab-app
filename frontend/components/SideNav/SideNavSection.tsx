@@ -8,8 +8,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { setSectionExpanded } from "@/lib/services/sideNavCookieService";
 import { cn } from "@/lib/utils";
+import { setSectionExpanded } from "@/services/sideNavCookieService";
 import type { NavigationItem } from "@/types/ui/navigation-item";
 
 import { SideNavItem } from "./SideNavItem";

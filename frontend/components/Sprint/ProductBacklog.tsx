@@ -5,8 +5,8 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 import { IssuesTable } from "@/components/List/IssuesTable";
-import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { isOk } from "@/error/result";
+import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";

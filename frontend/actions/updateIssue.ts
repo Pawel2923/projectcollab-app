@@ -3,10 +3,10 @@
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { getAccessToken } from "@/lib/services/accessTokenService";
 import { handleApiError } from "@/lib/utils/errorHandler";
 import { buildResourceIri } from "@/lib/utils/iri";
 import { isValidTimeString, parseEstimatedTime } from "@/lib/utils/issueUtils";
+import { getAccessToken } from "@/services/accessTokenService";
 
 const NO_RESOLUTION_VALUE = "__none__";
 

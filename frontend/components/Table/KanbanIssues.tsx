@@ -7,9 +7,9 @@ import { AlertCircle, Loader2, XCircle } from "lucide-react";
 import React from "react";
 
 import { updateIssueStatus } from "@/actions/updateIssueStatus";
+import { isOk } from "@/error/result";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { extractIdFromIri } from "@/lib/utils/iri";
 import { getMessageText } from "@/lib/utils/messageMapper/messageMapper";

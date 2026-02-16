@@ -11,9 +11,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useGanttData } from "@/lib/hooks/useGanttData";
-import { useGanttState } from "@/lib/hooks/useGanttState";
-import { useGanttTimeline } from "@/lib/hooks/useGanttTimeline";
+import { useGanttData } from "@/hooks/useGanttData";
+import { useGanttState } from "@/hooks/useGanttState";
+import { useGanttTimeline } from "@/hooks/useGanttTimeline";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
 import type { GanttViewMode } from "@/types/ui/gantt-view-mode";

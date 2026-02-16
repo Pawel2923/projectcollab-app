@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { fetchMentionData, type MentionData } from "../services/mentionService";
+import { fetchMentionData, type MentionData } from "@/services/mentionService";
 
 export function useMentionData(
   organizationId: string,

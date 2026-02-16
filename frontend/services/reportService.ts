@@ -1,10 +1,10 @@
 import type { Collection } from "@/types/api/collection";
 import type { Report } from "@/types/api/report";
 
-import type { AppError } from "../../error/app-error";
-import { Ok, type Result } from "../../error/result";
-import { apiDelete, apiGet, apiPost } from "../utils/apiClient";
-import { toErrorResult } from "../utils/errorHandler";
+import type { AppError } from "../error/app-error";
+import { Ok, type Result } from "../error/result";
+import { apiDelete, apiGet, apiPost } from "../lib/utils/apiClient";
+import { toErrorResult } from "../lib/utils/errorHandler";
 
 export async function getReports(
   projectId: number,

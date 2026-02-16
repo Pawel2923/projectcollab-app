@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import getEntityRole from "@/actions/getEntityRole";
-import type { EntityType, Role } from "@/lib/constants/roleHierarchy";
+import type { EntityType, Role } from "@/constants/roleHierarchy";
 import {
   handleSessionExpired,
   refreshSession,
