@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { OrganizationRole } from "@/constants/roleHierarchy";
-import { formatDateTime } from "@/lib/utils/issueUtils";
+import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { OrganizationMember } from "@/types/api/organization";
 
 interface MembersTableProps {

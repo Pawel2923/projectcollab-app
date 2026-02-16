@@ -1,6 +1,6 @@
 import React from "react";
 
-import { formatDateTime } from "@/lib/utils/issueUtils";
+import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { IssueDetails } from "@/types/api/issue";
 
 import { InfoRow } from "./InfoRow";

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { formatEstimatedTime } from "@/lib/utils/issueUtils";
+import { formatEstimatedTime } from "@/services/issue/issue-date-time-service";
 
 import { TypographyDescription } from "../typography/TypographyDescription";
 import { Progress } from "../ui/progress";

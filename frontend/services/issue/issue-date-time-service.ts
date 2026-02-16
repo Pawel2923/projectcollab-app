@@ -67,22 +67,6 @@ export function isValidTimeString(value?: string | null): boolean {
   const fullRegex = /^(\d+[wdhm]\s*)+$/i;
   return fullRegex.test(trimmed);
 }
-
-export function mapPriorityColor(priority: string | undefined): string {
-  switch (priority) {
-    case "low":
-      return "priority-low";
-    case "medium":
-      return "priority-medium";
-    case "high":
-      return "priority-high";
-    case "critical":
-      return "priority-critical";
-    default:
-      return "muted-foreground";
-  }
-}
-
 export function formatDateTime(
   value?: string | null,
   skipTime = false,

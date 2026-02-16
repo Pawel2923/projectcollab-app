@@ -1,8 +1,8 @@
 import { Trash2 } from "lucide-react";
 import React from "react";
 
-import { formatDateTime } from "@/lib/utils/issueUtils";
 import { getUserInitials } from "@/lib/utils/userUtils";
+import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { IssueComment } from "@/types/api/issue-metadata";
 
 import { Avatar } from "../../Avatar";

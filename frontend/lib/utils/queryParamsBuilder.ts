@@ -1,4 +1,4 @@
-import { isValidTimeString, parseEstimatedTime } from "@/lib/utils/issueUtils";
+import { isValidTimeString, parseEstimatedTime } from "@/services/issue/issue-date-time-service";
 import type {
   IssueFilterOption,
   IssueSortOption,

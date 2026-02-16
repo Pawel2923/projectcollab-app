@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useProjectOverview } from "@/hooks/useProjectOverview";
-import { formatDateTime } from "@/lib/utils/issueUtils";
+import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 
 interface OverviewTabProps {

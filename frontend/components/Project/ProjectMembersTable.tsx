@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ProjectRole } from "@/constants/roleHierarchy";
-import { formatDateTime } from "@/lib/utils/issueUtils";
+import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { ProjectMember } from "@/types/api/project";
 
 interface ProjectMembersTableProps {

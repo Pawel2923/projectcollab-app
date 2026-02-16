@@ -9,7 +9,7 @@ import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
 import { ErrorBoundary } from "@/error/ErrorBoundary";
 import { apiGet } from "@/lib/utils/apiClient";
-import { getIssueStatusObjects } from "@/lib/utils/issueStatusUtils";
+import { fetchIssueStatusObjects } from "@/services/issue/issue-status-fetcher";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
@@ -37,7 +37,7 @@ export default async function KanbanPage({
   const { projectId } = await params;
 
   // Fetch issue statuses
-  const issueStatuses = await getIssueStatusObjects(projectId);
+  const issueStatuses = await fetchIssueStatusObjects(projectId);
 
   // eslint-disable-next-line prefer-const
   let { data: issues, error } = await apiGet<Collection<Issue>>(
