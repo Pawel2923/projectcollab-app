@@ -8,7 +8,7 @@ import { apiGet } from "@/lib/utils/apiClient";
 import {
   handleSessionExpired,
   refreshSession,
-} from "@/lib/utils/clientTokenRefresh";
+} from "@/services/auth/client-token-refresh";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 

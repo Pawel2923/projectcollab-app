@@ -12,7 +12,7 @@ import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import { extractIdFromIri } from "@/lib/utils/iri";
-import { getMessageText } from "@/lib/utils/messageMapper/messageMapper";
+import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { buildQueryParams } from "@/lib/utils/queryParamsBuilder";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";

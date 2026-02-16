@@ -12,7 +12,7 @@ interface UseMercureObserverOptions<T = unknown> {
 import {
   handleSessionExpired,
   refreshSession,
-} from "@/lib/utils/clientTokenRefresh";
+} from "@/services/auth/client-token-refresh";
 
 export function useMercureObserver<T = unknown>({
   hubUrl,

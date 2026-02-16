@@ -1,39 +1,5 @@
-import type { Message } from "./messageMap";
-import { messageMap, symfonyValidationMessages } from "./messageMap";
-
-export function hasMessage(code: string): boolean {
-  return code in messageMap;
-}
-
-export function mapMessage(
-  code: string,
-  overrides?: Record<string, Message>,
-  fallback = "Nieoczekiwany błąd",
-) {
-  return overrides?.[code] ?? messageMap[code] ?? fallback;
-}
-
-/**
- * Get the user-facing message (description or title) from a message code
- */
-export function getMessageText(code: string): string {
-  const mapped = mapMessage(code);
-  if (typeof mapped === "object") {
-    return mapped.description || mapped.title;
-  }
-  return "Wystąpił nieoczekiwany błąd";
-}
-
-/**
- * Get the title from a message code
- */
-export function getMessageTitle(code: string): string {
-  const mapped = mapMessage(code);
-  if (typeof mapped === "object" && "title" in mapped) {
-    return mapped.title;
-  }
-  return "Error";
-}
+import { symfonyValidationMessages } from "@/constants/symfony-validation-messages";
+import { getMessageText } from "@/services/message-mapper/message-mapper";
 
 /**
  * Translate Symfony validation message to Polish

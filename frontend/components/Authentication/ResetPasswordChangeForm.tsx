@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/hooks/useAlert";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { mapMessage } from "@/lib/utils/messageMapper/messageMapper";
+import { mapMessage } from "@/services/message-mapper/message-mapper";
 import { sanitizeInput } from "@/lib/utils/sanitizeUtil";
 
 const FORM_FIELDS = ["password", "repeatPassword"] as const;

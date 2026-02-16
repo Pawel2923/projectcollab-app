@@ -5,11 +5,11 @@ import type {
   ActionResult,
   FailedActionResult,
 } from "@/actions/types/ActionResult";
-import { messageMap } from "@/lib/utils/messageMapper/messageMap";
+import { messagesMap } from "@/constants/messages-map";
 import {
   getMessageText,
-  translateSymfonyValidation,
-} from "@/lib/utils/messageMapper/messageMapper";
+
+} from "@/services/message-mapper/message-mapper";
 import {
   isOtherClientError,
   isUnprocessableEntityErrorWithConstraint,
@@ -18,6 +18,7 @@ import {
 import type { Constraint } from "@/services/validator/types/constraintTypes";
 import type { FormViolation } from "@/services/validator/types/formViolationTypes";
 import { extractViolations } from "@/services/validator/violationExtractor";
+import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 
 type FieldError = { [key: string]: { isInvalid: boolean; message: string } };
 
@@ -90,8 +91,8 @@ export function useServerValidation(
         serverFieldsMap,
       );
     } else if (isOtherClientError(actionState)) {
-      // Try to get translated message from messageMap first
-      const mapped = messageMap[failedState.code];
+      // Try to get translated message from messagesMap first
+      const mapped = messagesMap[failedState.code];
       const translatedMessage = mapped
         ? mapped.description || mapped.title
         : null;

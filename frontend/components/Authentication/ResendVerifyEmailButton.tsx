@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { mapMessage } from "@/lib/utils/messageMapper/messageMapper";
+import { mapMessage } from "@/services/message-mapper/message-mapper";
 import { isApiPlatformError } from "@/types/api/api-platform-error";
 
 export function ResendVerifyEmailButton() {

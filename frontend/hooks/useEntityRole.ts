@@ -7,7 +7,7 @@ import type { EntityType, Role } from "@/constants/roleHierarchy";
 import {
   handleSessionExpired,
   refreshSession,
-} from "@/lib/utils/clientTokenRefresh";
+} from "@/services/auth/client-token-refresh";
 
 interface UseEntityRoleResult {
   role: Role | null;

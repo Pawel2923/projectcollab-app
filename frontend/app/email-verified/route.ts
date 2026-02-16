@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { mapMessage } from "@/lib/utils/messageMapper/messageMapper";
+import { mapMessage } from "@/services/message-mapper/message-mapper";
 import { addAlertAndGetResponse } from "@/services/alertService";
 
 export async function GET(req: NextRequest) {

@@ -1,6 +1,6 @@
 import { AppError } from "@/error/app-error";
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { parseJsonCode } from "@/lib/utils/messageMapper/jsonCodeParser";
+import { parseJsonCode } from "@/services/message-mapper/json-code-parser";
 import { getAccessToken } from "@/services/accessTokenService";
 
 export async function POST(req: Request): Promise<Response> {

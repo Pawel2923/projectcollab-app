@@ -17,7 +17,7 @@ import {
   formatValidationErrors,
   getErrorTitle,
 } from "@/lib/utils/errorHandler";
-import { messageMap } from "@/lib/utils/messageMapper/messageMap";
+import { messagesMap } from "@/constants/messages-map";
 
 export function useErrorHandler() {
   const alert = useAlert();
@@ -72,7 +72,7 @@ export function useErrorHandler() {
       const title = getErrorTitle(appError.code);
 
       // Prefer mapped message if available, otherwise use server message
-      const mapped = messageMap[appError.code];
+      const mapped = messagesMap[appError.code];
       const mappedMessage = mapped ? mapped.description || mapped.title : null;
 
       const message =

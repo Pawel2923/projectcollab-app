@@ -2,13 +2,14 @@ import { Err, type Result } from "@/error/result";
 import {
   getMessageText,
   getMessageTitle,
-  translateSymfonyValidation,
-} from "@/lib/utils/messageMapper/messageMapper";
+
+} from "@/services/message-mapper/message-mapper";
 import type { ApiPlatformError } from "@/types/api/api-platform-error";
 import { isApiPlatformError } from "@/types/api/api-platform-error";
 
 import type { ErrorCode } from "../../error/app-error";
 import { AppError } from "../../error/app-error";
+import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 
 /**
  * Enhanced error handler for API calls
