@@ -2,9 +2,9 @@ import { useDroppable } from "@dnd-kit/core";
 import { Inbox } from "lucide-react";
 import React from "react";
 
-import { cn } from "@/lib/utils";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { KanbanIssue } from "./KanbanIssue";
@@ -20,7 +20,7 @@ export function KanbanColumn({ title, issues, statusIri }: KanbanColumnProps) {
 
   return (
     <div
-      className={cn(
+      className={classNamesMerger(
         "flex flex-col gap-4 rounded-lg border border-border",
         isOver ? "bg-tertiary" : "bg-background",
       )}

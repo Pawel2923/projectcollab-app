@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 const FORM_FIELDS = ["name"] as const;
 
@@ -45,7 +45,7 @@ export function CreateProjectForm({
   }, [state, router]);
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={classNamesMerger("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Utwórz nowy projekt</CardTitle>

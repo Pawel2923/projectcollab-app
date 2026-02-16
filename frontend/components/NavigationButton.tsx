@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 interface NavigationButtonProps extends LinkProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ export function NavigationButton({
     <Button
       variant="ghost"
       asChild
-      className={cn(
+      className={classNamesMerger(
         "w-full justify-start relative min-h-[40px] transition-all duration-300",
         isCollapsed ? "justify-center px-0" : "px-4 gap-1.5",
         isActive

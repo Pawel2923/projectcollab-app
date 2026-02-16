@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 type PasswordToggleProps = {
   name: string;
@@ -32,7 +32,7 @@ export function PasswordToggle({
         type={isVisible ? "text" : "password"}
         placeholder={placeholder}
         required={required}
-        className={cn("pr-10", className)}
+        className={classNamesMerger("pr-10", className)}
         {...rest}
       />
       <Button

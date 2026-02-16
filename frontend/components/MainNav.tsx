@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useRecentProjects } from "@/hooks/useRecentProjects";
-import { cn } from "@/lib/utils";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Collection } from "@/types/api/collection";
 import type { Project } from "@/types/api/project";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 export function MainNav({
   organizationId: propOrganizationId,
@@ -92,7 +92,7 @@ export function MainNav({
       <NavigationMenuList className="space-x-6">
         <NavigationMenuItem>
           <NavigationMenuLink
-            className={cn(
+            className={classNamesMerger(
               navigationMenuTriggerStyle(),
               "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
               isOverviewActive && "bg-light dark:bg-dark",
@@ -108,7 +108,7 @@ export function MainNav({
           {projects.length > 0 ? (
             <>
               <NavigationMenuTrigger
-                className={cn(
+                className={classNamesMerger(
                   "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
                   isProjectsActive && "bg-light dark:bg-dark",
                 )}
@@ -146,7 +146,7 @@ export function MainNav({
             </>
           ) : (
             <NavigationMenuLink
-              className={cn(
+              className={classNamesMerger(
                 navigationMenuTriggerStyle(),
                 "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
                 isProjectsActive && "bg-light dark:bg-dark",
@@ -161,7 +161,7 @@ export function MainNav({
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink
-            className={cn(
+            className={classNamesMerger(
               navigationMenuTriggerStyle(),
               "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
               isChatsActive && "bg-light dark:bg-dark",

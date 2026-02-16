@@ -9,11 +9,11 @@ import { Avatar } from "@/components/Avatar";
 import { AddChatModal } from "@/components/Chat/AddChatModal";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
 import { UserSettings } from "@/components/UserSettings";
-import { cn } from "@/lib/utils";
 import { getUserInitials } from "@/lib/utils/userUtils";
 import { useUserContext } from "@/store/UserContext";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 type MobileMainNavProps = {
   organizationId?: string;
@@ -40,7 +40,7 @@ function MobileNavItem({ href, label, icon, isActive }: MobileNavItemProps) {
       aria-current={isActive ? "page" : undefined}
     >
       <span
-        className={cn(
+        className={classNamesMerger(
           "flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200",
           isActive
             ? "bg-primary/10 text-primary"
@@ -50,7 +50,7 @@ function MobileNavItem({ href, label, icon, isActive }: MobileNavItemProps) {
         {icon}
       </span>
       <span
-        className={cn(
+        className={classNamesMerger(
           "text-[11px] font-medium leading-4",
           isActive ? "text-primary" : "text-text-secondary",
         )}
@@ -74,7 +74,7 @@ const MobileAddTrigger = React.forwardRef<
     type="button"
     aria-label={label}
     aria-disabled={disabled || undefined}
-    className={cn(
+    className={classNamesMerger(
       "relative flex h-16 w-16 items-center justify-center rounded-full bg-white text-foreground transition-transform duration-200 dark:bg-black",
       disabled
         ? "cursor-not-allowed opacity-60"
@@ -84,7 +84,7 @@ const MobileAddTrigger = React.forwardRef<
     {...props}
   >
     <span
-      className={cn(
+      className={classNamesMerger(
         "flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white",
         disabled && "bg-primary/60",
       )}

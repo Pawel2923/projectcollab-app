@@ -12,10 +12,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { isOk } from "@/error/result";
-import { cn } from "@/lib/utils";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import { Input } from "../ui/input";
 
@@ -111,7 +111,7 @@ export function IssueSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(
+          className={classNamesMerger(
             "w-full justify-between font-normal",
             !selectedValues.length && "text-muted-foreground",
             className,
@@ -195,13 +195,13 @@ export function IssueSelector({
                   key={issue.id}
                   type="button"
                   onClick={() => handleSelect(issue["@id"] || "")}
-                  className={cn(
+                  className={classNamesMerger(
                     "relative flex w-full cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
                     isSelected && "bg-accent",
                   )}
                 >
                   <Check
-                    className={cn(
+                    className={classNamesMerger(
                       "mr-2 h-4 w-4",
                       isSelected ? "opacity-100" : "opacity-0",
                     )}

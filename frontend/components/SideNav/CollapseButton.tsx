@@ -1,7 +1,7 @@
 import React from "react";
 
 import { ChevronsLeftIcon } from "@/assets/icons/ChevronsLeftIcon";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import { useTextAnimation } from "../../hooks/useTextAnimation";
 import { Button } from "../ui/button";
@@ -25,7 +25,7 @@ export function CollapseButton({
       <TooltipTrigger asChild>
         <Button
           onClick={onClick}
-          className={cn(
+          className={classNamesMerger(
             "flex items-center justify-center border-t border-sidebar-border text-sm font-semibold rounded-none bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground min-h-[44px]",
             isExpanded ? "gap-1.5 py-1.5" : "!gap-0 !py-0",
           )}
@@ -34,7 +34,7 @@ export function CollapseButton({
         >
           <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
             <ChevronsLeftIcon
-              className={cn(
+              className={classNamesMerger(
                 "inline-block transition-transform duration-300 ease-in-out",
                 isExpanded ? "" : "rotate-180",
               )}

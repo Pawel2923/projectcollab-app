@@ -1,7 +1,7 @@
 import { Check, ChevronsUpDown } from "lucide-react";
 import React, { useState } from "react";
 
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import {
   Command,
@@ -58,7 +58,7 @@ export function ComboBox({
           role="combobox"
           aria-expanded={open}
           aria-controls="combobox-content"
-          className={cn(
+          className={classNamesMerger(
             "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
             (isMultiSelect
               ? (selectedValues?.length ?? 0) === 0
@@ -90,7 +90,7 @@ export function ComboBox({
                 >
                   {item.label}
                   <Check
-                    className={cn(
+                    className={classNamesMerger(
                       "ml-auto",
                       isMultiSelect
                         ? selectedValues.includes(item.value)

@@ -2,7 +2,7 @@ import React from "react";
 
 import { SearchIcon } from "@/assets/icons/SearchIcon";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onSearchIconClick?: () => void;
@@ -23,7 +23,7 @@ export function SearchInput({
   ...props
 }: SearchInputProps) {
   return (
-    <div className={cn("relative", containerClassName)}>
+    <div className={classNamesMerger("relative", containerClassName)}>
       <label htmlFor={id} className="sr-only">
         {ariaLabel}
       </label>
@@ -38,7 +38,7 @@ export function SearchInput({
         name={name}
         id={id}
         aria-label={ariaLabel}
-        className={cn("pl-11 rounded-full bg-background h-10", className)}
+        className={classNamesMerger("pl-11 rounded-full bg-background h-10", className)}
         ref={inputRef}
         {...props}
       />

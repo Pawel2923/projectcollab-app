@@ -3,7 +3,7 @@
 import * as LabelPrimitive from "@radix-ui/react-label";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 type LabelProps = {
   withoutControls?: boolean;
@@ -12,7 +12,7 @@ type LabelProps = {
 function Label({ withoutControls = false, className, ...props }: LabelProps) {
   return withoutControls ? (
     <span
-      className={cn(
+      className={classNamesMerger(
         "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
         className,
       )}
@@ -21,7 +21,7 @@ function Label({ withoutControls = false, className, ...props }: LabelProps) {
   ) : (
     <LabelPrimitive.Root
       data-slot="label"
-      className={cn(
+      className={classNamesMerger(
         "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
         className,
       )}

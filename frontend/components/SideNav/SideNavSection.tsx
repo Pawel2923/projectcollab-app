@@ -8,9 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
 import { setSectionExpanded } from "@/services/sideNavCookieService";
 import type { NavigationItem } from "@/types/ui/navigation-item";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import { SideNavItem } from "./SideNavItem";
 
@@ -47,7 +47,7 @@ export function SideNavSection({
     >
       <AccordionItem value="section" className="border-b-0">
         <AccordionTrigger
-          className={cn(
+          className={classNamesMerger(
             "py-2 px-3 hover:no-underline hover:bg-gray-100 dark:hover:bg-gray-800",
             "text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider",
             "[&>svg]:h-3 [&>svg]:w-3",

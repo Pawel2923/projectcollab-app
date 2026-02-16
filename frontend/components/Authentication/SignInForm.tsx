@@ -23,7 +23,7 @@ import {
 import { FormField, FormFieldLabel } from "@/components/ui/Form/FormField";
 import { FormInput } from "@/components/ui/Form/FormInput";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 const FORM_FIELDS = ["email", "password"] as const;
 
@@ -57,7 +57,7 @@ export function SignInForm({
           : null;
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={classNamesMerger("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Witaj ponownie</CardTitle>

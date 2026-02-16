@@ -3,7 +3,7 @@
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 const Progress = React.forwardRef<
   React.ComponentRef<typeof ProgressPrimitive.Root>,
@@ -11,7 +11,7 @@ const Progress = React.forwardRef<
 >(({ className, value, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
-    className={cn(
+    className={classNamesMerger(
       "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
       className,
     )}

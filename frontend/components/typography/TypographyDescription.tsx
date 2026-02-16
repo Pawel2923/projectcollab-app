@@ -1,6 +1,6 @@
 import React from "react";
 
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 export function TypographyDescription({
   children,
@@ -10,7 +10,7 @@ export function TypographyDescription({
   className?: string;
 }) {
   return (
-    <span className={cn("text-sm text-muted-foreground", className)}>
+    <span className={classNamesMerger("text-sm text-muted-foreground", className)}>
       {children}
     </span>
   );

@@ -5,7 +5,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 interface AvatarProps {
   initials: string;
@@ -37,7 +37,7 @@ export function Avatar({
 
   return (
     <ShadcnAvatar
-      className={cn(sizeClass, rounding, className)}
+      className={classNamesMerger(sizeClass, rounding, className)}
       onClick={onClick}
     >
       <AvatarImage src={src} alt={ariaLabel || `Avatar ${initials}`} />

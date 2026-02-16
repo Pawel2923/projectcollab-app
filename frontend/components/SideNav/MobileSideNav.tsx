@@ -8,9 +8,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 import type { GroupedChats } from "@/types/ui/grouped-chats";
 import type { NavigationItem } from "@/types/ui/navigation-item";
+import { classNamesMerger } from "@/utils/class-names-merger";
 
 import { getNavigationItems } from "./constants";
 import { useSideNavData } from "./SideNavContext";
@@ -134,7 +134,7 @@ export function MobileSideNav({
                                 key={href}
                                 href={href}
                                 onClick={() => setIsDrawerOpen(false)}
-                                className={cn(
+                                className={classNamesMerger(
                                   "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
                                   isActive
                                     ? "border-primary/60 bg-primary/10 text-primary"
@@ -185,7 +185,7 @@ export function MobileSideNav({
             <Link
               key={href}
               href={href}
-              className={cn(
+              className={classNamesMerger(
                 "flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors duration-200",
                 isActive
                   ? "border-primary bg-primary/10 text-primary"
