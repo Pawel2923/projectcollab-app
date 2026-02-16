@@ -6,7 +6,7 @@ import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/lib/utils/errorHandler";
 import { buildResourceIri } from "@/lib/utils/iri";
 import { isValidTimeString, parseEstimatedTime } from "@/lib/utils/issueUtils";
-import { getAccessToken } from "@/services/accessTokenService";
+import { getAccessToken } from "@/services/auth/token-service";
 
 const NO_RESOLUTION_VALUE = "__none__";
 

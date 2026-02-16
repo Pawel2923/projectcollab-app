@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { getAccessToken } from "@/services/accessTokenService";
+import { getAccessToken } from "@/services/auth/token-service";
 
 const schema = z.object({
   commentIri: z.string().min(1, "ID komentarza jest wymagane"),

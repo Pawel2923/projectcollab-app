@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { getAccessToken } from "@/services/accessTokenService";
+import { getAccessToken } from "@/services/auth/token-service";
 import type { ChatMember } from "@/types/api/chat";
 
 import type { ActionResult } from "./types/ActionResult";

@@ -7,8 +7,7 @@ import { cookies } from "next/headers";
  */
 export async function getAccessTokenReadOnly(): Promise<string | undefined> {
   try {
-    const token = (await cookies()).get("access_token")?.value;
-    return token;
+    return (await cookies()).get("access_token")?.value;
   } catch (e) {
     console.error("Error reading access token:", e);
     return undefined;

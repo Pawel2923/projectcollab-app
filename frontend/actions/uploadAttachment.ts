@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { getAccessTokenReadOnly } from "@/services/pageTokenService";
+import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 
 export async function uploadAttachment(
   formData: FormData,

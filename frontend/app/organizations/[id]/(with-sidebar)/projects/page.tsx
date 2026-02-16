@@ -4,7 +4,7 @@ import React from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { ProjectsContent } from "@/components/Project/ProjectsContent";
 import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
-import { getAccessTokenReadOnly } from "@/services/pageTokenService";
+import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 
 export default async function ProjectsPage({
   params,

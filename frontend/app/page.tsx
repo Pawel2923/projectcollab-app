@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { isAuthenticated } from "@/services/pageTokenService";
+import { isAuthenticated } from "@/services/auth/token-read-service";
 
 export default async function Home() {
   const authenticated = await isAuthenticated();

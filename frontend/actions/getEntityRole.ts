@@ -1,7 +1,7 @@
 "use server";
 
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { getAccessToken } from "@/services/accessTokenService";
+import { getAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Collection } from "@/types/api/collection";
 
