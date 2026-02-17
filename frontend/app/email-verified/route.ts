@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { addAlertAndGetResponse } from "@/services/alert/alert-service";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
-import { addAlertAndGetResponse } from "@/services/alertService";
 
 export async function GET(req: NextRequest) {
   try {

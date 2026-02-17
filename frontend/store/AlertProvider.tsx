@@ -11,7 +11,7 @@ import React, {
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { dismissAlertCookie } from "@/services/alertCookieService";
+import { dismissAlertCookie } from "@/services/alert/alert-cookie-service";
 import { mapIcon } from "@/services/icon-mapper/icon-mapper";
 
 import type { Alert as AlertObject } from "./AlertContext";

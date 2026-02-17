@@ -6,7 +6,7 @@ import React from "react";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/error/ErrorBoundary";
-import { getAlerts } from "@/services/alertService";
+import { getAlerts } from "@/services/alert/alert-service";
 import { AlertProvider } from "@/store/AlertProvider";
 import { QueryProvider } from "@/store/QueryProvider";
 
