@@ -1,5 +1,5 @@
 import { apiGet, type ApiResponse } from "@/lib/utils/apiClient";
-import { getDirectChatDisplayName } from "@/lib/utils/chatHelpers";
+import { getDirectChatDisplayName } from "@/services/chat/chat-service";
 import type { Chat, ChatMember } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";

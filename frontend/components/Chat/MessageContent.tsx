@@ -1,6 +1,6 @@
 import React from "react";
 
-import { parseMentions } from "@/lib/utils/mentionUtils";
+import { parseMentions } from "@/services/chat/chat-mentions-service";
 import type { MentionData } from "@/services/mentionService";
 
 import { Mention } from "./Mention";

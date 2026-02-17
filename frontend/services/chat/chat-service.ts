@@ -40,29 +40,6 @@ export function getDirectChatDisplayName(
 
   return `${otherParticipants.slice(0, maxNames).join(", ")}...`;
 }
-
-/**
- * Generates an acronym from a chat name
- * @param chatName - The name of the chat
- * @returns Acronym (max 2 characters)
- */
-export function getChatAcronym(chatName: string): string {
-  if (!chatName || chatName.length === 0) {
-    return "C";
-  }
-
-  const words = chatName.trim().split(/\s+/);
-  if (words.length === 1) {
-    return chatName.slice(0, 2).toUpperCase();
-  }
-
-  return words
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
 /**
  * Categorizes chats by type and prepares navigation items
  * @param chats - Array of chats to categorize
