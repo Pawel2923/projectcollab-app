@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { addAlertAndGetResponse } from "@/services/alert/alert-service";
+import { addAlert } from "@/services/alert/alert-service";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
 
 export async function GET(req: NextRequest) {
@@ -13,17 +13,18 @@ export async function GET(req: NextRequest) {
       isOk ? "EMAIL_VERIFIED" : "EMAIL_NOT_VERIFIED",
     );
 
-    return addAlertAndGetResponse(
-      NextResponse.redirect(new URL("/signin", req.url)),
-      {
-        title,
-        description,
-        type: isOk ? "default" : "destructive",
-        duration: 5000,
-        hasCloseButton: true,
-        icon: isOk ? "mail-check" : "mail-x",
-      },
-    );
+    const response = NextResponse.redirect(new URL("/signin", req.url));
+
+    await addAlert(response, {
+      title,
+      description,
+      type: isOk ? "default" : "destructive",
+      duration: 5000,
+      hasCloseButton: true,
+      icon: isOk ? "mail-check" : "mail-x",
+    });
+
+    return response;
   } catch (e) {
     console.error(e);
     return NextResponse.json({ code: "EMAIL_NOT_VERIFIED" }, { status: 500 });

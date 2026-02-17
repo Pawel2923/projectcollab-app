@@ -19,10 +19,10 @@ export async function getAlerts(): Promise<Alert[]> {
   }
 }
 
-export async function addAlertAndGetResponse(
+export async function addAlert(
   res: NextResponse,
   alert: Omit<Alert, "id">,
-): Promise<NextResponse> {
+): Promise<void> {
   const alerts = await getAlerts();
   alerts.push({
     ...alert,
@@ -30,5 +30,4 @@ export async function addAlertAndGetResponse(
   });
 
   res.cookies.set("pc_alerts", JSON.stringify(alerts));
-  return res;
 }

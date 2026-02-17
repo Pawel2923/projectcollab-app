@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { addAlertAndGetResponse } from "@/services/alert/alert-service";
+import { addAlert } from "@/services/alert/alert-service";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
 
 type VerifyEmailParams = {
@@ -41,25 +41,28 @@ export async function GET(req: NextRequest) {
       data.code || "INTERNAL_SERVER_ERROR",
     );
 
-    return addAlertAndGetResponse(
-      NextResponse.redirect(
-        data.isVerified ? new URL("/", baseUrl) : returnUrl,
-      ),
-      {
-        title,
-        description,
-        icon: data.isVerified ? "mail-check" : "mail-x",
-        type: data.isVerified ? "default" : "destructive",
-        hasCloseButton: true,
-        duration: 5000,
-      },
+    const response = NextResponse.redirect(
+      data.isVerified ? new URL("/", baseUrl) : returnUrl,
     );
+
+    await addAlert(response, {
+      title,
+      description,
+      icon: data.isVerified ? "mail-check" : "mail-x",
+      type: data.isVerified ? "default" : "destructive",
+      hasCloseButton: true,
+      duration: 5000,
+    });
+
+    return response;
   } catch (e) {
     console.error(e);
 
     const { title, description } = mapMessage("INTERNAL_SERVER_ERROR");
 
-    return addAlertAndGetResponse(NextResponse.redirect(returnUrl), {
+    const response = NextResponse.redirect(returnUrl);
+
+    await addAlert(response, {
       title,
       description,
       icon: "mail-x",
@@ -67,5 +70,7 @@ export async function GET(req: NextRequest) {
       hasCloseButton: true,
       duration: 5000,
     });
+
+    return response;
   }
 }
