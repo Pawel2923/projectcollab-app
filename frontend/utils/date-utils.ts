@@ -38,22 +38,11 @@ export function formatDistanceToNow(date: Date, locale?: string): string {
 }
 
 /**
- * Formats a date to a localized string
- */
-export function formatDate(date: Date, locale: string = "pl-PL"): string {
-  return new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-}
-
-/**
  * Formats a date to a localized string with time
  * @throws Will throw RangeError if date is not a valid Date object
  */
 export function formatDateTime(date: Date, locale: string = "pl-PL"): string {
-  if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     throw new RangeError(
       `Invalid date provided to formatDateTime: ${date}. Expected a valid Date object.`,
     );
