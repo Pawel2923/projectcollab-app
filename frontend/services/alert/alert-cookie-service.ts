@@ -1,6 +1,6 @@
 "use client";
 
-import { getCookie } from "@/lib/utils/cookieUtil";
+import { getCookie } from "@/services/client-cookie-service";
 import type { Alert } from "@/store/AlertContext";
 
 const ALERT_COOKIE = "pc_alerts";

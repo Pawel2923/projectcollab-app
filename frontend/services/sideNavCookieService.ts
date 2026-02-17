@@ -1,6 +1,6 @@
 "use client";
 
-import { getCookie, setCookie } from "../lib/utils/cookieUtil";
+import { getCookie, setCookie } from "./client-cookie-service";
 
 const SIDE_NAV_EXPANDED_COOKIE = "pc_side_nav_expanded";
 const DIRECT_CHATS_EXPANDED_COOKIE = "pc_direct_chats_expanded";
