@@ -3,7 +3,7 @@
 import React from "react";
 
 import { Avatar } from "@/components/Avatar";
-import { getUserInitials } from "@/lib/utils/userUtils";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 import type { MentionData } from "@/services/mentionService";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { UserWithOnlyEmailAndName } from "@/types/api/user";
@@ -78,7 +78,7 @@ export function MessageItem({
         <div className="w-8 flex-shrink-0">
           {showAvatar && senderUser && (
             <Avatar
-              initials={getUserInitials(senderUser)}
+              initials={generateUserInitials(senderUser)}
               size="small"
               ariaLabel={senderUser.username || senderUser.email}
             />

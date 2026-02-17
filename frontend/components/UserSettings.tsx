@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { getUserInitials } from "@/lib/utils/userUtils";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 import { useUserContext } from "@/store/UserContext";
 
 import { ChevronDownIcon } from "../assets/icons/ChevronDownIcon";
@@ -28,7 +28,7 @@ export function UserSettings({ children, trigger }: UserSettingsProps) {
       className="data-[state=open]:[&_svg]:rotate-180"
     >
       <Avatar
-        initials={getUserInitials(userCtx?.user || null)}
+        initials={generateUserInitials(userCtx?.user || null)}
         size="large"
         ariaLabel={`Profil użytkownika ${userCtx?.user?.email}`}
       />

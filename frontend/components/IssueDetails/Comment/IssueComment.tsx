@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import React from "react";
 
-import { getUserInitials } from "@/lib/utils/userUtils";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 import { formatDateTime } from "@/services/issue/issue-date-time-service";
 import type { IssueComment } from "@/types/api/issue-metadata";
 
@@ -29,7 +29,7 @@ export function IssueComment({
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
-          <Avatar initials={getUserInitials(comment.commenter)} size="medium" />
+          <Avatar initials={generateUserInitials(comment.commenter)} size="medium" />
           <p>
             {comment.commenter?.username ||
               comment.commenter?.email ||

@@ -5,7 +5,7 @@ import React from "react";
 
 import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
-import { getUserInitials } from "@/lib/utils/userUtils";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 import type { User } from "@/types/api/user";
 
 import { Avatar } from "./Avatar";
@@ -57,7 +57,7 @@ export function AssigneeAvatar({
     <Tooltip>
       <TooltipTrigger asChild>
         <Avatar
-          initials={getUserInitials(user)}
+          initials={generateUserInitials(user)}
           size={size}
           ariaLabel={ariaLabel}
           isCircle={isCircle}

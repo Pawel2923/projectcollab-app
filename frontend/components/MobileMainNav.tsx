@@ -9,7 +9,7 @@ import { Avatar } from "@/components/Avatar";
 import { AddChatModal } from "@/components/Chat/AddChatModal";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
 import { UserSettings } from "@/components/UserSettings";
-import { getUserInitials } from "@/lib/utils/userUtils";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 import { useUserContext } from "@/store/UserContext";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
@@ -106,7 +106,7 @@ export function MobileMainNav({
 }: MobileMainNavProps) {
   const pathname = usePathname();
   const userCtx = useUserContext();
-  const userInitials = getUserInitials(userCtx?.user || null);
+  const userInitials = generateUserInitials(userCtx?.user || null);
 
   const organizationPath = organizationId
     ? `/organizations/${organizationId}`
