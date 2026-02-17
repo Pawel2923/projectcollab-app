@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import type { ErrorCode } from "@/error/app-error";
 import { AppError } from "@/error/app-error";
 import { getErrorTitle } from "@/lib/utils/errorHandler";
-
 import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 
 interface Props {

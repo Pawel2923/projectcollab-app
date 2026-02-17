@@ -40,7 +40,10 @@ export function CreateOrganizationForm({
   }, [state, router]);
 
   return (
-    <div className={classNamesMerger("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={classNamesMerger("flex flex-col gap-6", className)}
+      {...props}
+    >
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Utwórz nową organizację</CardTitle>

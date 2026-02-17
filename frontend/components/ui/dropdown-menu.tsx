@@ -175,7 +175,10 @@ const DropdownMenuShortcut = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={classNamesMerger("ml-auto text-xs tracking-widest opacity-60", className)}
+      className={classNamesMerger(
+        "ml-auto text-xs tracking-widest opacity-60",
+        className,
+      )}
       {...props}
     />
   );

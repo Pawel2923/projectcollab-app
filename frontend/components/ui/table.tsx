@@ -20,7 +20,11 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={classNamesMerger("[&_tr]:border-b", className)} {...props} />
+  <thead
+    ref={ref}
+    className={classNamesMerger("[&_tr]:border-b", className)}
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -104,7 +108,10 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={classNamesMerger("mt-4 text-sm text-muted-foreground", className)}
+    className={classNamesMerger(
+      "mt-4 text-sm text-muted-foreground",
+      className,
+    )}
     {...props}
   />
 ));

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import React, { useCallback } from "react";
 
+import { messagesMap } from "@/constants/messages-map";
 import type { ErrorCode } from "@/error/app-error";
 import { AppError } from "@/error/app-error";
 import { useAlert } from "@/hooks/useAlert";
@@ -17,7 +18,6 @@ import {
   formatValidationErrors,
   getErrorTitle,
 } from "@/lib/utils/errorHandler";
-import { messagesMap } from "@/constants/messages-map";
 
 export function useErrorHandler() {
   const alert = useAlert();

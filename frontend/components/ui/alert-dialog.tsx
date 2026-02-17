@@ -104,7 +104,10 @@ const AlertDialogAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
-    className={classNamesMerger(props.asChild ? "" : buttonVariants(), className)}
+    className={classNamesMerger(
+      props.asChild ? "" : buttonVariants(),
+      className,
+    )}
     {...props}
   />
 ));

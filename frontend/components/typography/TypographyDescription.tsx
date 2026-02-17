@@ -10,7 +10,9 @@ export function TypographyDescription({
   className?: string;
 }) {
   return (
-    <span className={classNamesMerger("text-sm text-muted-foreground", className)}>
+    <span
+      className={classNamesMerger("text-sm text-muted-foreground", className)}
+    >
       {children}
     </span>
   );

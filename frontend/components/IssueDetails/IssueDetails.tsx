@@ -27,7 +27,10 @@ import { useServerValidation } from "@/hooks/useServerValidation";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getDefaultMessage } from "@/lib/utils/errorHandler";
 import { buildResourceIri, extractIdFromIri } from "@/lib/utils/iri";
-import { formatEstimatedTime, isValidTimeString } from "@/services/issue/issue-date-time-service";
+import {
+  formatEstimatedTime,
+  isValidTimeString,
+} from "@/services/issue/issue-date-time-service";
 import type { Collection } from "@/types/api/collection";
 import type { IssueDetails as IssueDetailsType } from "@/types/api/issue";
 import type { IssueComment } from "@/types/api/issue-metadata";

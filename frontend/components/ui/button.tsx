@@ -53,7 +53,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         data-slot="button"
         type={asChild ? undefined : (type ?? "button")}
-        className={classNamesMerger(buttonVariants({ variant, size, className }))}
+        className={classNamesMerger(
+          buttonVariants({ variant, size, className }),
+        )}
         {...props}
       />
     );

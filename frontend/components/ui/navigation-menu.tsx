@@ -50,7 +50,11 @@ const NavigationMenuTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
-    className={classNamesMerger(navigationMenuTriggerStyle(), "group", className)}
+    className={classNamesMerger(
+      navigationMenuTriggerStyle(),
+      "group",
+      className,
+    )}
     {...props}
   >
     {children}{" "}
@@ -83,7 +87,11 @@ const NavigationMenuViewport = React.forwardRef<
   React.ComponentRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
-  <div className={classNamesMerger("absolute left-0 top-full flex justify-center w-full")}>
+  <div
+    className={classNamesMerger(
+      "absolute left-0 top-full flex justify-center w-full",
+    )}
+  >
     <NavigationMenuPrimitive.Viewport
       className={classNamesMerger(
         "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",

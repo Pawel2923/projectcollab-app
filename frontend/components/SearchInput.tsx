@@ -38,7 +38,10 @@ export function SearchInput({
         name={name}
         id={id}
         aria-label={ariaLabel}
-        className={classNamesMerger("pl-11 rounded-full bg-background h-10", className)}
+        className={classNamesMerger(
+          "pl-11 rounded-full bg-background h-10",
+          className,
+        )}
         ref={inputRef}
         {...props}
       />

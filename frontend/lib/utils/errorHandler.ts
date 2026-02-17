@@ -1,15 +1,10 @@
+import type { ErrorCode } from "@/error/app-error";
+import { AppError } from "@/error/app-error";
 import { Err, type Result } from "@/error/result";
-import {
-  getMessageText,
-  getMessageTitle,
-
-} from "@/services/message-mapper/message-mapper";
+import { getMessageText, getMessageTitle } from "@/services/message-mapper/message-mapper";
+import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 import type { ApiPlatformError } from "@/types/api/api-platform-error";
 import { isApiPlatformError } from "@/types/api/api-platform-error";
-
-import type { ErrorCode } from "../../error/app-error";
-import { AppError } from "../../error/app-error";
-import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 
 /**
  * Enhanced error handler for API calls
@@ -89,10 +84,9 @@ export function handleApiError(
   }
 
   const code = "UNKNOWN_ERROR";
-  const defaultMessage = code;
 
   const appError = new AppError({
-    message: error instanceof Error ? error.message : defaultMessage,
+    message: error instanceof Error ? error.message : code,
     code,
     status: 500,
     context,
@@ -156,10 +150,9 @@ export function toErrorResult(
   }
 
   const code = "UNKNOWN_ERROR";
-  const defaultMessage = code;
 
   const appError = new AppError({
-    message: error instanceof Error ? error.message : defaultMessage,
+    message: error instanceof Error ? error.message : code,
     code,
     status: 500,
     context,

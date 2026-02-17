@@ -29,7 +29,10 @@ export interface BadgeProps
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <div className={classNamesMerger(badgeVariants({ variant }), className)} {...props} />
+    <div
+      className={classNamesMerger(badgeVariants({ variant }), className)}
+      {...props}
+    />
   );
 }
 

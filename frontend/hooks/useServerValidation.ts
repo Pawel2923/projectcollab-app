@@ -6,10 +6,8 @@ import type {
   FailedActionResult,
 } from "@/actions/types/ActionResult";
 import { messagesMap } from "@/constants/messages-map";
-import {
-  getMessageText,
-
-} from "@/services/message-mapper/message-mapper";
+import { getMessageText } from "@/services/message-mapper/message-mapper";
+import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 import {
   isOtherClientError,
   isUnprocessableEntityErrorWithConstraint,
@@ -18,7 +16,6 @@ import {
 import type { Constraint } from "@/services/validator/types/constraintTypes";
 import type { FormViolation } from "@/services/validator/types/formViolationTypes";
 import { extractViolations } from "@/services/validator/violationExtractor";
-import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 
 type FieldError = { [key: string]: { isInvalid: boolean; message: string } };
 
