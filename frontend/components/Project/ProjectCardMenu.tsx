@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 import { useEntityRole } from "@/hooks/useEntityRole";
-import { hasPermission } from "@/lib/utils/permissions";
+import { hasPermission } from "@/services/permissions/permissions-service";
 import type { ProjectMember } from "@/types/api/project";
 
 import { Button } from "../ui/button";

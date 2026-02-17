@@ -16,8 +16,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { OrganizationRole } from "@/constants/roleHierarchy";
-import { getPermissionDescription } from "@/constants/rolePermissions";
+import { getPermissionDescription } from "@/services/permissions/permissions-service";
+import type { OrganizationRole } from "@/types/permissions/roles";
 
 interface RoleSelectorProps {
   value: OrganizationRole;

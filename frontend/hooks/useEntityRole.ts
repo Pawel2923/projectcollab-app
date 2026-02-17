@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 
 import getEntityRole from "@/actions/getEntityRole";
-import type { EntityType, Role } from "@/constants/roleHierarchy";
 import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
+import type { EntityType } from "@/types/permissions/entity";
+import type { Role } from "@/types/permissions/roles";
 
 interface UseEntityRoleResult {
   role: Role | null;

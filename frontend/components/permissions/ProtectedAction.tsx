@@ -2,9 +2,10 @@
 
 import React, { type ReactNode } from "react";
 
-import type { EntityType, Role } from "@/constants/roleHierarchy";
 import { useEntityRole } from "@/hooks/useEntityRole";
-import { hasPermission } from "@/lib/utils/permissions";
+import { hasPermission } from "@/services/permissions/permissions-service";
+import type { EntityType } from "@/types/permissions/entity";
+import type { Role } from "@/types/permissions/roles";
 
 interface ProtectedActionProps {
   entityType: EntityType;

@@ -1,8 +1,13 @@
-import type { ChatRole, OrganizationRole, ProjectRole } from "./roleHierarchy";
-
 /**
- * Permission descriptions for each role
+ * Role-based permission mappings for project, organization and chat entities.
  */
+
+import type {
+  ChatRole,
+  OrganizationRole,
+  ProjectRole,
+} from "@/types/permissions/roles";
+
 export const PROJECT_ROLE_PERMISSIONS: Record<
   ProjectRole,
   { base: string[]; inherited?: string[] }
@@ -135,21 +140,3 @@ export const CHAT_ROLE_PERMISSIONS: Record<
     ],
   },
 };
-
-/**
- * Get permission description for tooltip
- */
-export function getPermissionDescription(
-  role: ProjectRole | OrganizationRole | ChatRole,
-  entityType: "project" | "organization" | "chat",
-): { base: string[]; inherited?: string[] } {
-  if (entityType === "project") {
-    return PROJECT_ROLE_PERMISSIONS[role as ProjectRole] || { base: [] };
-  } else if (entityType === "organization") {
-    return (
-      ORGANIZATION_ROLE_PERMISSIONS[role as OrganizationRole] || { base: [] }
-    );
-  } else {
-    return CHAT_ROLE_PERMISSIONS[role as ChatRole] || { base: [] };
-  }
-}

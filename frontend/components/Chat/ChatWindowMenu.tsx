@@ -4,7 +4,7 @@ import { EllipsisVertical, UserPlus } from "lucide-react";
 import React, { useState } from "react";
 
 import { useEntityRole } from "@/hooks/useEntityRole";
-import { hasPermission } from "@/lib/utils/permissions";
+import { hasPermission } from "@/services/permissions/permissions-service";
 import type { ChatMember } from "@/types/api/chat";
 
 import { Button } from "../ui/button";
