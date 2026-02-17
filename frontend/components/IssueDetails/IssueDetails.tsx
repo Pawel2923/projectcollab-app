@@ -5,7 +5,7 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect, useMemo, useState } from "react";
 
-import updateIssue from "@/actions/updateIssue";
+import updateIssue from "@/actions/issue/updateIssue";
 import { AssigneeAvatar } from "@/components/AssigneeAvatar";
 import { IssueSoftDeleteContainer } from "@/components/IssueDetails/SoftDelete/IssueSoftDeleteContainer";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";

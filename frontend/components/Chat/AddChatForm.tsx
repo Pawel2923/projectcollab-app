@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 
-import createChat from "@/actions/createChat";
+import createChat from "@/actions/chat/createChat";
 import { useAlert } from "@/hooks/useAlert";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import type { OrganizationMember } from "@/types/api/organization";

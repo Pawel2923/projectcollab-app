@@ -4,7 +4,7 @@ import { Loader2Icon } from "lucide-react";
 import { Form } from "radix-ui";
 import React, { useActionState, useEffect, useRef } from "react";
 
-import updateComment from "@/actions/updateComment";
+import updateComment from "@/actions/issue/updateComment";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import type { IssueComment } from "@/types/api/issue-metadata";
 

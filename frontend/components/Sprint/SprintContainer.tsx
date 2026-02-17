@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MoreVertical, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 
-import updateSprintStatus from "@/actions/updateSprintStatus";
+import updateSprintStatus from "@/actions/sprint/updateSprintStatus";
 import {
   DropdownMenu,
   DropdownMenuContent,

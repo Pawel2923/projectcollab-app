@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import React, { useActionState } from "react";
 
-import login from "@/actions/login";
+import login from "@/actions/auth/login";
 import { GoogleLogoIcon } from "@/assets/icons/GoogleLogoIcon";
 import { MicrosoftLogoIcon } from "@/assets/icons/MicrosoftLogoIcon";
 import { PasswordToggle } from "@/components/PasswordToggle";

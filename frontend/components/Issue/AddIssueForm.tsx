@@ -5,7 +5,7 @@ import { Bug, ClipboardList, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect, useState } from "react";
 
-import createIssue from "@/actions/createIssue";
+import createIssue from "@/actions/issue/createIssue";
 import { SubtaskIcon } from "@/assets/icons/SubtaskIcon";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";

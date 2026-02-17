@@ -4,7 +4,7 @@ import * as Form from "@radix-ui/react-form";
 import { Loader2Icon } from "lucide-react";
 import React, { useActionState, useEffect } from "react";
 
-import createSprint from "@/actions/createSprint";
+import createSprint from "@/actions/sprint/createSprint";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/ui/Form/FormInput";

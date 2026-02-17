@@ -1,6 +1,6 @@
 import React from "react";
 
-import deleteComment from "@/actions/deleteComments";
+import deleteComment from "@/actions/issue/deleteComments";
 
 import {
   AlertDialog,

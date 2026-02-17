@@ -4,7 +4,7 @@ import { Loader2Icon } from "lucide-react";
 import { Form } from "radix-ui";
 import React, { useActionState, useEffect, useRef, useState } from "react";
 
-import createComment from "@/actions/createComment";
+import createComment from "@/actions/issue/createComment";
 import { useServerValidation } from "@/hooks/useServerValidation";
 
 import { TypographyInvalid } from "../../typography/TypographyInvalid";

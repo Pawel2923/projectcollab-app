@@ -5,23 +5,21 @@ import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import type { ChatMember } from "@/types/api/chat";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const schema = z.object({
-  chatId: z.string().min(1, "ID czatu jest wymagane"),
-  chatIri: z.string().min(1, "IRI czatu jest wymagane"),
-  memberIri: z.string().min(1, "Członek jest wymagany"),
+  memberId: z.number().positive("ID członka jest wymagane"),
   organizationId: z.string().min(1, "ID organizacji jest wymagane"),
+  projectId: z.string().min(1, "ID projektu jest wymagane"),
 });
 
-type InviteChatMemberData = z.infer<typeof schema>;
+type DeleteProjectMemberData = z.infer<typeof schema>;
 
-export default async function inviteChatMember(
+export default async function deleteProjectMember(
   _initialState: unknown,
-  formData: InviteChatMemberData,
-): Promise<ActionResult<ChatMember>> {
+  formData: DeleteProjectMemberData,
+): Promise<ActionResult<void>> {
   try {
     const validated = schema.safeParse(formData);
 
@@ -52,20 +50,16 @@ export default async function inviteChatMember(
       };
     }
 
-    const requestBody = {
-      chat: validated.data.chatIri,
-      member: validated.data.memberIri,
-    };
-
-    const res = await fetch(`${nextApiUrl}/chat_members`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/ld+json",
-        Authorization: `Bearer ${token}`,
-        accept: "application/ld+json",
+    const res = await fetch(
+      `${nextApiUrl}/project_members/${validated.data.memberId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: "application/ld+json",
+        },
       },
-      body: JSON.stringify(requestBody),
-    });
+    );
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
@@ -76,21 +70,20 @@ export default async function inviteChatMember(
         message:
           errorData.message ||
           errorData["hydra:description"] ||
-          "Nie udało się zaprosić członka",
+          "Nie udało się usunąć członka",
       };
     }
 
-    const data = await res.json();
-
+    revalidatePath(`/organizations/${validated.data.organizationId}`);
     revalidatePath(
-      `/organizations/${validated.data.organizationId}/chats/${validated.data.chatId}`,
+      `/organizations/${validated.data.organizationId}/projects/${validated.data.projectId}`,
     );
 
     return {
       ok: true,
-      content: data,
+      content: undefined,
     };
   } catch (error) {
-    return handleApiError(error, "Invite Chat Member");
+    return handleApiError(error, "Delete Project Member");
   }
 }

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import login from "@/actions/login";
+import login from "@/actions/auth/login";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
@@ -17,7 +17,7 @@ const schema = z.object({
  * @param _initialState
  * @param formData
  */
-export default async function createUser(
+export default async function signUp(
   _initialState: unknown,
   formData: FormData,
 ): Promise<ActionResult<User>> {

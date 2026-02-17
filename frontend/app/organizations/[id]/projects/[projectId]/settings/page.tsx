@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import React from "react";
 
-import getEntityRole from "@/actions/getEntityRole";
+import getEntityRole from "@/actions/permissions/getEntityRole";
 import { PageHeader } from "@/components/PageHeader";
 import ProjectSettingsContent from "@/components/Project/ProjectSettingsContent";
 import { getCurrentUser } from "@/services/auth/user-service";

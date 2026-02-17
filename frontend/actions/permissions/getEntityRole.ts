@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Collection } from "@/types/api/collection";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 type EntityType = "organization" | "project" | "chat";
 

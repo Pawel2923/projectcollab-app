@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import deleteProject from "@/actions/deleteProject";
+import deleteProject from "@/actions/project/deleteProject";
 import {
   AlertDialog,
   AlertDialogAction,

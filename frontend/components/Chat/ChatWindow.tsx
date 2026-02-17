@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { deleteMessage } from "@/actions/chat";
+import { deleteMessage } from "@/actions/chat/deleteMessage";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMentionData } from "@/hooks/useMentionData";
 import { useMercureObserver } from "@/hooks/useMercureObserver";

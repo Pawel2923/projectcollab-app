@@ -3,7 +3,7 @@
 import { Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import deleteProjectMember from "@/actions/deleteProjectMember";
+import deleteProjectMember from "@/actions/project/deleteProjectMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";

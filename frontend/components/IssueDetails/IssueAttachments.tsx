@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useRef, useTransition } from "react";
 
-import { deleteAttachment } from "@/actions/deleteAttachment";
-import { uploadAttachment } from "@/actions/uploadAttachment";
+import { deleteAttachment } from "@/actions/issue/deleteAttachment";
+import { uploadAttachment } from "@/actions/issue/uploadAttachment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import type { IssueDetails } from "@/types/api/issue";
 import { extractIdFromIri } from "@/utils/iri-util";

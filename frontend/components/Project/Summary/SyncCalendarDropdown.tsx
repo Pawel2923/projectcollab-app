@@ -1,7 +1,7 @@
 import { CalendarSync, CalendarX2, Loader2Icon } from "lucide-react";
 import React, { useState } from "react";
 
-import syncCalendar from "@/actions/syncCalendar";
+import syncCalendar from "@/actions/calendar/syncCalendar";
 import { GoogleLogoIcon } from "@/assets/icons/GoogleLogoIcon";
 import { MicrosoftLogoIcon } from "@/assets/icons/MicrosoftLogoIcon";
 import { Button } from "@/components/ui/button";

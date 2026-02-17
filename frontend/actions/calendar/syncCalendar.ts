@@ -5,7 +5,7 @@ import { ApiError } from "next/dist/server/api-utils";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 interface SyncCalendarParams {
   provider: string;

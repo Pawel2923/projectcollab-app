@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import React from "react";
 
-import { searchGlobal } from "@/actions/search";
+import { searchGlobal } from "@/actions/search/search";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBackButton } from "@/components/SearchBackButton";
 import { SearchPageInput } from "@/components/SearchPageInput";

@@ -5,21 +5,24 @@ import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import type { ProjectMember } from "@/types/api/project";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const schema = z.object({
-  memberId: z.number().positive("ID członka jest wymagane"),
   organizationId: z.string().min(1, "ID organizacji jest wymagane"),
   projectId: z.string().min(1, "ID projektu jest wymagane"),
+  projectIri: z.string().min(1, "IRI projektu jest wymagane"),
+  memberIri: z.string().min(1, "Członek jest wymagany"),
+  roleIri: z.string().optional(),
 });
 
-type DeleteProjectMemberData = z.infer<typeof schema>;
+type InviteProjectMemberData = z.infer<typeof schema>;
 
-export default async function deleteProjectMember(
+export default async function inviteProjectMember(
   _initialState: unknown,
-  formData: DeleteProjectMemberData,
-): Promise<ActionResult<void>> {
+  formData: InviteProjectMemberData,
+): Promise<ActionResult<ProjectMember>> {
   try {
     const validated = schema.safeParse(formData);
 
@@ -50,16 +53,21 @@ export default async function deleteProjectMember(
       };
     }
 
-    const res = await fetch(
-      `${nextApiUrl}/project_members/${validated.data.memberId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          accept: "application/ld+json",
-        },
+    const requestBody = {
+      project: validated.data.projectIri,
+      member: validated.data.memberIri,
+      ...(validated.data.roleIri && { role: validated.data.roleIri }),
+    };
+
+    const res = await fetch(`${nextApiUrl}/project_members`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/ld+json",
+        Authorization: `Bearer ${token}`,
+        accept: "application/ld+json",
       },
-    );
+      body: JSON.stringify(requestBody),
+    });
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
@@ -70,9 +78,11 @@ export default async function deleteProjectMember(
         message:
           errorData.message ||
           errorData["hydra:description"] ||
-          "Nie udało się usunąć członka",
+          "Nie udało się zaprosić członka",
       };
     }
+
+    const data = await res.json();
 
     revalidatePath(`/organizations/${validated.data.organizationId}`);
     revalidatePath(
@@ -81,9 +91,9 @@ export default async function deleteProjectMember(
 
     return {
       ok: true,
-      content: undefined,
+      content: data,
     };
   } catch (error) {
-    return handleApiError(error, "Delete Project Member");
+    return handleApiError(error, "Invite Project Member");
   }
 }

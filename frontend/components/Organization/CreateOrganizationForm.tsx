@@ -5,7 +5,7 @@ import { CheckIcon, Loader2Icon, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect } from "react";
 
-import createOrganization from "@/actions/createOrganization";
+import createOrganization from "@/actions/organization/createOrganization";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";
 import {

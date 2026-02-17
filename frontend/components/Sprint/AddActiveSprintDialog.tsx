@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import updateSprintStatus from "@/actions/updateSprintStatus";
+import updateSprintStatus from "@/actions/sprint/updateSprintStatus";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import { AppError } from "@/services/error/app-error";

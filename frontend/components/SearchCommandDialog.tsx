@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { searchGlobal, type SearchResults } from "@/actions/search";
+import { searchGlobal, type SearchResults } from "@/actions/search/search";
 import {
   CommandDialog,
   CommandEmpty,

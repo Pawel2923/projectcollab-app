@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import deleteSprint from "@/actions/deleteSprint";
+import deleteSprint from "@/actions/sprint/deleteSprint";
 import {
   AlertDialog,
   AlertDialogAction,

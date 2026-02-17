@@ -7,7 +7,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Chat } from "@/types/api/chat";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const baseSchema = z.object({
   organizationId: z.string().min(1, "ID organizacji jest wymagane"),

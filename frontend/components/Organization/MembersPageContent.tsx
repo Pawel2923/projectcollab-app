@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 
-import deleteOrganizationMember from "@/actions/deleteOrganizationMember";
-import updateOrganizationMemberRole from "@/actions/updateOrganizationMemberRole";
+import deleteOrganizationMember from "@/actions/organization/deleteOrganizationMember";
+import updateOrganizationMemberRole from "@/actions/organization/updateOrganizationMemberRole";
 import MembersTable from "@/components/permissions/MembersTable";
 import { useAlert } from "@/hooks/useAlert";
 import { useEntityRole } from "@/hooks/useEntityRole";

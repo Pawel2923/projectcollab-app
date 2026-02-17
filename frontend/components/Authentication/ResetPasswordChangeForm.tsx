@@ -5,7 +5,7 @@ import { CircleCheck, Loader2Icon, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useActionState, useEffect } from "react";
 
-import resetUserPassword from "@/actions/resetUserPassword";
+import resetUserPassword from "@/actions/auth/resetUserPassword";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

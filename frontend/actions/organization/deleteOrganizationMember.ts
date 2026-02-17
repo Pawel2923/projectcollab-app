@@ -4,24 +4,21 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
-import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import type { OrganizationMember } from "@/types/api/organization";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const schema = z.object({
+  memberId: z.number().positive("ID członka jest wymagane"),
   organizationId: z.string().min(1, "ID organizacji jest wymagane"),
-  organizationIri: z.string().min(1, "IRI organizacji jest wymagane"),
-  memberIri: z.string().min(1, "Członek jest wymagany"),
 });
 
-type InviteOrganizationMemberData = z.infer<typeof schema>;
+type DeleteOrganizationMemberData = z.infer<typeof schema>;
 
-export default async function inviteOrganizationMember(
+export default async function deleteOrganizationMember(
   _initialState: unknown,
-  formData: InviteOrganizationMemberData,
-): Promise<ActionResult<OrganizationMember>> {
+  formData: DeleteOrganizationMemberData,
+): Promise<ActionResult<void>> {
   try {
     const validated = schema.safeParse(formData);
 
@@ -52,30 +49,16 @@ export default async function inviteOrganizationMember(
       };
     }
 
-    const user = await getCurrentUser();
-    if (!user.ok) {
-      return {
-        ok: false,
-        code: "UNAUTHORIZED",
-        status: 401,
-      };
-    }
-
-    const requestBody = {
-      organization: validated.data.organizationIri,
-      member: validated.data.memberIri,
-      invitedBy: user.value["@id"],
-    };
-
-    const res = await fetch(`${nextApiUrl}/organization_members`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/ld+json",
-        Authorization: `Bearer ${token}`,
-        accept: "application/ld+json",
+    const res = await fetch(
+      `${nextApiUrl}/organization_members/${validated.data.memberId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: "application/ld+json",
+        },
       },
-      body: JSON.stringify(requestBody),
-    });
+    );
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
@@ -86,20 +69,18 @@ export default async function inviteOrganizationMember(
         message:
           errorData.message ||
           errorData["hydra:description"] ||
-          "Nie udało się zaprosić członka",
+          "Nie udało się usunąć członka",
       };
     }
-
-    const data = await res.json();
 
     revalidatePath(`/organizations/${validated.data.organizationId}`);
     revalidatePath(`/organizations/${validated.data.organizationId}/members`);
 
     return {
       ok: true,
-      content: data,
+      content: undefined,
     };
   } catch (error) {
-    return handleApiError(error, "Invite Organization Member");
+    return handleApiError(error, "Delete Organization Member");
   }
 }

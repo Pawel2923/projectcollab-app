@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Loader2, XCircle } from "lucide-react";
 import React from "react";
 
-import { updateIssueStatus } from "@/actions/updateIssueStatus";
+import { updateIssueStatus } from "@/actions/issue/updateIssueStatus";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/services/fetch/client-api-service";

@@ -5,7 +5,7 @@ import { CheckIcon, Loader2Icon, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect } from "react";
 
-import createProject from "@/actions/createProject";
+import createProject from "@/actions/project/createProject";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";
 import {

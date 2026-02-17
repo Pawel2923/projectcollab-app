@@ -3,7 +3,7 @@
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 
-import inviteChatMember from "@/actions/inviteChatMember";
+import inviteChatMember from "@/actions/chat/inviteChatMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { apiGet } from "@/services/fetch/api-service";

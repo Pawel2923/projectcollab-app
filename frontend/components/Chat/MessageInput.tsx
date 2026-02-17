@@ -3,7 +3,7 @@
 import { Loader2Icon, Send } from "lucide-react";
 import React, { useState } from "react";
 
-import { sendMessage } from "@/actions/chat";
+import { sendMessage } from "@/actions/chat/sendMessage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useErrorHandler } from "@/hooks/useErrorHandler";

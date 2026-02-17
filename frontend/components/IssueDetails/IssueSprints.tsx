@@ -4,8 +4,8 @@ import { Loader2Icon, PlusCircleIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useTransition } from "react";
 
-import addIssueToSprint from "@/actions/addIssueToSprint";
-import removeIssueFromSprint from "@/actions/removeIssueFromSprint";
+import addIssueToSprint from "@/actions/sprint/addIssueToSprint";
+import removeIssueFromSprint from "@/actions/sprint/removeIssueFromSprint";
 import { Button } from "@/components/ui/button";
 import {
   Command,

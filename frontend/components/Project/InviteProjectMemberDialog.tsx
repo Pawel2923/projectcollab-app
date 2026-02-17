@@ -3,7 +3,7 @@
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 
-import inviteProjectMember from "@/actions/inviteProjectMember";
+import inviteProjectMember from "@/actions/project/inviteProjectMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { apiGet } from "@/services/fetch/api-service";

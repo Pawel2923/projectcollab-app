@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import getEntityRole from "@/actions/getEntityRole";
+import getEntityRole from "@/actions/permissions/getEntityRole";
 import {
   handleSessionExpired,
   refreshSession,

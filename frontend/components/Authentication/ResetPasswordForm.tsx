@@ -5,7 +5,7 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useActionState, useEffect } from "react";
 
-import sendResetPasswordRequest from "@/actions/sendResetPasswordRequest";
+import sendResetPasswordRequest from "@/actions/auth/sendResetPasswordRequest";
 import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

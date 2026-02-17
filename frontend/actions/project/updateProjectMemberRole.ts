@@ -7,7 +7,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { ProjectMember } from "@/types/api/project";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const schema = z.object({
   memberId: z.string().min(1, "Member ID jest wymagane"),

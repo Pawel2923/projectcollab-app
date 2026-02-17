@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import React, { useActionState, useEffect } from "react";
 
-import createUser from "@/actions/createUser";
+import signUp from "@/actions/auth/signUp";
 import { GoogleLogoIcon } from "@/assets/icons/GoogleLogoIcon";
 import { MicrosoftLogoIcon } from "@/assets/icons/MicrosoftLogoIcon";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ const SERVER_TO_FORM_FIELDS_MAP: Record<string, string> = {
 
 export function SignUpForm({ className, ...props }: { className?: string }) {
   const router = useRouter();
-  const [state, formAction, pending] = useActionState(createUser, null);
+  const [state, formAction, pending] = useActionState(signUp, null);
   const { serverErrors, clearServerErrors } = useServerValidation(
     FORM_FIELDS,
     state,

@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import deleteOrganization from "@/actions/deleteOrganization";
+import deleteOrganization from "@/actions/organization/deleteOrganization";
 import {
   AlertDialog,
   AlertDialogAction,

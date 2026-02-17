@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import deleteIssue from "@/actions/deleteIssue";
+import deleteIssue from "@/actions/issue/deleteIssue";
 import {
   AlertDialog,
   AlertDialogAction,

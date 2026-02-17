@@ -5,24 +5,23 @@ import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import type { ProjectMember } from "@/types/api/project";
+import type { ChatMember } from "@/types/api/chat";
 
-import type { ActionResult } from "./types/ActionResult";
+import type { ActionResult } from "../types/ActionResult";
 
 const schema = z.object({
-  organizationId: z.string().min(1, "ID organizacji jest wymagane"),
-  projectId: z.string().min(1, "ID projektu jest wymagane"),
-  projectIri: z.string().min(1, "IRI projektu jest wymagane"),
+  chatId: z.string().min(1, "ID czatu jest wymagane"),
+  chatIri: z.string().min(1, "IRI czatu jest wymagane"),
   memberIri: z.string().min(1, "Członek jest wymagany"),
-  roleIri: z.string().optional(),
+  organizationId: z.string().min(1, "ID organizacji jest wymagane"),
 });
 
-type InviteProjectMemberData = z.infer<typeof schema>;
+type InviteChatMemberData = z.infer<typeof schema>;
 
-export default async function inviteProjectMember(
+export default async function inviteChatMember(
   _initialState: unknown,
-  formData: InviteProjectMemberData,
-): Promise<ActionResult<ProjectMember>> {
+  formData: InviteChatMemberData,
+): Promise<ActionResult<ChatMember>> {
   try {
     const validated = schema.safeParse(formData);
 
@@ -54,12 +53,11 @@ export default async function inviteProjectMember(
     }
 
     const requestBody = {
-      project: validated.data.projectIri,
+      chat: validated.data.chatIri,
       member: validated.data.memberIri,
-      ...(validated.data.roleIri && { role: validated.data.roleIri }),
     };
 
-    const res = await fetch(`${nextApiUrl}/project_members`, {
+    const res = await fetch(`${nextApiUrl}/chat_members`, {
       method: "POST",
       headers: {
         "Content-Type": "application/ld+json",
@@ -84,9 +82,8 @@ export default async function inviteProjectMember(
 
     const data = await res.json();
 
-    revalidatePath(`/organizations/${validated.data.organizationId}`);
     revalidatePath(
-      `/organizations/${validated.data.organizationId}/projects/${validated.data.projectId}`,
+      `/organizations/${validated.data.organizationId}/chats/${validated.data.chatId}`,
     );
 
     return {
@@ -94,6 +91,6 @@ export default async function inviteProjectMember(
       content: data,
     };
   } catch (error) {
-    return handleApiError(error, "Invite Project Member");
+    return handleApiError(error, "Invite Chat Member");
   }
 }
