@@ -26,7 +26,6 @@ import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import { apiGet } from "@/lib/utils/apiClient";
 import { getDefaultMessage } from "@/lib/utils/errorHandler";
-import { buildResourceIri, extractIdFromIri } from "@/lib/utils/iri";
 import {
   formatEstimatedTime,
   isValidTimeString,
@@ -37,6 +36,7 @@ import type { IssueComment } from "@/types/api/issue-metadata";
 import type { ProjectMember } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
 import type { User } from "@/types/api/user";
+import { buildResourceIri, extractIdFromIri } from "@/utils/iri-util";
 
 import { IssuePriority } from "../Issue/IssuePriority";
 import { ComboBox } from "../ui/combobox";

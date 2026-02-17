@@ -1,12 +1,12 @@
 import { apiGet, type ApiResponse } from "@/lib/utils/apiClient";
 import { getDirectChatDisplayName } from "@/lib/utils/chatHelpers";
-import { extractIdFromIri } from "@/lib/utils/iri";
 import type { Chat, ChatMember } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
 import type { UserWithOnlyEmailAndName } from "@/types/api/user";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 export interface MentionIssue extends Issue {
   projectSummary?: {

@@ -11,12 +11,12 @@ import { isOk } from "@/error/result";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
-import { extractIdFromIri } from "@/lib/utils/iri";
-import { buildQueryParams } from "@/lib/utils/queryParamsBuilder";
 import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue, IssueStatus } from "@/types/api/issue";
+import { extractIdFromIri } from "@/utils/iri-util";
+import { buildQueryParams } from "@/utils/query-params-builder";
 
 import { KanbanColumn } from "./KanbanColumn";
 import { useKanbanSensors } from "./useKanbanSensors";

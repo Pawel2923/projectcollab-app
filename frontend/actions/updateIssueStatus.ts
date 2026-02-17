@@ -4,8 +4,8 @@ import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/lib/utils/errorHandler";
-import { buildResourceIri } from "@/lib/utils/iri";
 import { getAccessToken } from "@/services/auth/token-service";
+import { buildResourceIri } from "@/utils/iri-util";
 
 const updateIssueStatusSchema = z.object({
   issueId: z.string().min(1, "Identyfikator zadania jest wymagany"),

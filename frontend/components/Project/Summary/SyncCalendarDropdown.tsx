@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAlert } from "@/hooks/useAlert";
-import { formatDateTime } from "@/lib/utils/dateHelpers";
+import { formatDateTime } from "@/utils/date-utils";
 
 interface SyncCalendarDropdownProps {
   issueIds: number[];

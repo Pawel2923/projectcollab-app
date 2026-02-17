@@ -12,8 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/hooks/useAlert";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { sanitizeInput } from "@/lib/utils/sanitizeUtil";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
+import { sanitizeInput } from "@/utils/input-sanitizer";
 
 const FORM_FIELDS = ["password", "repeatPassword"] as const;
 

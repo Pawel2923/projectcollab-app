@@ -4,8 +4,8 @@ import React from "react";
 import { IssueDetails } from "@/components/IssueDetails/IssueDetails";
 import type { SelectOption } from "@/components/IssueDetails/types";
 import { apiGet } from "@/lib/utils/apiClient";
-import { extractIdFromIri } from "@/lib/utils/iri";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 type Resolution = {
   "@id"?: string;

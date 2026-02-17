@@ -6,8 +6,8 @@ import React, { useRef, useTransition } from "react";
 import { deleteAttachment } from "@/actions/deleteAttachment";
 import { uploadAttachment } from "@/actions/uploadAttachment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { extractIdFromIri } from "@/lib/utils/iri";
 import type { IssueDetails } from "@/types/api/issue";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 import {
   Accordion,

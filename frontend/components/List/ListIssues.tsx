@@ -7,10 +7,10 @@ import React from "react";
 import { isOk } from "@/error/result";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
-import { buildQueryParams } from "@/lib/utils/queryParamsBuilder";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
+import { buildQueryParams } from "@/utils/query-params-builder";
 
 import { IssuesTable } from "./IssuesTable";
 
