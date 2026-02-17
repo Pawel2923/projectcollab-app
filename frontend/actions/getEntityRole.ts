@@ -1,8 +1,8 @@
 "use server";
 
 import { getAccessToken } from "@/services/auth/token-service";
+import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import { getCurrentUser } from "@/services/userService";
 import type { Collection } from "@/types/api/collection";
 
 import type { ActionResult } from "./types/ActionResult";

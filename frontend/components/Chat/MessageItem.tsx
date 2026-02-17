@@ -3,7 +3,7 @@
 import React from "react";
 
 import { Avatar } from "@/components/Avatar";
-import type { MentionData } from "@/services/mentionService";
+import type { MentionData } from "@/services/chat/mention-data-fetcher";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { UserWithOnlyEmailAndName } from "@/types/api/user";
 import { generateUserInitials } from "@/utils/user-initials-generator";

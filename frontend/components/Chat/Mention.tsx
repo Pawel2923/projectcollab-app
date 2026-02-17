@@ -7,7 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { MentionChat, MentionIssue } from "@/services/mentionService";
+import type {
+  MentionChat,
+  MentionIssue,
+} from "@/services/chat/mention-data-fetcher";
 import type { Chat } from "@/types/api/chat";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
@@ -35,10 +38,7 @@ export function Mention({ type, text, data }: MentionProps) {
       const issue = data;
 
       const projectId =
-        issue.projectSummary?.projectId ||
-        (typeof issue.project === "string"
-          ? issue.project.split("/").pop() || ""
-          : "");
+        issue.projectSummary?.projectId || issue.project.split("/").pop() || "";
       const orgId = issue.projectSummary?.organizationId;
 
       if (projectId && orgId) {

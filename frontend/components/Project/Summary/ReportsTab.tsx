@@ -36,7 +36,7 @@ import {
   deleteReport,
   generateReport,
   getReports,
-} from "@/services/reportService";
+} from "@/services/report/report-service";
 import type { Report } from "@/types/api/report";
 
 export function ReportsTab() {

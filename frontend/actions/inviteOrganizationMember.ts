@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
+import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import { getCurrentUser } from "@/services/userService";
 import type { OrganizationMember } from "@/types/api/organization";
 
 import type { ActionResult } from "./types/ActionResult";

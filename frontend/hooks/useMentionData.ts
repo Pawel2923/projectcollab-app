@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { fetchMentionData, type MentionData } from "@/services/mentionService";
+import {
+  fetchMentionData,
+  type MentionData,
+} from "@/services/chat/mention-data-fetcher";
 
 export function useMentionData(
   organizationId: string,

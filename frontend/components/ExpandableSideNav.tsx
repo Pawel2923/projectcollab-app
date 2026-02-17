@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-import { setSideNavExpanded } from "@/services/sideNavCookieService";
+import { setSideNavExpanded } from "@/services/ui/side-nav-cookie-manager";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { GroupedChats } from "@/types/ui/grouped-chats";
 import type { NavigationItem } from "@/types/ui/navigation-item";

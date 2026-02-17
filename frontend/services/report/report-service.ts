@@ -1,10 +1,10 @@
 import { toErrorResult } from "@/services/error/app-error-to-result";
 import type { Collection } from "@/types/api/collection";
 import type { Report } from "@/types/api/report";
-
 import { Ok, type Result } from "@/utils/result";
-import type { AppError } from "./error/app-error";
-import { apiDelete, apiGet, apiPost } from "./fetch/api-service";
+
+import type { AppError } from "../error/app-error";
+import { apiDelete, apiGet, apiPost } from "../fetch/api-service";
 
 export async function getReports(
   projectId: number,

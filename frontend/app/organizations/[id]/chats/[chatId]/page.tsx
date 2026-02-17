@@ -3,8 +3,8 @@ import React from "react";
 
 import { ChatWindow } from "@/components/Chat/ChatWindow";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { getCurrentUser } from "@/services/auth/user-service";
 import { apiGet } from "@/services/fetch/api-service";
-import { getCurrentUser } from "@/services/userService";
 import type { Chat, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { getCurrentUser } from "@/services/userService";
+import { getCurrentUser } from "@/services/auth/user-service";
 import { UserProvider } from "@/store/UserContext";
 import { match } from "@/utils/result";
 

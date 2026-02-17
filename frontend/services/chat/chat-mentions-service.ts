@@ -2,7 +2,7 @@ import type {
   MentionChat,
   MentionData,
   MentionIssue,
-} from "@/services/mentionService";
+} from "@/services/chat/mention-data-fetcher";
 import type { Chat } from "@/types/api/chat";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";

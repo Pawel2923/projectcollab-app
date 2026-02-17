@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { setSectionExpanded } from "@/services/sideNavCookieService";
+import { setSectionExpanded } from "@/services/ui/side-nav-cookie-manager";
 import type { NavigationItem } from "@/types/ui/navigation-item";
 import { classNamesMerger } from "@/utils/class-names-merger";
 

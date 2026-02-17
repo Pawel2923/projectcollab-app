@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
+import { getCurrentUser } from "@/services/auth/user-service";
 import { apiGet } from "@/services/fetch/api-service";
-import { getCurrentUser } from "@/services/userService";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 
