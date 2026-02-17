@@ -9,11 +9,11 @@ import { Avatar } from "@/components/Avatar";
 import { AddChatModal } from "@/components/Chat/AddChatModal";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
 import { UserSettings } from "@/components/UserSettings";
-import { generateUserInitials } from "@/utils/user-initials-generator";
 import { useUserContext } from "@/store/UserContext";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 import { classNamesMerger } from "@/utils/class-names-merger";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 
 type MobileMainNavProps = {
   organizationId?: string;

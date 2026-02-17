@@ -2,10 +2,10 @@
 
 import React from "react";
 
-import { generateUserInitials } from "@/utils/user-initials-generator";
+import { ChevronDownIcon } from "@/assets/icons/ChevronDownIcon";
 import { useUserContext } from "@/store/UserContext";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 
-import { ChevronDownIcon } from "../assets/icons/ChevronDownIcon";
 import { Avatar } from "./Avatar";
 import { Button } from "./ui/button";
 import {

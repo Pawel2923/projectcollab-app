@@ -5,8 +5,8 @@ import React from "react";
 
 import { isOk } from "@/error/result";
 import { clientApiGet } from "@/lib/utils/clientApiClient";
-import { generateUserInitials } from "@/utils/user-initials-generator";
 import type { User } from "@/types/api/user";
+import { generateUserInitials } from "@/utils/user-initials-generator";
 
 import { Avatar } from "./Avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
