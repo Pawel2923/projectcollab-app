@@ -3,7 +3,7 @@ import React from "react";
 
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { TopNav } from "@/components/TopNav";
-import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
 import type { Project } from "@/types/api/project";
 import { generateAcronym } from "@/utils/acronym-generator";
 

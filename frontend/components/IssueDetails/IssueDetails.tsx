@@ -20,16 +20,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectGroup, SelectItem } from "@/components/ui/select";
-import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { apiGet } from "@/lib/utils/apiClient";
-import { getDefaultMessage } from "@/lib/utils/errorHandler";
+import { AppError } from "@/services/error/app-error";
+import { apiGet } from "@/services/fetch/api-service";
 import {
   formatEstimatedTime,
   isValidTimeString,
 } from "@/services/issue/issue-date-time-service";
+import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import type { Collection } from "@/types/api/collection";
 import type { IssueDetails as IssueDetailsType } from "@/types/api/issue";
 import type { IssueComment } from "@/types/api/issue-metadata";
@@ -226,7 +226,8 @@ export function IssueDetails({
       router.refresh();
     } else if (state?.message && state?.code !== "VALIDATION_ERROR") {
       console.log("Error state:", state);
-      const message = state.message || getDefaultMessage(state.code);
+      const message =
+        state.message || getMessageTitle(state.code) || state.code;
       showError(
         new AppError({
           message,

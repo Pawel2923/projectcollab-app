@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import React from "react";
 
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { ActiveFilters } from "@/components/Issue/ActiveFilters";
 import { Filter } from "@/components/Issue/Filter";
 import { Sort } from "@/components/Issue/Sort";
 import { PageHeader } from "@/components/PageHeader";
 import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
-import { ErrorBoundary } from "@/error/ErrorBoundary";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { fetchIssueStatusObjects } from "@/services/issue/issue-status-fetcher";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";

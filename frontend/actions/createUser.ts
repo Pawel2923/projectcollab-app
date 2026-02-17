@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import login from "@/actions/login";
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { handleApiError } from "@/lib/utils/errorHandler";
+import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
 
 const schema = z.object({

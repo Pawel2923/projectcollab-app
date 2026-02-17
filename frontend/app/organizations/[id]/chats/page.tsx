@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
@@ -53,7 +53,6 @@ export default async function ChatsPage({
       e &&
       typeof e === "object" &&
       "digest" in e &&
-      typeof (e as { digest: string }).digest === "string" &&
       (e as { digest: string }).digest.startsWith("NEXT_REDIRECT")
     ) {
       throw e;

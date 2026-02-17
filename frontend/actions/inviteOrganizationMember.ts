@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { handleApiError } from "@/lib/utils/errorHandler";
 import { getAccessToken } from "@/services/auth/token-service";
+import { handleApiError } from "@/services/error/api-error-handler";
 import { getCurrentUser } from "@/services/userService";
 import type { OrganizationMember } from "@/types/api/organization";
 

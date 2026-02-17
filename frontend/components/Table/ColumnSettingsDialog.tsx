@@ -28,11 +28,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { isOk } from "@/error/result";
-import { clientApiCall, clientApiGet } from "@/lib/utils/clientApiClient";
+import {
+  clientApiCall,
+  clientApiGet,
+} from "@/services/fetch/client-api-service";
 import type { Collection } from "@/types/api/collection";
 import type { IssueStatus, IssueType } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import { isOk } from "@/utils/result";
 
 type ColumnSettingsDialogProps = {
   projectId: string;

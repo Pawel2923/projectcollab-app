@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import React from "react";
 
 import { ChatsSideNav } from "@/components/Chat/ChatsSideNav";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { TopNav } from "@/components/TopNav";
-import { ErrorBoundary } from "@/error/ErrorBoundary";
-import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
+import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";

@@ -3,7 +3,7 @@ import React from "react";
 
 import { PageHeader } from "@/components/PageHeader";
 import { SummaryTabs } from "@/components/Project/Summary/SummaryTabs";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { Collection } from "@/types/api/collection";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import type { Project } from "@/types/api/project";

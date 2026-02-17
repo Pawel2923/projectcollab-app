@@ -1,8 +1,8 @@
 "use server";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { apiCall } from "@/lib/utils/apiClient";
-import { handleApiError } from "@/lib/utils/errorHandler";
+import { handleApiError } from "@/services/error/api-error-handler";
+import { apiCall } from "@/services/fetch/api-service";
 import type { Message } from "@/types/api/chat";
 
 export async function sendMessage(

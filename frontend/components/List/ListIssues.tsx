@@ -4,13 +4,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-import { isOk } from "@/error/result";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
 import { buildQueryParams } from "@/utils/query-params-builder";
+import { isOk } from "@/utils/result";
 
 import { IssuesTable } from "./IssuesTable";
 

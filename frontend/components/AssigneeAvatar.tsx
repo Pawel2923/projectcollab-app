@@ -3,9 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-import { isOk } from "@/error/result";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { User } from "@/types/api/user";
+import { isOk } from "@/utils/result";
 import { generateUserInitials } from "@/utils/user-initials-generator";
 
 import { Avatar } from "./Avatar";

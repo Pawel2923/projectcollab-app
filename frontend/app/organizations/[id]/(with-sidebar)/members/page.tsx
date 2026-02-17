@@ -3,7 +3,7 @@ import React from "react";
 
 import MembersPageContent from "@/components/Organization/MembersPageContent";
 import { PageHeader } from "@/components/PageHeader";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { hasPermission } from "@/services/permissions/permissions-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Collection } from "@/types/api/collection";

@@ -2,8 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import React from "react";
 
 import { ChatWindow } from "@/components/Chat/ChatWindow";
-import { ErrorBoundary } from "@/error/ErrorBoundary";
-import { apiGet } from "@/lib/utils/apiClient";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { apiGet } from "@/services/fetch/api-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Chat, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";

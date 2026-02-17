@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { ProjectMember } from "@/types/api/project";
 
 import {

@@ -1,6 +1,6 @@
-import type { AppError } from "@/error/app-error";
-import { Ok, type Result } from "@/error/result";
-import { toErrorResult } from "@/lib/utils/errorHandler";
+import type { AppError } from "@/services/error/app-error";
+import { toErrorResult } from "@/services/error/app-error-to-result";
+import { Ok, type Result } from "@/utils/result";
 
 interface ClientApiCallOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";

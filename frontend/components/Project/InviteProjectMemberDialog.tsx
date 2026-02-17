@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import inviteProjectMember from "@/actions/inviteProjectMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { ProjectMember, ProjectRole } from "@/types/api/project";
 

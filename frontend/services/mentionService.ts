@@ -1,5 +1,5 @@
-import { apiGet, type ApiResponse } from "@/lib/utils/apiClient";
 import { getDirectChatDisplayName } from "@/services/chat/chat-service";
+import { apiGet, type ApiResponse } from "@/services/fetch/api-service";
 import type { Chat, ChatMember } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
@@ -78,9 +78,7 @@ function enrichIssuesWithProjectData(
   });
 
   return issues.map((issue) => {
-    const projectValue = issue.project;
-    const projectIri =
-      typeof projectValue === "string" ? projectValue : undefined;
+    const projectIri = issue.project;
     const derivedProjectId = projectIri
       ? extractIdFromIri(projectIri)
       : undefined;

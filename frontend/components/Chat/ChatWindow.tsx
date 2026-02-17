@@ -6,7 +6,7 @@ import { deleteMessage } from "@/actions/chat";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMentionData } from "@/hooks/useMentionData";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 

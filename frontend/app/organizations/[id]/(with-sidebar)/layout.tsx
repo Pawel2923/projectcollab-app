@@ -4,7 +4,7 @@ import React from "react";
 
 import { OrganizationSideNav } from "@/components/Organization/OrganizationSideNav";
 import { TopNav } from "@/components/TopNav";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { OrganizationProvider } from "@/store/OrganizationContext";
 import type { Organization } from "@/types/api/organization";
 import { generateAcronym } from "@/utils/acronym-generator";
@@ -43,7 +43,7 @@ export default async function OrganizationLayout({
   const cookieStore = await cookies();
   const isSideNavExpandedCookie = cookieStore.get("pc_side_nav_expanded");
 
-  let isSideNavExpanded = true;
+  let isSideNavExpanded: boolean;
   try {
     isSideNavExpanded = JSON.parse(isSideNavExpandedCookie?.value || "true");
   } catch {

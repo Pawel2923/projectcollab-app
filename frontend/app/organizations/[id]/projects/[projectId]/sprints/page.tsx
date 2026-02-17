@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AddSprintDialog } from "@/components/Sprint/AddSprintDialog";
 import { ProductBacklog } from "@/components/Sprint/ProductBacklog";
 import { SprintsList } from "@/components/Sprint/SprintsList";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { Collection } from "@/types/api/collection";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";

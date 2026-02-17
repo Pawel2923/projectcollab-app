@@ -8,10 +8,10 @@ import React, {
 } from "react";
 
 import updateSprintStatus from "@/actions/updateSprintStatus";
-import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useServerValidation } from "@/hooks/useServerValidation";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { AppError } from "@/services/error/app-error";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Collection } from "@/types/api/collection";
 import type { Sprint } from "@/types/api/sprint";

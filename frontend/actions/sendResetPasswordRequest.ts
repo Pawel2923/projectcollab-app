@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { handleApiError } from "@/lib/utils/errorHandler";
+import { handleApiError } from "@/services/error/api-error-handler";
 
 const schema = z.object({
   email: z.email(),

@@ -5,16 +5,16 @@ import React, { useEffect, useState } from "react";
 import deleteOrganizationMember from "@/actions/deleteOrganizationMember";
 import updateOrganizationMemberRole from "@/actions/updateOrganizationMemberRole";
 import MembersTable from "@/components/permissions/MembersTable";
-import { isOk } from "@/error/result";
 import { useAlert } from "@/hooks/useAlert";
 import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { hasPermission } from "@/services/permissions/permissions-service";
 import type { Collection } from "@/types/api/collection";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { OrganizationRole } from "@/types/permissions/roles";
+import { isOk } from "@/utils/result";
 
 import {
   AlertDialog,

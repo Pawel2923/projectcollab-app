@@ -5,7 +5,7 @@ import React from "react";
 import getEntityRole from "@/actions/getEntityRole";
 import { PageHeader } from "@/components/PageHeader";
 import ProjectSettingsContent from "@/components/Project/ProjectSettingsContent";
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { getCurrentUser } from "@/services/userService";
 import type { Collection } from "@/types/api/collection";
 import type { Project, ProjectMember } from "@/types/api/project";

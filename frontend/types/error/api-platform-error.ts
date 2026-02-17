@@ -26,10 +26,5 @@ export interface ApiPlatformError {
  * Type guard to check if error is API Platform error
  */
 export function isApiPlatformError(error: unknown): error is ApiPlatformError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "status" in error &&
-    typeof (error as ApiPlatformError).status === "number"
-  );
+  return typeof error === "object" && error !== null && "status" in error;
 }

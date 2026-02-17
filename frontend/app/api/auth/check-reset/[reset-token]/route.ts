@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { AppError } from "@/error/app-error";
-import { handleApiError } from "@/lib/utils/errorHandler";
+import { handleApiError } from "@/services/error/api-error-handler";
+import { AppError } from "@/services/error/app-error";
 
 export async function GET(req: NextRequest) {
   try {

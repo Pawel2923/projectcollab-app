@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { apiCall } from "@/lib/utils/apiClient";
-import { handleApiError } from "@/lib/utils/errorHandler";
+import { handleApiError } from "@/services/error/api-error-handler";
+import { apiCall } from "@/services/fetch/api-service";
 
 export async function deleteAttachment(
   attachmentId: string,

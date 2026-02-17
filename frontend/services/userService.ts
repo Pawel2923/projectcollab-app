@@ -1,9 +1,9 @@
+import { toErrorResult } from "@/services/error/app-error-to-result";
 import type { User } from "@/types/api/user";
+import { Ok, type Result } from "@/utils/result";
 
-import type { AppError } from "../error/app-error";
-import { Ok, type Result } from "../error/result";
-import { apiGet } from "../lib/utils/apiClient";
-import { toErrorResult } from "../lib/utils/errorHandler";
+import type { AppError } from "./error/app-error";
+import { apiGet } from "./fetch/api-service";
 
 export async function getCurrentUser(): Promise<Result<User, AppError>> {
   try {
@@ -24,7 +24,6 @@ export async function getCurrentUser(): Promise<Result<User, AppError>> {
       error &&
       typeof error === "object" &&
       "digest" in error &&
-      typeof (error as { digest: string }).digest === "string" &&
       (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
     ) {
       throw error;

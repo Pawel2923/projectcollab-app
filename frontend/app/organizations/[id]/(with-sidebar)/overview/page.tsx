@@ -3,8 +3,8 @@ import React from "react";
 
 import { OrganizationSummary } from "@/components/Organization/OrganizationSummary";
 import { PageHeader } from "@/components/PageHeader";
-import { apiGet, rethrowIfRedirect } from "@/lib/utils/apiClient";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
 import type { Chat } from "@/types/api/chat";
 import type { Organization } from "@/types/api/organization";
 import type { Project } from "@/types/api/project";

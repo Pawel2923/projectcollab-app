@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { apiGet } from "@/lib/utils/apiClient";
 import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
+import { apiGet } from "@/services/fetch/api-service";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 

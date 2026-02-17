@@ -1,6 +1,6 @@
 "use server";
 
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import type { Collection } from "@/types/api/collection";
 import type { IssueStatus } from "@/types/api/issue";
 

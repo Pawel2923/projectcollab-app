@@ -4,16 +4,19 @@ import { Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 import deleteProjectMember from "@/actions/deleteProjectMember";
-import { isOk } from "@/error/result";
 import { useAlert } from "@/hooks/useAlert";
 import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { clientApiCall, clientApiGet } from "@/lib/utils/clientApiClient";
+import {
+  clientApiCall,
+  clientApiGet,
+} from "@/services/fetch/client-api-service";
 import { hasPermission } from "@/services/permissions/permissions-service";
 import type { Collection } from "@/types/api/collection";
 import type { Project, ProjectMember } from "@/types/api/project";
 import type { ProjectRole } from "@/types/permissions/roles";
+import { isOk } from "@/utils/result";
 
 import {
   AlertDialog,

@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { handleApiError } from "@/lib/utils/errorHandler";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { handleApiError } from "@/services/error/api-error-handler";
 
 export async function uploadAttachment(
   formData: FormData,

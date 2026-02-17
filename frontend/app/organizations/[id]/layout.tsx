@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 
-import { apiGet } from "@/lib/utils/apiClient";
+import { apiGet } from "@/services/fetch/api-service";
 import { OrganizationProvider } from "@/store/OrganizationContext";
 import type { Organization } from "@/types/api/organization";
 

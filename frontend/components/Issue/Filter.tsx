@@ -21,8 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isOk } from "@/error/result";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type {
@@ -30,6 +29,7 @@ import type {
   IssueStatus,
   IssueType,
 } from "@/types/api/issue";
+import { isOk } from "@/utils/result";
 
 export function Filter({ projectId }: { projectId?: string | number }) {
   const [isOpen, setIsOpen] = useState(false);

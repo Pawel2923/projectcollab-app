@@ -5,12 +5,12 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 import { IssuesTable } from "@/components/List/IssuesTable";
-import { isOk } from "@/error/result";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import { isOk } from "@/utils/result";
 
 interface SprintBacklogProps {
   sprint: Sprint;

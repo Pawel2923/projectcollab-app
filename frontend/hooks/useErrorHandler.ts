@@ -11,13 +11,11 @@ import {
 import React, { useCallback } from "react";
 
 import { messagesMap } from "@/constants/messages-map";
-import type { ErrorCode } from "@/error/app-error";
-import { AppError } from "@/error/app-error";
 import { useAlert } from "@/hooks/useAlert";
-import {
-  formatValidationErrors,
-  getErrorTitle,
-} from "@/lib/utils/errorHandler";
+import { AppError } from "@/services/error/app-error";
+import { formatValidationErrors } from "@/services/error/validation-error-parser";
+import { getMessageTitle } from "@/services/message-mapper/message-mapper";
+import type { ErrorCode } from "@/types/error/error-code";
 
 export function useErrorHandler() {
   const alert = useAlert();
@@ -69,7 +67,7 @@ export function useErrorHandler() {
       }
 
       const icon = getErrorIcon(appError.code);
-      const title = getErrorTitle(appError.code);
+      const title = getMessageTitle(appError.code);
 
       // Prefer mapped message if available, otherwise use server message
       const mapped = messagesMap[appError.code];

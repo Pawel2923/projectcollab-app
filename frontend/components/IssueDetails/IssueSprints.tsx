@@ -21,9 +21,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { AppError } from "@/error/app-error";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { getDefaultMessage } from "@/lib/utils/errorHandler";
+import { AppError } from "@/services/error/app-error";
+import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import type { IssueDetails } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
 
@@ -77,7 +77,8 @@ export function IssueSprints({
         showSuccess("Dodano zadanie do sprintu");
         setOpen(false);
       } else {
-        const message = result.message || getDefaultMessage(result.code);
+        const message =
+          result.message || getMessageTitle(result.code) || result.code;
         showError(
           new AppError({
             message,
@@ -101,7 +102,8 @@ export function IssueSprints({
       if (result.ok) {
         showSuccess("Usunięto zadanie ze sprintu");
       } else {
-        const message = result.message || getDefaultMessage(result.code);
+        const message =
+          result.message || getMessageTitle(result.code) || result.code;
         showError(
           new AppError({
             message,

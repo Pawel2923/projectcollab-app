@@ -5,10 +5,10 @@ import type { ErrorInfo, ReactNode } from "react";
 import React, { Component } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { ErrorCode } from "@/error/app-error";
-import { AppError } from "@/error/app-error";
-import { getErrorTitle } from "@/lib/utils/errorHandler";
+import { AppError } from "@/services/error/app-error";
+import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
+import type { ErrorCode } from "@/types/error/error-code";
 
 interface Props {
   children: ReactNode;
@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     if (appError) {
       return {
-        title: getErrorTitle(appError.code),
+        title: getMessageTitle(appError.code),
         description: appError.message || "Wystąpił błąd. Spróbuj ponownie.",
       };
     }

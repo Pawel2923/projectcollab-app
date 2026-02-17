@@ -7,16 +7,16 @@ import { AlertCircle, Loader2, XCircle } from "lucide-react";
 import React from "react";
 
 import { updateIssueStatus } from "@/actions/updateIssueStatus";
-import { isOk } from "@/error/result";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { clientApiGet } from "@/lib/utils/clientApiClient";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import { extractIdFromIri } from "@/utils/iri-util";
 import { buildQueryParams } from "@/utils/query-params-builder";
+import { isOk } from "@/utils/result";
 
 import { KanbanColumn } from "./KanbanColumn";
 import { useKanbanSensors } from "./useKanbanSensors";

@@ -1,5 +1,5 @@
-import type { ErrorCode } from "@/error/app-error";
-import type { ApiPlatformViolation } from "@/types/api/api-platform-error";
+import type { ApiPlatformViolation } from "@/types/error/api-platform-error";
+import type { ErrorCode } from "@/types/error/error-code";
 
 export type FailedActionResult<T = object | undefined> = {
   ok: false;
