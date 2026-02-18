@@ -1,7 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @plugin "tailwindcss-animate";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -52,6 +52,7 @@
   --priority-medium-background: #d1fae5;
   --priority-high-background: #ffedd5;
   --priority-critical-background: #fee2e2;
+  --font-inter: Inter, sans-serif;
 }
 
 @theme inline {
