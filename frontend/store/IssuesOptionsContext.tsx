@@ -1,7 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export type IssueSortOption = {
   sortBy: string;
@@ -33,64 +32,15 @@ const IssuesOptionsContext = createContext<
   IssuesOptionsContextType | undefined
 >(undefined);
 
-// Helper functions to encode/decode URL params
-function encodeOptions<T>(options: T[]): string {
-  if (options.length === 0) return "";
-  return btoa(JSON.stringify(options));
-}
-
-function decodeOptions<T>(encoded: string): T[] {
-  if (!encoded) return [];
-  try {
-    return JSON.parse(atob(encoded));
-  } catch (e) {
-    console.error("Failed to decode options:", e);
-    return [];
-  }
-}
-
 export function IssuesOptionsProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const [sortOptions, setSortOptionsState] = useState<IssueSortOption[]>(() => {
-    const sortParam = searchParams.get("sort");
-    return decodeOptions<IssueSortOption>(sortParam || "");
-  });
-
+  const [sortOptions, setSortOptionsState] = useState<IssueSortOption[]>([]);
   const [filterOptions, setFilterOptionsState] = useState<IssueFilterOption[]>(
-    () => {
-      const filterParam = searchParams.get("filter");
-      return decodeOptions<IssueFilterOption>(filterParam || "");
-    },
+    [],
   );
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-
-    if (sortOptions.length > 0) {
-      params.set("sort", encodeOptions(sortOptions));
-    } else {
-      params.delete("sort");
-    }
-
-    if (filterOptions.length > 0) {
-      params.set("filter", encodeOptions(filterOptions));
-    } else {
-      params.delete("filter");
-    }
-
-    const newUrl = params.toString()
-      ? `${pathname}?${params.toString()}`
-      : pathname;
-
-    router.replace(newUrl, { scroll: false });
-  }, [sortOptions, filterOptions, pathname, router, searchParams]);
 
   const setSortOptions = (options: IssueSortOption[]) => {
     setSortOptionsState(options);

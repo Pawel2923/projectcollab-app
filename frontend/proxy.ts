@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 
-export const middleware = auth(async (request) => {
-  // Skip middleware for public routes and API routes
+export const proxy = auth(async (request) => {
+  // Skip for public routes and API routes
   if (
     request.nextUrl.pathname.startsWith("/signin") ||
     request.nextUrl.pathname.startsWith("/signup") ||

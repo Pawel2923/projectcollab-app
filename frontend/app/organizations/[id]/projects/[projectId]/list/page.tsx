@@ -8,7 +8,6 @@ import { Sort } from "@/components/Issue/Sort";
 import { ListIssues } from "@/components/List/ListIssues";
 import { PageHeader } from "@/components/PageHeader";
 import { apiGet } from "@/services/fetch/api-service";
-import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Project } from "@/types/api/project";
 
 export async function generateMetadata({
@@ -33,7 +32,7 @@ export default async function ListPage({
   const { projectId } = await params;
 
   return (
-    <IssuesOptionsProvider>
+    <>
       <PageHeader title="Lista zadań" />
       <section className="space-y-6 bg-background p-4 rounded-lg border border-border">
         <div className="flex items-start gap-3">
@@ -47,6 +46,6 @@ export default async function ListPage({
           </ErrorBoundary>
         </div>
       </section>
-    </IssuesOptionsProvider>
+    </>
   );
 }

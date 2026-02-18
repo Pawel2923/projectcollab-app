@@ -4,6 +4,7 @@ import React from "react";
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { TopNav } from "@/components/TopNav";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
+import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Project } from "@/types/api/project";
 import { generateAcronym } from "@/utils/acronym-generator";
 
@@ -54,7 +55,7 @@ export default async function ProjectsLayout({
         headerAcronym={headerAcronym}
       />
       <main className="flex flex-col col-start-1 row-start-3 p-4 gap-6 overflow-y-auto bg-light md:col-start-2 md:row-start-2">
-        {children}
+        <IssuesOptionsProvider>{children}</IssuesOptionsProvider>
       </main>
     </div>
   );

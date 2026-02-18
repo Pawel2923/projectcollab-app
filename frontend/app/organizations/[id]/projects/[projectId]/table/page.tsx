@@ -10,7 +10,6 @@ import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
 import { apiGet } from "@/services/fetch/api-service";
 import { fetchIssueStatusObjects } from "@/services/issue/issue-status-fetcher";
-import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
 import type { Project } from "@/types/api/project";
@@ -51,7 +50,7 @@ export default async function KanbanPage({
   console.log("Loaded issues:", issues);
 
   return (
-    <IssuesOptionsProvider>
+    <>
       <PageHeader
         title="Tablica Kanban"
         actions={<ColumnSettingsDialog projectId={projectId} />}
@@ -72,6 +71,6 @@ export default async function KanbanPage({
           </ErrorBoundary>
         </div>
       </section>
-    </IssuesOptionsProvider>
+    </>
   );
 }
