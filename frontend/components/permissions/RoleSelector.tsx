@@ -40,10 +40,10 @@ function formatRoleName(role: OrganizationRole): string {
     USER: "Użytkownik",
   };
   const tokens = role.split("_");
-  const translated = tokens
+
+  return tokens
     .map((t) => tokenMap[t] ?? t.charAt(0) + t.slice(1).toLowerCase())
     .join(" ");
-  return translated;
 }
 
 export default function RoleSelector({
@@ -57,7 +57,7 @@ export default function RoleSelector({
   return (
     <div className="flex items-center gap-2">
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-45">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

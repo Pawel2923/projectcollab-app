@@ -7,7 +7,7 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 export function useKanbanSensors() {
-  const sensors = useSensors(
+  return useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
@@ -17,6 +17,4 @@ export function useKanbanSensors() {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  return sensors;
 }

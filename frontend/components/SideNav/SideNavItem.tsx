@@ -1,6 +1,7 @@
 import React from "react";
 
-import { useTextAnimation } from "../../hooks/useTextAnimation";
+import { useTextAnimation } from "@/hooks/useTextAnimation";
+
 import { ActiveNavigationButton } from "../ActiveNavigationButton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 

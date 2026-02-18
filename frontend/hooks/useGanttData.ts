@@ -25,17 +25,12 @@ export const useGanttData = (
   issues.forEach((issue) => {
     if (issue.issueSprints && issue.issueSprints.length > 0) {
       issue.issueSprints.forEach((issueSprint) => {
-        let sprintIri: string | undefined;
-        if (typeof issueSprint === "string") {
-          sprintIri = issueSprint;
-        } else if (issueSprint.sprint) {
-          sprintIri =
+        if (issueSprint.sprint) {
+          const sprintIri =
             typeof issueSprint.sprint === "string"
               ? issueSprint.sprint
               : issueSprint.sprint["@id"];
-        }
 
-        if (sprintIri) {
           if (!issuesBySprint[sprintIri]) {
             issuesBySprint[sprintIri] = [];
           }

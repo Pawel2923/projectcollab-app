@@ -2,10 +2,10 @@
 
 import React from "react";
 
+import { useSidebarClasses } from "@/hooks/useSidebarClasses";
 import type { GroupedChats } from "@/types/ui/grouped-chats";
 import type { NavigationItem } from "@/types/ui/navigation-item";
 
-import { useSidebarClasses } from "../hooks/useSidebarClasses";
 import { CollapseButton } from "./SideNav/CollapseButton";
 import { useSideNavData, useSideNavState } from "./SideNav/SideNavContext";
 import { SideNavHeader } from "./SideNav/SideNavHeader";

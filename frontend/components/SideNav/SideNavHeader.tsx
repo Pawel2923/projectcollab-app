@@ -1,6 +1,7 @@
 import React from "react";
 
-import { useTextAnimation } from "../../hooks/useTextAnimation";
+import { useTextAnimation } from "@/hooks/useTextAnimation";
+
 import { Avatar } from "../Avatar";
 
 interface SideNavHeaderProps {

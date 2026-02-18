@@ -1,6 +1,5 @@
 import type { Issue } from "@/types/api/issue";
-
-import type { GanttViewMode } from "../types/ui/gantt-view-mode";
+import type { GanttViewMode } from "@/types/ui/gantt-view-mode";
 
 interface TimelineConfig {
   days: number;

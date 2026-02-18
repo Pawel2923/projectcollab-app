@@ -3,8 +3,3 @@ export type SelectOption = {
   label: string;
   iri: string;
 };
-
-export type AssigneeOption = {
-  iri: string;
-  label: string;
-};

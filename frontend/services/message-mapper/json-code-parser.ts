@@ -1,4 +1,4 @@
-import { messagesMap } from "../../constants/messages-map";
+import { messagesMap } from "@/constants/messages-map";
 
 export function parseJsonCode(jsonString: string): string | undefined {
   try {

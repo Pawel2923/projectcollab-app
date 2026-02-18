@@ -91,7 +91,7 @@ export function ReportsTab() {
         title: "Sukces",
         description: "Raport został wygenerowany.",
       });
-      loadReports();
+      await loadReports();
     } else {
       notify({
         type: "destructive",

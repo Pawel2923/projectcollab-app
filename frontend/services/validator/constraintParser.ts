@@ -1,30 +1,5 @@
 import type { Constraint } from "./types/constraintTypes";
 
-export function parseConstraint(jsonString?: string | null): Constraint | null {
-  try {
-    if (!jsonString) {
-      return null;
-    }
-
-    const constraint = JSON.parse(jsonString);
-
-    if (!isConstraint(constraint)) {
-      console.error("Parsed object is not a valid Constraint");
-      return null;
-    }
-
-    if (constraint.status !== 422) {
-      console.error(`Unsupported status: ${constraint.status}`);
-      return null;
-    }
-
-    return constraint;
-  } catch (error) {
-    console.error(`Error parsing JSON: ${error}`);
-    return null;
-  }
-}
-
 export function isConstraint(object?: object): object is Constraint {
   return (
     typeof object === "object" &&

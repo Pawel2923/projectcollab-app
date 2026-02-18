@@ -93,7 +93,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                   type="button"
                   onClick={() =>
                     signIn("microsoft-entra-id", {
-                      callbackUrl: "/organizations",
+                      redirectTo: "/organizations",
                     })
                   }
                 >
@@ -104,7 +104,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
                   variant="outline"
                   className="w-full gap-2.5 p-3"
                   onClick={() =>
-                    signIn("google", { callbackUrl: "/organizations" })
+                    signIn("google", { redirectTo: "/organizations" })
                   }
                   type="button"
                 >

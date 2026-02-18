@@ -23,14 +23,3 @@ export function LoadingSpinner({
     />
   );
 }
-
-export function PageLoading() {
-  return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="text-center">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <p className="text-sm text-muted-foreground">Ładowanie...</p>
-      </div>
-    </div>
-  );
-}

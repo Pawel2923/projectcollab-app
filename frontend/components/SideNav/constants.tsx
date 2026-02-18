@@ -17,20 +17,6 @@ export function isValidContentType(type: string): type is ContentType {
 }
 
 /**
- * Type guard for project content type
- */
-export function isProjectContent(type: string): type is "project" {
-  return type === "project";
-}
-
-/**
- * Type guard for chat content type
- */
-export function isChatContent(type: string): type is "chat" {
-  return type === "chat";
-}
-
-/**
  * Get navigation items based on content type
  * @throws Error if content type is invalid
  */

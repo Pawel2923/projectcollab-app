@@ -17,10 +17,7 @@ export function RelationItem({
 }: RelationItemProps) {
   const relationIri = reference["@id"];
   const extractedId = extractIdFromIri(relationIri);
-  const fallbackId =
-    typeof reference.id === "number" || typeof reference.id === "string"
-      ? String(reference.id)
-      : undefined;
+  const fallbackId = String(reference.id);
 
   const targetIssueId = extractedId || fallbackId;
   const href = targetIssueId

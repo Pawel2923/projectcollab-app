@@ -1,9 +1,9 @@
 import React from "react";
 
 import { ChevronsLeftIcon } from "@/assets/icons/ChevronsLeftIcon";
+import { useTextAnimation } from "@/hooks/useTextAnimation";
 import { classNamesMerger } from "@/utils/class-names-merger";
 
-import { useTextAnimation } from "../../hooks/useTextAnimation";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 

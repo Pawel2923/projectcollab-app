@@ -43,16 +43,11 @@ export function IssuesTable({ issues, projectId }: IssuesTableProps) {
 
     allIssues.forEach((issue) => {
       if (issue.parentIssue) {
-        const parentIri =
-          typeof issue.parentIssue === "string"
-            ? issue.parentIssue
-            : issue.parentIssue["@id"];
+        const parentIri = issue.parentIssue["@id"];
 
-        if (parentIri) {
-          const children = childrenMap.get(parentIri) || [];
-          children.push(issue);
-          childrenMap.set(parentIri, children);
-        }
+        const children = childrenMap.get(parentIri) || [];
+        children.push(issue);
+        childrenMap.set(parentIri, children);
       } else {
         topLevel.push(issue);
       }
