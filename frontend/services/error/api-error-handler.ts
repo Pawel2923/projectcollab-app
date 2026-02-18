@@ -4,10 +4,6 @@ import { logError } from "@/services/error/error-logger";
 import { isApiPlatformError } from "@/types/error/api-platform-error";
 import type { ErrorCode } from "@/types/error/error-code";
 
-/**
- * Enhanced error handler for API calls
- * Returns error details in ActionResult format for server actions
- */
 export function handleApiError(
   error: unknown,
   context: string = "API call",

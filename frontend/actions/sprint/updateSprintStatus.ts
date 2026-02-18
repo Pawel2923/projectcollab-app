@@ -18,11 +18,6 @@ const schema = z.object({
 
 type UpdateSprintStatusData = z.infer<typeof schema> | FormData;
 
-/**
- * Update the status of a sprint using form data or sprint data.
- * @param _initialState
- * @param formData
- */
 export default async function updateSprintStatus(
   _initialState: unknown,
   formData: UpdateSprintStatusData,

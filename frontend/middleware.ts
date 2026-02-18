@@ -24,7 +24,6 @@ export const middleware = auth(async (request) => {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
 
-  // Check NextAuth session
   const session = request.auth;
 
   if (session && session.accessToken) {
@@ -118,7 +117,6 @@ export const middleware = auth(async (request) => {
             maxAge: 60 * 5, // 5 minutes
           });
 
-          // Also set the cookie on the response so the client gets it
           response.cookies.set("access_token", newToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",

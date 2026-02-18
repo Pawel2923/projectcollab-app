@@ -40,16 +40,10 @@ export class AppError extends Error {
     }
   }
 
-  /**
-   * Check if error is a specific type
-   */
   is(code: ErrorCode): boolean {
     return this.code === code;
   }
 
-  /**
-   * Convert to plain object for logging
-   */
   toJSON() {
     return {
       name: this.name,

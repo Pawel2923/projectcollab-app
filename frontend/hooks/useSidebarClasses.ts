@@ -1,8 +1,5 @@
 import { useMemo } from "react";
 
-/**
- * Custom hook for sidebar container classes
- */
 export function useSidebarClasses(isExpanded: boolean) {
   return useMemo(() => {
     const baseClasses =

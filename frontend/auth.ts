@@ -240,7 +240,6 @@ export const { handlers, auth, signOut } = NextAuth({
         return token;
       }
 
-      // Access token has expired, try to refresh it
       console.log("Access token expired, refreshing...");
       return refreshAccessToken(token);
     },

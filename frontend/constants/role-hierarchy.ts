@@ -1,6 +1,5 @@
 /**
- * Role hierarchy definition matching backend implementation
- * Each role inherits permissions from roles in its array
+ * Role inheritance mapping matching backend implementation
  */
 export const ROLE_HIERARCHY: Record<string, string[]> = {
   CREATOR: [

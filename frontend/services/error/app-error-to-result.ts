@@ -5,9 +5,6 @@ import { isApiPlatformError } from "@/types/error/api-platform-error";
 import type { Result } from "@/utils/result";
 import { Err } from "@/utils/result";
 
-/**
- * Convert error to Result<never, AppError> for client-side use
- */
 export function toErrorResult(
   error: unknown,
   context: string = "API call",

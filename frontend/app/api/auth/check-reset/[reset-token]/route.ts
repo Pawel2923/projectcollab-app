@@ -61,7 +61,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if the token is valid based on the API Platform response
     if (data.isValid === true) {
       return new Response(null, { status: 204 });
     } else {

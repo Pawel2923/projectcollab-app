@@ -35,7 +35,6 @@ export function ProjectsContent({
     topics: ["/projects"],
   });
 
-  // Filter projects by search query (client-side)
   const filteredProjects = useMemo(() => {
     if (!searchQuery.trim()) return projects;
 

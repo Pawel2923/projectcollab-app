@@ -23,7 +23,6 @@ export function getDirectChatDisplayName(
     return chat.name;
   }
 
-  // Filter out current user to get other participants
   const otherParticipants = chat.chatMembers
     .filter((cm) => cm.member.id !== currentUserId)
     .map((cm) => cm.member.username || cm.member.email);
@@ -32,7 +31,6 @@ export function getDirectChatDisplayName(
     return chat.name;
   }
 
-  // Show up to 3 names, then add "..."
   const maxNames = 3;
   if (otherParticipants.length <= maxNames) {
     return otherParticipants.join(", ");
@@ -58,7 +56,6 @@ export function categorizeChatsByType(
     group: [],
   };
 
-  // Sort chats: by lastMessageAt (most recent first), fallback to createdAt
   const sortedChats = [...chats].sort((a, b) => {
     const aTime = a.lastMessageAt || a.createdAt || "";
     const bTime = b.lastMessageAt || b.createdAt || "";
@@ -92,7 +89,6 @@ export function categorizeChatsByType(
         break;
 
       default:
-        // Fallback: treat unknown types as group
         item.icon = React.createElement(Users, { className: "w-5 h-5" });
         grouped.group.push(item);
     }

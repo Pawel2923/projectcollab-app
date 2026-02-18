@@ -58,7 +58,6 @@ export function IssuesOptionsProvider({
   const router = useRouter();
   const pathname = usePathname();
 
-  // Initialize from URL search params
   const [sortOptions, setSortOptionsState] = useState<IssueSortOption[]>(() => {
     const sortParam = searchParams.get("sort");
     return decodeOptions<IssueSortOption>(sortParam || "");
@@ -71,7 +70,6 @@ export function IssuesOptionsProvider({
     },
   );
 
-  // Update URL when options change
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
 

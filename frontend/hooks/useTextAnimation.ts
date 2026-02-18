@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 /**
- * Custom hook for text animation classes in collapsible sidebar
+ * Text animation classes for collapsible sidebar
  */
 export function useTextAnimation(isExpanded: boolean, delay?: string) {
   return useMemo(() => {

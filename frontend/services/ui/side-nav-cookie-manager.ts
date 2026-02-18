@@ -8,9 +8,6 @@ const COOKIE_OPTIONS = {
   maxAge: 31536000, // 1 year
 };
 
-/**
- * Set the SideNav expansion state in cookies
- */
 export function setSideNavExpanded(isExpanded: boolean): void {
   setCookie(
     SIDE_NAV_EXPANDED_COOKIE,
@@ -19,9 +16,6 @@ export function setSideNavExpanded(isExpanded: boolean): void {
   );
 }
 
-/**
- * Set a section's expansion state in cookies
- */
 export function setSectionExpanded(
   cookieName: string,
   isExpanded: boolean,

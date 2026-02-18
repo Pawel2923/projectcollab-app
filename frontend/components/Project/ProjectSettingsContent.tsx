@@ -78,7 +78,6 @@ export default function ProjectSettingsContent({
     (hasPermission(currentUserRole, "ADMIN") ||
       hasPermission(currentUserRole, "PRODUCT_OWNER"));
 
-  // Refetch members when they change
   const refetchMembers = async (): Promise<void> => {
     const result = await clientApiGet<Collection<ProjectMember>>(
       `/project_members?projectId=${projectId}&pagination=false`,

@@ -2,9 +2,6 @@
 
 import { cookies } from "next/headers";
 
-/**
- * Get access token for use in Server Components (pages)
- */
 export async function getAccessTokenReadOnly(): Promise<string | undefined> {
   try {
     return (await cookies()).get("access_token")?.value;

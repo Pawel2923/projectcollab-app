@@ -58,7 +58,6 @@ export default async function resetUserPassword(
       }),
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

@@ -17,7 +17,6 @@ export async function createErrorFromResponse(
       return parseApiPlatformError(data, context);
     }
 
-    // Handle non-ApiPlatform JSON errors (e.g. from custom endpoints)
     if (data && typeof data === "object") {
       // Check for specific 401 cases
       if (
@@ -52,8 +51,6 @@ export async function createErrorFromResponse(
   } catch {
     // Could not parse JSON
   }
-
-  // Handle 401 without JSON body (or parse failure)
   if (response.status === 401) {
     // If we can't distinguish, we might default to UNAUTHORIZED,
     // but if it's a login endpoint, it might be INVALID_CREDENTIALS.

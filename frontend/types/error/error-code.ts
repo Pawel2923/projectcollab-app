@@ -1,6 +1,3 @@
-/**
- * Centralized error types and interfaces for consistent error handling
- */
 export type ErrorCode =
   | "VALIDATION_ERROR"
   | "UNAUTHORIZED"

@@ -52,7 +52,6 @@ export default async function sendResetPasswordRequest(
       cache: "no-store",
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

@@ -12,11 +12,6 @@ const schema = z.object({
   password: z.string(),
 });
 
-/**
- * Create a new user account using form data.
- * @param _initialState
- * @param formData
- */
 export default async function signUp(
   _initialState: unknown,
   formData: FormData,
@@ -56,7 +51,6 @@ export default async function signUp(
       body: JSON.stringify({ email, plainPassword: password }),
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

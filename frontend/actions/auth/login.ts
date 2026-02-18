@@ -35,11 +35,6 @@ type LoginData =
       redirectUrl?: string;
     };
 
-/**
- * Login a user using form data or email and password.
- * @param _initialState
- * @param formData
- */
 export default async function login(
   _initialState: unknown,
   formData: LoginData,

@@ -44,11 +44,6 @@ type CreateIssueData =
       relatedIssues?: string[];
     };
 
-/**
- * Create a new issue using form data or issue data.
- * @param _initialState
- * @param formData
- */
 export default async function createIssue(
   _initialState: unknown,
   formData: CreateIssueData,
@@ -136,7 +131,6 @@ export default async function createIssue(
       body: JSON.stringify(requestBody),
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

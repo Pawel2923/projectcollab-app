@@ -55,7 +55,6 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
       const newToken = data?.token;
 
       if (newToken) {
-        // Update the access token cookie
         cookieStore.set("access_token", newToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
@@ -87,7 +86,6 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       return NextResponse.json(error.toJSON(), { status: 500 });
     }
 
-    // Get the endpoint from query params
     const endpoint = request.nextUrl.searchParams.get("endpoint");
     if (!endpoint) {
       const error = new AppError({
@@ -99,12 +97,10 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       return NextResponse.json(error.toJSON(), { status: 400 });
     }
 
-    // Get access token from cookies
     const cookieStore = await cookies();
     let token = cookieStore.get("access_token")?.value;
 
     if (!token) {
-      // Try to refresh token if no access token exists
       const refreshedToken = await refreshToken(apiUrl);
       if (!refreshedToken) {
         const error = new AppError({
@@ -118,7 +114,6 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       token = refreshedToken;
     }
 
-    // Parse body if present
     let body: Record<string, unknown> | undefined;
     if (method !== "GET" && method !== "DELETE") {
       try {
@@ -128,7 +123,6 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       }
     }
 
-    // Helper to make API request
     const makeApiRequest = async (authToken: string) => {
       const incomingContentType = request.headers.get("content-type");
       const contentType =
@@ -147,17 +141,14 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       });
     };
 
-    // Make the actual API call
     let response = await makeApiRequest(token);
 
-    // If 401, try refreshing token and retry once
     if (response.status === 401) {
       console.log("Got 401, attempting token refresh...");
       const newToken = await refreshToken(apiUrl);
 
       if (newToken) {
         console.log("Token refreshed, retrying request...");
-        // Retry with new token
         response = await makeApiRequest(newToken);
       } else {
         console.log("Token refresh failed");
@@ -182,7 +173,6 @@ async function handleProxyRequest(request: NextRequest, method: string) {
     const data = await response.json();
     const nextResponse = NextResponse.json(data);
 
-    // Forward Set-Cookie header if present
     const setCookieHeader = response.headers.get("set-cookie");
 
     if (setCookieHeader) {

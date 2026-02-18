@@ -1,5 +1,5 @@
 /**
- * Role-based permission mappings for project, organization and chat entities.
+ * Permission mappings for project, organization, and chat roles
  */
 
 import type {

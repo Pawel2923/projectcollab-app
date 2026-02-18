@@ -18,9 +18,6 @@ const schema = z.object({
 
 type UpdateProjectMemberRoleData = z.infer<typeof schema>;
 
-/**
- * Update a project member's role
- */
 export default async function updateProjectMemberRole(
   _initialState: unknown,
   formData: UpdateProjectMemberRoleData,

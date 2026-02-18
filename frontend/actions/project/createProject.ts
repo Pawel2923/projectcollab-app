@@ -24,11 +24,6 @@ type CreateProjectData =
       organizationId: string;
     };
 
-/**
- * Create a new project using form data or project data.
- * @param _initialState
- * @param formData
- */
 export default async function createProject(
   _initialState: unknown,
   formData: CreateProjectData,
@@ -83,7 +78,6 @@ export default async function createProject(
       }),
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

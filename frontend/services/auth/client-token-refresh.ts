@@ -1,9 +1,3 @@
-/**
- * Attempts to refresh the session by calling the backend API.
- * This is used by client-side components to silent-refresh when they hit a 401.
- *
- * @returns true if refresh succeeded, false otherwise
- */
 export async function refreshSession(): Promise<boolean> {
   try {
     const res = await fetch("/api/auth/refresh-token", {
@@ -22,10 +16,6 @@ export async function refreshSession(): Promise<boolean> {
   return false;
 }
 
-/**
- * Redirects the user to the session expired handler.
- * This should be called when silent refresh fails.
- */
 export function handleSessionExpired() {
   if (typeof window !== "undefined") {
     // Current path as redirect target

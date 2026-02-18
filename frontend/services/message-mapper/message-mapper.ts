@@ -9,9 +9,6 @@ export function mapMessage(
   return overrides?.[code] ?? messagesMap[code] ?? fallback;
 }
 
-/**
- * Get the user-facing message (description or title) from a message code
- */
 export function getMessageText(code: string): string {
   const mapped = mapMessage(code);
   if (typeof mapped === "object") {
@@ -20,9 +17,6 @@ export function getMessageText(code: string): string {
   return "Wystąpił nieoczekiwany błąd";
 }
 
-/**
- * Get the title from a message code
- */
 export function getMessageTitle(code: string): string {
   const mapped = mapMessage(code);
   if (typeof mapped === "object" && "title" in mapped) {

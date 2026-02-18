@@ -16,14 +16,12 @@ export function buildQueryParams(
   const params = new URLSearchParams();
   params.append("projectId", projectId);
 
-  // Add sort options
   if (sortOptions.length > 0) {
     sortOptions.forEach((option) => {
       params.append(`order[${option.sortBy}]`, option.sortOrder);
     });
   }
 
-  // Add filter options
   if (filterOptions.length > 0) {
     filterOptions.forEach((option) => {
       const { field, value, operator } = option;
@@ -54,31 +52,22 @@ export function buildQueryParams(
       }
 
       if (operator === "partial") {
-        // For search filters with partial match - API Platform expects just the field name
         params.append(field, filterValue);
       } else if (operator === "exact") {
-        // For exact filters
         params.append(field, filterValue);
       } else if (operator === "before") {
-        // For date filters - before
         params.append(`${field}[before]`, filterValue);
       } else if (operator === "after") {
-        // For date filters - after
         params.append(`${field}[after]`, filterValue);
       } else if (operator === "gt") {
-        // Greater than
         params.append(`${field}[gt]`, filterValue);
       } else if (operator === "lt") {
-        // Less than
         params.append(`${field}[lt]`, filterValue);
       } else if (operator === "gte") {
-        // Greater than or equal
         params.append(`${field}[gte]`, filterValue);
       } else if (operator === "lte") {
-        // Less than or equal
         params.append(`${field}[lte]`, filterValue);
       } else {
-        // Default exact match
         params.append(field, filterValue);
       }
     });

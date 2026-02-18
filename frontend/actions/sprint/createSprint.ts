@@ -58,11 +58,6 @@ type CreateSprintData =
       projectId: string;
     };
 
-/**
- * Create a new sprint using form data or sprint data.
- * @param _initialState
- * @param formData
- */
 export default async function createSprint(
   _initialState: unknown,
   formData: CreateSprintData,
@@ -136,7 +131,6 @@ export default async function createSprint(
       body: JSON.stringify(requestBody),
     });
 
-    // Parse response for both success and error cases
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

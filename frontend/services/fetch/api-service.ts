@@ -17,10 +17,6 @@ export interface ApiResponse<T> {
   status: number;
 }
 
-/**
- * Standardized API call utility for Server Components (pages)
- * Handles authentication, error handling, and response parsing
- */
 export async function apiCall<T = unknown>(
   endpoint: string,
   options: ApiCallOptions = {},

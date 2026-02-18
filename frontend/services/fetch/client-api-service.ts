@@ -8,10 +8,6 @@ interface ClientApiCallOptions {
   headers?: Record<string, string>;
 }
 
-/**
- * Client-side API call utility
- * Returns Result<T, AppError> instead of throwing
- */
 export async function clientApiCall<T = unknown>(
   endpoint: string,
   options: ClientApiCallOptions = {},

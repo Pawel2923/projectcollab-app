@@ -57,7 +57,6 @@ export function InviteProjectMemberDialog({
   const { showError } = useErrorHandler();
   const { notify } = useAlert();
 
-  // Fetch organization members
   useEffect(() => {
     if (!open) return;
 
@@ -98,7 +97,6 @@ export function InviteProjectMemberDialog({
     fetchRoles();
   }, [open, organizationId, showError]);
 
-  // Filter available members (not already in project)
   const availableMembers = useMemo(() => {
     const existingMemberIds = new Set(
       existingMembers.map((pm) => pm.member.id),
@@ -107,7 +105,6 @@ export function InviteProjectMemberDialog({
     return orgMembers.filter((om) => !existingMemberIds.has(om.member.id));
   }, [orgMembers, existingMembers]);
 
-  // Filter by search query
   const filteredMembers = useMemo(() => {
     if (!searchQuery.trim()) return availableMembers;
 

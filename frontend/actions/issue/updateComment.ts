@@ -19,11 +19,6 @@ type CreateCommentData =
       content: string;
     };
 
-/**
- * Create a new comment using form data or comment data.
- * @param _initialState
- * @param formData
- */
 export default async function createComment(
   _initialState: unknown,
   formData: CreateCommentData,

@@ -11,9 +11,6 @@ import type {
   Role,
 } from "@/types/permissions/roles";
 
-/**
- * Get permission description for tooltip
- */
 export function getPermissionDescription(
   role: ProjectRole | OrganizationRole | ChatRole,
   entityType: "project" | "organization" | "chat",
