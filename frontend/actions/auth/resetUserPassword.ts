@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z
   .object({
@@ -36,7 +37,7 @@ export default async function resetUserPassword(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       console.error("Server config error: NEXT_PUBLIC_API_URL is not set");
       return {

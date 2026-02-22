@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { addAlert } from "@/services/alert/alert-service";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 type VerifyEmailParams = {
   signature: string;
@@ -32,9 +33,12 @@ export async function GET(req: NextRequest) {
 
     const queryString = new URLSearchParams(params).toString();
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/verify-email?${queryString}`,
-    );
+    const apiUrl = getServerApiUrl();
+    if (!apiUrl) {
+      throw new Error("API URL not configured");
+    }
+
+    const res = await fetch(`${apiUrl}/verify-email?${queryString}`);
     const data = await res.json();
 
     const { title, description } = mapMessage(

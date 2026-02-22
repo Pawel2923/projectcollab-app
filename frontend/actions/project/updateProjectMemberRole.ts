@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { ProjectMember } from "@/types/api/project";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -36,7 +37,17 @@ export default async function updateProjectMemberRole(
   const { memberId, roleIri, projectId, organizationId } = validatedFields.data;
 
   try {
-    const token = await getAccessToken(process.env.NEXT_PUBLIC_API_URL || "");
+    const apiUrl = getServerApiUrl();
+    if (!apiUrl) {
+      return {
+        ok: false,
+        status: 500,
+        code: "SERVER_CONFIG_ERROR",
+        message: "Brak konfiguracji adresu API",
+      };
+    }
+
+    const token = await getAccessToken(apiUrl);
 
     if (!token) {
       return {
@@ -48,7 +59,7 @@ export default async function updateProjectMemberRole(
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/project_members/${memberId}`,
+      `${apiUrl}/project_members/${memberId}`,
       {
         method: "PATCH",
         headers: {

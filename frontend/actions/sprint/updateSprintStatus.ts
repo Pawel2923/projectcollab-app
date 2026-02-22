@@ -8,6 +8,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Sprint } from "@/types/api/sprint";
 import { SprintStatusEnum } from "@/types/api/sprint";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
   sprintId: z.string().min(1, "ID sprintu jest wymagane"),
@@ -60,7 +61,7 @@ export default async function updateSprintStatus(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

@@ -34,11 +34,11 @@ CMD ["sh", "-c", "pnpm install; pnpm dev"]
 FROM base AS builder
 
 COPY --link pnpm-lock.yaml ./
-RUN pnpm fetch --prod
+RUN pnpm fetch
 
 COPY --link . .
 
-RUN	pnpm install --frozen-lockfile --offline --prod && \
+RUN	pnpm install --frozen-lockfile --offline && \
 	pnpm run build
 
 
@@ -51,21 +51,21 @@ ENV NODE_ENV production
 # Delete the following line in case you want to enable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --gid 1001 nodejs; \
-	adduser --uid 1001 nextjs
+RUN groupadd -g 1234 next && \
+    useradd -m -u 1234 -g next next
 
 COPY --from=builder --link /app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next; \
-	chown nextjs:nodejs .next
+	chown next:next .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --link --chown=1001:1001 /app/.next/standalone ./
-COPY --from=builder --link --chown=1001:1001 /app/.next/static ./.next/static
+COPY --from=builder --link --chown=1234:1234 /app/.next/standalone ./
+COPY --from=builder --link --chown=1234:1234 /app/.next/static ./.next/static
 
-USER nextjs
+USER next
 
 EXPOSE 3000
 

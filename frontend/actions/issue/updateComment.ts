@@ -6,6 +6,7 @@ import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { IssueComment } from "@/types/api/issue-metadata";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
   commentIri: z.string().min(1, "ID zadania jest wymagane"),
@@ -42,7 +43,7 @@ export default async function createComment(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

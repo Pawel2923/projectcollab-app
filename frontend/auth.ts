@@ -9,8 +9,9 @@ import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 
 import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api";
+const API_URL = getServerApiUrl() || "http://api";
 
 interface User {
   id: string;

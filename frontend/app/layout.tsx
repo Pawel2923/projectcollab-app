@@ -10,6 +10,8 @@ import { getAlerts } from "@/services/alert/alert-service";
 import { AlertProvider } from "@/store/AlertProvider";
 import { QueryProvider } from "@/store/QueryProvider";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],

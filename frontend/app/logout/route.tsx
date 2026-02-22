@@ -1,13 +1,14 @@
 import { cookies } from "next/headers";
 
 import { signOut } from "@/auth";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 export async function GET() {
   const cookieStore = await cookies();
 
   // If a refresh token exists, revoke it on the backend first
   const refreshToken = cookieStore.get("refresh_token")?.value;
-  const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const nextApiUrl = getServerApiUrl();
   if (refreshToken && nextApiUrl) {
     try {
       await fetch(`${nextApiUrl}/auth/logout`, {

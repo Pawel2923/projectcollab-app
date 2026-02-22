@@ -1,17 +1,31 @@
 services:
   api:
+    image: pawel2923/projectcollab-api:latest
     build:
       context: ./api
       target: frankenphp_prod
     environment:
       APP_SECRET: ${APP_SECRET}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
+    image: pawel2923/projectcollab-frontend:latest
     build:
       context: ./frontend
       target: prod
+    environment:
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_URL: ${AUTH_URL}
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://api}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost}
+      NEXT_PUBLIC_MERCURE_URL: ${NEXT_PUBLIC_MERCURE_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
 
   database:
     environment:
