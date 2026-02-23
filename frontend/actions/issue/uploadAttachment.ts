@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 export async function uploadAttachment(
   formData: FormData,
@@ -35,7 +36,15 @@ export async function uploadAttachment(
 
   try {
     const token = await getAccessTokenReadOnly();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = getServerApiUrl();
+    if (!apiUrl) {
+      return {
+        ok: false,
+        code: "SERVER_CONFIG_ERROR",
+        status: 500,
+        message: "API URL is not configured",
+      };
+    }
 
     const response = await fetch(`${apiUrl}/attachments`, {
       method: "POST",

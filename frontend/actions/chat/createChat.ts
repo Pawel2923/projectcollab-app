@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Chat } from "@/types/api/chat";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -47,7 +48,7 @@ export default async function createChat(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

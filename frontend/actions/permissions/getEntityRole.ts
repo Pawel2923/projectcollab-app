@@ -4,6 +4,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Collection } from "@/types/api/collection";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -40,7 +41,17 @@ export default async function getEntityRole(
     }
 
     const user = userResult.value;
-    const token = await getAccessToken(process.env.NEXT_PUBLIC_API_URL || "");
+    const apiUrl = getServerApiUrl();
+    if (!apiUrl) {
+      return {
+        ok: false,
+        status: 500,
+        code: "SERVER_CONFIG_ERROR",
+        message: "Brak konfiguracji adresu API",
+      };
+    }
+
+    const token = await getAccessToken(apiUrl);
 
     if (!token) {
       return {
@@ -100,7 +111,7 @@ function getEndpoint(
   entityId: string,
   userId: number,
 ): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = getServerApiUrl() || "";
 
   switch (entityType) {
     case "organization":

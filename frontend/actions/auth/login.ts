@@ -7,6 +7,7 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 const INVALID_REDIRECT_URLS = [
   "/",
@@ -59,7 +60,7 @@ export default async function login(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

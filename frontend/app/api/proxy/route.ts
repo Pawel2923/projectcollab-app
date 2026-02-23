@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { AppError } from "@/services/error/app-error";
 import { createErrorFromResponse } from "@/services/error/response-to-error";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 /**
  * API Proxy route for client-side requests
@@ -75,7 +76,7 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
 
 async function handleProxyRequest(request: NextRequest, method: string) {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = getServerApiUrl();
     if (!apiUrl) {
       const error = new AppError({
         message: "Brak konfiguracji serwera API",

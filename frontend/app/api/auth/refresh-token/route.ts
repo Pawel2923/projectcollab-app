@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { AppError } from "@/services/error/app-error";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 export async function POST() {
   try {
@@ -24,7 +25,7 @@ export async function POST() {
       return NextResponse.json(error.toJSON(), { status: 401 });
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       const error = new AppError({
         message: "API URL not configured",

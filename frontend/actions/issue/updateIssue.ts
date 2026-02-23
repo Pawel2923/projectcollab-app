@@ -10,6 +10,7 @@ import {
   parseEstimatedTime,
 } from "@/services/issue/issue-date-time-service";
 import { buildResourceIri } from "@/utils/iri-util";
+import { getServerApiUrl } from "@/utils/server-api-url";
 
 const NO_RESOLUTION_VALUE = "__none__";
 
@@ -254,7 +255,7 @@ export default async function updateIssue(
       };
     }
 
-    const nextApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const nextApiUrl = getServerApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,
