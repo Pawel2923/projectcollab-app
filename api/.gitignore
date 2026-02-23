@@ -27,3 +27,5 @@
 
 public/media/
 public/reports/
+
+public/.well-known/microsoft-identity-association.json
