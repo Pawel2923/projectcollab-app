@@ -14,6 +14,8 @@ import {
   refreshSession,
 } from "@/services/auth/client-token-refresh";
 
+const MAX_RETRIES = 5;
+
 export function useMercureObserver<T = unknown>({
   hubUrl,
   topics,
@@ -35,6 +37,13 @@ export function useMercureObserver<T = unknown>({
       return;
     }
 
+    if (retryCount >= MAX_RETRIES) {
+      console.error(
+        `[MercureObserver] Max retries (${MAX_RETRIES}) reached, giving up.`,
+      );
+      handleSessionExpired();
+      return;
+    }
     const url = new URL(
       hubUrl ||
         process.env.NEXT_PUBLIC_MERCURE_URL ||
@@ -103,5 +112,5 @@ export function useMercureObserver<T = unknown>({
       eventSource.close();
       eventSourceRef.current = null;
     };
-  }, [hubUrl, topicsStr, router, topics, retryCount]);
+  }, [hubUrl, topicsStr, router, retryCount, topics]);
 }
