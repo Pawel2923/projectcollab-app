@@ -5,7 +5,7 @@ framework:
     trusted_proxies: '%env(TRUSTED_PROXIES)%'
     trusted_hosts: '%env(TRUSTED_HOSTS)%'
     # See https://caddyserver.com/docs/caddyfile/directives/reverse_proxy#headers
-    trusted_headers: [ 'x-forwarded-for', 'x-forwarded-proto' ]
+    trusted_headers: '%env(TRUSTED_HEADERS)%'
 
     # Note that the session will be started ONLY if you read or write from it.
     #session: true
