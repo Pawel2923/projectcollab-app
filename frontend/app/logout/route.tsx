@@ -14,7 +14,7 @@ export async function GET() {
       await fetch(`${nextApiUrl}/auth/logout`, {
         method: "POST",
         headers: {
-          accepts: "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ refresh_token: refreshToken }),

@@ -72,7 +72,7 @@ export default async function login(
     const res = await fetch(`${nextApiUrl}/auth/login`, {
       method: "POST",
       headers: {
-        accepts: "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(validated.data),

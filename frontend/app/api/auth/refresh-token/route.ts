@@ -39,7 +39,7 @@ export async function POST() {
     const res = await fetch(`${nextApiUrl}/auth/refresh`, {
       method: "POST",
       headers: {
-        accepts: "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

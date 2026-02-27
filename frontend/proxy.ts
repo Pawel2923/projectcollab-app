@@ -93,7 +93,7 @@ export const proxy = auth(async (request) => {
       const refreshResponse = await fetch(`${nextApiUrl}/auth/refresh`, {
         method: "POST",
         headers: {
-          accepts: "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

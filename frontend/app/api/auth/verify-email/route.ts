@@ -42,7 +42,7 @@ export async function POST(req: Request): Promise<Response> {
     const res = await fetch(`${nextApiUrl}/verify-email/send`, {
       method: "POST",
       headers: {
-        accepts: "application/ld+json",
+        Accept: "application/ld+json",
         "Content-Type": "application/ld+json",
         Authorization: `Bearer ${token}`,
       },

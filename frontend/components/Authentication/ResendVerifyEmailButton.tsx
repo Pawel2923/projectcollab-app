@@ -56,7 +56,7 @@ export function ResendVerifyEmailButton() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          accepts: "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({ email }),
       });
