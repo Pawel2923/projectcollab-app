@@ -28,6 +28,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_EXTRA_DIRECTIVES: demo
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      CADDY_TLS: ${CADDY_TLS:-force_automate}
     volumes:
       - caddy_data:/data
       - caddy_config:/config
