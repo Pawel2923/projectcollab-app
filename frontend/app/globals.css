@@ -155,9 +155,3 @@
     @apply bg-light text-foreground;
   }
 }
-
-@media (max-width: 767px) {
-  body {
-    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
-  }
-}

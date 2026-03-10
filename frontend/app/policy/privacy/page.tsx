@@ -11,7 +11,7 @@ export default async function PrivacyPolicyPage({
 
   return (
     <>
-      <BackButton href={referer || "/signin"} label="Powróć" position="fixed" />
+      <BackButton href={referer || "/"} label="Powróć" position="fixed" />
 
       <main className="max-w-3xl mx-auto px-4 py-12 text-gray-900 dark:text-gray-100">
         <h1 className="text-3xl font-bold mb-6">Polityka prywatności</h1>

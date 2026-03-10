@@ -23,5 +23,9 @@ export default async function OrganizationsLayout({
     },
   });
 
-  return <UserProvider initial={currentUser}>{children}</UserProvider>;
+  return (
+    <div className="pb-24 md:pb-0">
+      <UserProvider initial={currentUser}>{children}</UserProvider>
+    </div>
+  );
 }
