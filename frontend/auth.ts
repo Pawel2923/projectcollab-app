@@ -30,7 +30,7 @@ async function captureMercureCookie(res: Response) {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: 60 * 60, // 1 hour
+        maxAge: 3600,
       });
     }
   }
@@ -110,7 +110,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     ...token,
     accessToken: newToken,
     expiresAt: decoded.exp,
-    refreshToken: newRefreshToken ?? token.refreshToken, // Fallback to old refresh token if not rotated
+    refreshToken: newRefreshToken ?? token.refreshToken,
   };
 }
 
@@ -197,7 +197,6 @@ export const { handlers, auth, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, account, user }) {
       if (account && user) {
-        // Initial sign-in
         let accessToken = "";
         let refreshToken = "";
 
@@ -232,13 +231,11 @@ export const { handlers, auth, signOut } = NextAuth({
           const decoded = jwtDecode<JwtPayload>(accessToken);
           token.accessToken = accessToken;
           token.refreshToken = refreshToken;
-          token.expiresAt = decoded.exp; // Seconds since epoch
+          token.expiresAt = decoded.exp;
           return token;
         }
       }
 
-      // Return previous token if the access token has not expired yet
-      // buffer time: 10 seconds
       if (Date.now() < (token.expiresAt as number) * 1000 - 10000) {
         return token;
       }
