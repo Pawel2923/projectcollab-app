@@ -52,7 +52,8 @@
         "symfony/yaml": "^7.3",
         "symfonycasts/reset-password-bundle": "^1.23",
         "symfonycasts/verify-email-bundle": "^1.17",
-        "thenetworg/oauth2-azure": "^2.2"
+        "thenetworg/oauth2-azure": "^2.2",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",
