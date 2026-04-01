@@ -1,42 +1,75 @@
-# PLATFORMA DO ZARZĄDZANIA PROJEKTAMI Z INTEGRACJĄ METODOLOGII AGILE PROJECTCOLLAB
+# ProjectCollab
 
-Platforma ProjectCollab stanowi aplikację webową wspomagającą zarządzanie projektami
-realizowanymi zgodnie z metodykami Agile (Scrum, Kanban). Aplikacja została
-opracowana jako część pracy inżynierskiej i umożliwia m.in. zarządzanie projektami,
-zadaniami, sprintami oraz komunikację zespołową.
+PLATFORMA DO ZARZĄDZANIA PROJEKTAMI Z INTEGRACJĄ METODOLOGII AGILE PROJECTCOLLAB
 
-## Instrukcja uruchamiania aplikacji
+ProjectCollab to aplikacja webowa umożliwiająca zarządzanie projektami
+realizowanymi zgodnie z metodykami Agile (Scrum, Kanban) oraz komunikację zespołową. Aplikacja została
+opracowana na pracę inżynierską.
 
-### Wymagania wstępne
+## Funkcjonalności
 
-Przed uruchomieniem aplikacji należy upewnić się, że na komputerze zainstalowane są następujące narzędzia:
+- **Uwierzytelnianie** przy przy użyciu kont Microsoft i Google, a także przy użyciu adresu e-mail i hasła.
+- **System RBAC** pozwalający na kontrolę do zasobów organizacji.
+- **Nawigacja i wyszukiwanie** pozwalają na szybki dostęp do elementów aplikacji.
+- **Organizacje i projekty** pozwalają na zarządzanie członkami zespołów i uporządkowanie pracy.
+- **Czat tekstowy** pozwala na zintegrowaną komunikację zespołową i zachowanie kontekstu prac.
+- **Tablica Kanban i list zadań** pozwalają na wyświetlanie i zarządzanie zadaniami w projekcie.
+- **Sprinty** zarządzaj backlogiem produktu i planuj sprinty według iteracyjnego tworzenia oprogramowania.
+- **Synchronizuj kalendarze** Google i Microsoft, aby z łatwością śledzić terminy zadań.
+- **Raporty** pozwalją na sprawdzanie wykorzystanego czasu i aktywności dla zadań.
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Node.js](https://nodejs.org/) (wersja 22 lub nowsza)
+## Uruchamianie aplikacji
 
-### Kroki uruchomienia aplikacji
+### Przed uruchomieniem
 
-1. Będąc w głównym katalogu projektu, uruchom w terminalu polecenie:
+**Narzędzia**
+
+- [Docker](https://www.docker.com/)
+- [Node.js (wersja 22 lub nowsza)](https://nodejs.org/en/download)
+
+**Zmienne środowiskowe**
+
+Należy odpowiednio skonfigurować zmienne środowiskowe dla aplikacji, aby mogła prawidłowo działać.
+Szczegółowe nazwy zmiennych znajdziesz w plikach `.env` w głównym katalogu, a także `api` i `frontend`.
+
+### Instrukcja uruchomienia aplikacji
+
+1. Budowa i uruchamianie wersji dev:
 
 ```bash
 docker compose up --build --wait
 ```
 
-3. Wszystkie serwisy powinny być uruchomione. Dostęp do aplikacji znajduje się pod adresem [http://localhost](http://localhost). Dokumentacja OpenAPI jest dostępna pod adresem [http://localhost/docs](http://localhost/docs).
-
-### Zatrzymanie aplikacji
-
-Aby zatrzymać aplikację, uruchomić polecenie:
+2. Wygeneruj klucz dla lexik:
 
 ```bash
-docker compose down
+docker compose exec api php bin/console lexik:jwt:generate-keypair
 ```
 
-### Dodatkowe informacje
+3. Wszystkie serwisy powinny być uruchomione. 
 
-- Upewnij się, że porty 80, 443 oraz 5432 nie są zajęte przez inne aplikacje.
-- Dane przechowywane w bazie danych są utrwalone w wolumenie Dockera, aby je usunąć należy usunąć wolumin.
-- Można dokonać wczytania przykładowych danych do bazy danych, uruchamiając polecenie w terminalu:
+- Dostęp do aplikacji znajduje się pod adresem [http://localhost](http://localhost). 
+- Dokumentacja OpenAPI jest dostępna pod adresem [http://localhost/docs](http://localhost/docs).
+
+4. Zatrzymywanie aplikacji
+
+```bash
+docker compose stop
+```
+
+Dla wersji produkcyjnej i staging należy skonfigurować pod te środowiska odpowiednie zmienne. Uruchamianie prod i staging odpowiednio:
+
+```bash
+docker compose -f compose.yml -f compose.prod.yml up --wait
+docker compose -f compose.yml -f compose.staging.yml up --wait
+```
+
+Dodatkowe informacje
+
+- Upewnij się, że porty `80`, `443` oraz `5432` nie są zajęte przez inne aplikacje.
+- Dane przechowywane w bazie danych są utrwalone w wolumenie Dockera.
+- Szyfrowane hasła zależne są od wygenerowanych kluczy, ponowne budowanie obrazów, może uniemożliwić na ponowne logowanie. W logach serwisu `api` będzie wtedy widoczny wyjątek z LexikJWTAuthenticationBundle. Należy użyć nowych kluczy do szyfrowania haseł użytkowników.
+- Wczytywanie przykładowych danych do aplikacji:
 
 ```bash
 docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
