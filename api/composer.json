@@ -7,6 +7,7 @@
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-mbstring": "*",
         "api-platform/doctrine-orm": "^4.2",
         "api-platform/serializer": "^4.2",
         "api-platform/symfony": "^4.2",
@@ -34,6 +35,7 @@
         "symfony/http-client": "^7.3",
         "symfony/lock": "^7.3",
         "symfony/mailer": "^7.3",
+        "symfony/mailtrap-mailer": "^7.3",
         "symfony/mercure-bundle": "^0.3.5",
         "symfony/messenger": "^7.3",
         "symfony/mime": "^7.3",
@@ -52,8 +54,7 @@
         "symfony/yaml": "^7.3",
         "symfonycasts/reset-password-bundle": "^1.23",
         "symfonycasts/verify-email-bundle": "^1.17",
-        "thenetworg/oauth2-azure": "^2.2",
-        "ext-mbstring": "*"
+        "thenetworg/oauth2-azure": "^2.2"
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",
