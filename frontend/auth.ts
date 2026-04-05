@@ -11,7 +11,7 @@ import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
-const API_URL = getServerApiUrl() || "http://api";
+const API_URL = getServerApiUrl() || "http://api/core-api";
 
 interface User {
   id: string;

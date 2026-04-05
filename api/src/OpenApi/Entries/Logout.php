@@ -12,7 +12,7 @@ class Logout extends DocsEntry
         $this->openApi
             ->getPaths()
             ->addPath(
-                '/auth/logout',
+                '/core-api/auth/logout',
                 new Model\PathItem()->withPost(
                     new Model\Operation()
                         ->withOperationId('auth_logout')

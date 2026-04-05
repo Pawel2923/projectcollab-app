@@ -19,14 +19,14 @@ security:
       entry_point: jwt
       stateless: true
       json_login:
-        check_path: /auth/login
+        check_path: /core-api/auth/login
         username_path: email
         password_path: password
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
       jwt: ~
       refresh_jwt:
-        check_path: /auth/refresh
+        check_path: /core-api/auth/refresh
       custom_authenticator: App\Security\OAuthAuthenticator
 
       # activate different ways to authenticate
@@ -41,13 +41,13 @@ security:
     - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
     - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
     - { path: ^/contexts, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI contexts
-    - { path: ^/auth/login, roles: PUBLIC_ACCESS }
-    - { path: ^/auth/refresh, roles: PUBLIC_ACCESS }
-    - { path: ^/auth/oauth, roles: PUBLIC_ACCESS }
-    - { path: ^/users, roles: PUBLIC_ACCESS, method: [POST] }
-    - { path: ^/verify-email, roles: PUBLIC_ACCESS, method: [GET] }
-    - { path: ^/reset-password, roles: PUBLIC_ACCESS, method: [GET, POST] }
-    - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/core-api/auth/login, roles: PUBLIC_ACCESS }
+    - { path: ^/core-api/auth/refresh, roles: PUBLIC_ACCESS }
+    - { path: ^/core-api/auth/oauth, roles: PUBLIC_ACCESS }
+    - { path: ^/core-api/users, roles: PUBLIC_ACCESS, method: [POST] }
+    - { path: ^/core-api/verify-email, roles: PUBLIC_ACCESS, method: [GET] }
+    - { path: ^/core-api/reset-password, roles: PUBLIC_ACCESS, method: [GET, POST] }
+    - { path: ^/core-api/, roles: IS_AUTHENTICATED_FULLY }
     # - { path: ^/admin, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
 

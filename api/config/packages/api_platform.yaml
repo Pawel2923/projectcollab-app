@@ -13,6 +13,7 @@ api_platform:
     pagination_client_enabled: true
     pagination_client_items_per_page: true
     pagination_items_per_page: 30
+    route_prefix: /core-api
   use_symfony_listeners: true
   swagger:
     api_keys:

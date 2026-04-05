@@ -12,7 +12,7 @@ class Search extends DocsEntry
         $this->openApi
             ->getPaths()
             ->addPath(
-                '/search',
+                '/core-api/search',
                 new Model\PathItem()->withGet(
                     new Model\Operation()
                         ->withOperationId('api_search')

@@ -12,7 +12,7 @@ class LoginCheck extends DocsEntry
         $this->openApi
             ->getPaths()
             ->addPath(
-                '/auth/refresh',
+                '/core-api/auth/refresh',
                 new Model\PathItem()->withPost(
                     new Model\Operation()
                         ->withOperationId('gesdinet_jwt_refresh_token')

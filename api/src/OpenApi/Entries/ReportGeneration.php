@@ -12,7 +12,7 @@ class ReportGeneration extends DocsEntry
         $this->openApi
             ->getPaths()
             ->addPath(
-                '/reports/generate',
+                '/core-api/reports/generate',
                 new Model\PathItem()->withPost(
                     new Model\Operation()
                         ->withOperationId('api_reports_generate')

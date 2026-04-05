@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     environment:
       NEXT_PUBLIC_ENTRYPOINT: ${NEXT_PUBLIC_ENTRYPOINT:-http://localhost}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/core-api}
       API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: ${API_PLATFORM_CREATE_CLIENT_ENTRYPOINT:-http://localhost}
 
   api:

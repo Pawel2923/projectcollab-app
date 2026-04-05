@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Post(
-            uriTemplate: 'calendar/sync',
+            uriTemplate: '/calendar/sync',
             status: 200,
             output: CalendarSyncRequest::class,
             processor: CalendarSyncProcessor::class

@@ -51,8 +51,7 @@
 			header({'Accept': '*text/html*'})
 			&& !path(
 				'/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*',
-				'*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml', '/verify-email*',
-				'/reset-password*', '/media*', '/reports*'
+				'*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml', '/core-api*'
 			)
 		)
 		|| path('/favicon.ico', '/manifest.json', '/robots.txt', '/sitemap*', '/_next*', '/__next*', '/api*')

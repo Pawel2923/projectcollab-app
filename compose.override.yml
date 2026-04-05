@@ -6,9 +6,9 @@ services:
       - ./frontend:/app
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_ENTRYPOINT: http://api
-      NEXT_PUBLIC_API_URL: http://api
-      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://api
+      NEXT_PUBLIC_ENTRYPOINT: http://api/core-api
+      NEXT_PUBLIC_API_URL: http://api/core-api
+      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://api/core-api
 
   api:
     build:

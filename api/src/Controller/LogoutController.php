@@ -15,6 +15,7 @@ use function is_array;
 use function is_string;
 use function json_decode;
 
+#[Route('/core-api')]
 final class LogoutController extends AbstractController
 {
     public function __construct(

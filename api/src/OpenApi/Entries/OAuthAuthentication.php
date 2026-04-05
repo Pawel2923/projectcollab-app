@@ -12,7 +12,7 @@ class OAuthAuthentication extends DocsEntry
         $this->openApi
             ->getPaths()
             ->addPath(
-                '/auth/oauth/{provider}',
+                '/core-api/auth/oauth/{provider}',
                 new Model\PathItem()->withPost(
                     new Model\Operation()
                         ->withOperationId('auth_oauth_check')

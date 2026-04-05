@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/core-api')]
 class AuthController extends AbstractController
 {
     #[Route('/auth/oauth/{provider}', name: 'auth_oauth_check', methods: ['POST'])]
