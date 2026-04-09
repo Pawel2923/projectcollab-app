@@ -146,9 +146,9 @@ function getProjectId(chatRes: ProjectChat, projectId?: string) {
     data: string | { id?: string | number; "@id"?: string } | undefined | null,
   ) => {
     if (!data) return undefined;
-    if (typeof data === "string") return data.split("/").pop();
+    if (typeof data === "string") return extractIdFromIri(data);
     if (data.id) return data.id.toString();
-    if (data["@id"]) return data["@id"]?.split("/").pop();
+    if (data["@id"]) return extractIdFromIri(data["@id"]);
     return undefined;
   };
 
