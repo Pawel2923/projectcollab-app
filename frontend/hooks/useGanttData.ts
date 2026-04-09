@@ -1,5 +1,6 @@
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 export const useGanttData = (
   issues: Issue[],
@@ -16,7 +17,7 @@ export const useGanttData = (
   );
 
   const getStatusName = (iri: string) => {
-    return statusMap[iri] || iri.split("/").pop() || "Unknown";
+    return statusMap[iri] || extractIdFromIri(iri) || "Unknown";
   };
 
   const issuesBySprint: Record<string, Issue[]> = {};

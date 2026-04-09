@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 
 import type { Issue, IssueStatus } from "@/types/api/issue";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 interface UseProjectOverviewProps {
   issues: Issue[];
@@ -27,7 +28,7 @@ export function useProjectOverview({
 
   const getStatusName = useCallback(
     (iri: string) => {
-      return statusMap[iri] || iri.split("/").pop() || "Unknown";
+      return statusMap[iri] || extractIdFromIri(iri) || "Unknown";
     },
     [statusMap],
   );
