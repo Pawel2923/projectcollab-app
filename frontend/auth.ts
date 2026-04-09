@@ -11,7 +11,9 @@ import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
-const API_URL = getServerApiUrl() || "http://api/core-api";
+import { getApiRoutePrefix } from "./utils/iri-util";
+
+const API_URL = getServerApiUrl() || `http://api${getApiRoutePrefix()}`;
 
 interface User {
   id: string;
