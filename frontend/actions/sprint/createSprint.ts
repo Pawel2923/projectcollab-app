@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { buildResourceIri } from "@/utils/iri-util";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z
@@ -114,7 +115,7 @@ export default async function createSprint(
       endDate: endDateTime,
       status: "created",
       isArchived: false,
-      project: `/projects/${validated.data.projectId}`,
+      project: buildResourceIri("projects", validated.data.projectId),
     };
 
     // Add optional fields

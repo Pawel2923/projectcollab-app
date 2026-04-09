@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Chat } from "@/types/api/chat";
+import { buildResourceIri } from "@/utils/iri-util";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
@@ -148,20 +149,20 @@ function validateFormData(
 
 function getRequestBody(data: FormFields): Record<string, unknown> {
   const body: Record<string, unknown> = {
-    organization: `/organizations/${data.organizationId}`,
+    organization: buildResourceIri("organizations", data.organizationId),
     type: data.type,
   };
 
   if (data.projectId) {
-    body.project = `/projects/${data.projectId}`;
+    body.project = buildResourceIri("projects", data.projectId);
   }
 
   if (data.sprintId) {
-    body.sprint = `/sprints/${data.sprintId}`;
+    body.sprint = buildResourceIri("sprints", data.sprintId);
   }
 
   if (data.issueId) {
-    body.issue = `/issues/${data.issueId}`;
+    body.issue = buildResourceIri("issues", data.issueId);
   }
 
   if (data.type === "group" && "name" in data && "members" in data) {

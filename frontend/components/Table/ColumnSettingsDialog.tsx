@@ -35,6 +35,7 @@ import {
 import type { Collection } from "@/types/api/collection";
 import type { IssueStatus, IssueType } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
+import { buildResourceIri, extractIdFromIri } from "@/utils/iri-util";
 import { isOk } from "@/utils/result";
 
 type ColumnSettingsDialogProps = {
@@ -283,7 +284,7 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
           endDate: endDateTime,
           status: "created",
           isArchived: false,
-          project: `/projects/${projectId}`,
+          project: buildResourceIri("projects", projectId),
         },
       });
 
@@ -324,7 +325,7 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
       );
 
       // Start the selected sprint
-      const sprintId = currentSprint.split("/").pop();
+      const sprintId = extractIdFromIri(currentSprint);
       await clientApiCall(`/sprints/${sprintId}`, {
         method: "PATCH",
         body: { status: "started" },

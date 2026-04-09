@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { extractIdFromIri } from "@/utils/iri-util";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
@@ -107,11 +108,11 @@ export default async function updateOrganizationMemberRole(
       );
     }
 
-    // Extract organization ID from member's organization IRI
-    const orgMatch = data.organization?.match(/\/organizations\/(\d+)/);
-    if (orgMatch) {
-      revalidatePath(`/organizations/${orgMatch[1]}/members`);
-      revalidatePath(`/organizations/${orgMatch[1]}`);
+    // Revalidate organization views using ID parsed from returned organization IRI.
+    const organizationId = extractIdFromIri(data.organization);
+    if (organizationId) {
+      revalidatePath(`/organizations/${organizationId}/members`);
+      revalidatePath(`/organizations/${organizationId}`);
     }
 
     return { ok: true };

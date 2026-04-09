@@ -15,6 +15,7 @@ import type { Chat } from "@/types/api/chat";
 import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
 import type { UserWithOnlyEmailAndName } from "@/types/api/user";
+import { extractIdFromIri } from "@/utils/iri-util";
 
 type MentionType = "user" | "context";
 
@@ -38,7 +39,9 @@ export function Mention({ type, text, data }: MentionProps) {
       const issue = data;
 
       const projectId =
-        issue.projectSummary?.projectId || issue.project.split("/").pop() || "";
+        issue.projectSummary?.projectId ||
+        extractIdFromIri(issue.project) ||
+        "";
       const orgId = issue.projectSummary?.organizationId;
 
       if (projectId && orgId) {

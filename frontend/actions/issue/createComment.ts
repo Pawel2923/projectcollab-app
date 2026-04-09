@@ -7,6 +7,7 @@ import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { IssueComment } from "@/types/api/issue-metadata";
+import { buildResourceIri } from "@/utils/iri-util";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
@@ -64,7 +65,7 @@ export default async function createComment(
 
     const requestBody: Record<string, unknown> = {
       content: validated.data.content,
-      issue: `/issues/${validated.data.issueId}`,
+      issue: buildResourceIri("issues", validated.data.issueId),
     };
 
     const res = await fetch(`${nextApiUrl}/comments`, {

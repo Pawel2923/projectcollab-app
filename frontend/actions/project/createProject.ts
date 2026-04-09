@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { buildResourceIri } from "@/utils/iri-util";
 import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
@@ -75,7 +76,10 @@ export default async function createProject(
       },
       body: JSON.stringify({
         name: validated.data.name,
-        organization: `/organizations/${validated.data.organizationId}`,
+        organization: buildResourceIri(
+          "organizations",
+          validated.data.organizationId,
+        ),
       }),
     });
 
