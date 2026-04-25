@@ -6,8 +6,8 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { getApiUrl } from "@/utils/get-api-url";
 import { extractIdFromIri } from "@/utils/iri-util";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
   memberId: z.number().positive(),
@@ -35,7 +35,7 @@ export default async function updateOrganizationMemberRole(
 
   const { memberId, role } = validation.data;
 
-  const nextApiUrl = getServerApiUrl();
+  const nextApiUrl = getApiUrl();
   if (!nextApiUrl) {
     return {
       ok: false,

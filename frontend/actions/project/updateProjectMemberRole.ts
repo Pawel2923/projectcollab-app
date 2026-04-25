@@ -6,7 +6,7 @@ import { z } from "zod";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { ProjectMember } from "@/types/api/project";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -37,7 +37,7 @@ export default async function updateProjectMemberRole(
   const { memberId, roleIri, projectId, organizationId } = validatedFields.data;
 
   try {
-    const apiUrl = getServerApiUrl();
+    const apiUrl = getApiUrl();
     if (!apiUrl) {
       return {
         ok: false,

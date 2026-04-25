@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 export const proxy = auth(async (request) => {
   // Skip for public routes and API routes
@@ -83,7 +83,7 @@ export const proxy = auth(async (request) => {
 
   if (refreshToken) {
     try {
-      const nextApiUrl = getServerApiUrl();
+      const nextApiUrl = getApiUrl();
       if (!nextApiUrl) {
         const signInUrl = new URL("/signin", request.url);
         signInUrl.searchParams.set("redirectUrl", request.nextUrl.pathname);

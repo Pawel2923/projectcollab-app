@@ -4,7 +4,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Collection } from "@/types/api/collection";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -41,7 +41,7 @@ export default async function getEntityRole(
     }
 
     const user = userResult.value;
-    const apiUrl = getServerApiUrl();
+    const apiUrl = getApiUrl();
     if (!apiUrl) {
       return {
         ok: false,
@@ -111,7 +111,7 @@ function getEndpoint(
   entityId: string,
   userId: number,
 ): string {
-  const baseUrl = getServerApiUrl() || "";
+  const baseUrl = getApiUrl() || "";
 
   switch (entityType) {
     case "organization":

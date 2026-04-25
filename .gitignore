@@ -1,6 +1,5 @@
-/.env
-/helm/api-platform/charts/*
-!/helm/api-platform/charts/.gitignore
+.env.local
+.env.*.local
 .vscode
 .idea
 bolt.db

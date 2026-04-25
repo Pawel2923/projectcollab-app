@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 const schema = z.object({
   issueSprintIri: z.string().min(1, "IssueSprint IRI is required"),
@@ -36,7 +36,7 @@ export default async function removeIssueFromSprint(
 
   const { issueSprintIri, organizationId, projectId } = validatedFields.data;
 
-  const apiUrl = getServerApiUrl();
+  const apiUrl = getApiUrl();
   if (!apiUrl) {
     return {
       ok: false,

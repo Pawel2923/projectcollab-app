@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -32,7 +32,7 @@ export default async function deleteOrganizationMember(
       };
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

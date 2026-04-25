@@ -7,7 +7,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { OrganizationMember } from "@/types/api/organization";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 import type { ActionResult } from "../types/ActionResult";
 
@@ -35,7 +35,7 @@ export default async function inviteOrganizationMember(
       };
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

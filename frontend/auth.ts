@@ -7,13 +7,13 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 
+import { getApiUrl } from "@/utils/get-api-url";
 import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 import { getApiRoutePrefix } from "./utils/iri-util";
 
-const API_URL = getServerApiUrl() || `http://api${getApiRoutePrefix()}`;
+const API_URL = getApiUrl() || `http://api${getApiRoutePrefix()}`;
 
 interface User {
   id: string;

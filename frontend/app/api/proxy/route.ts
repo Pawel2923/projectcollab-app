@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 
 import { AppError } from "@/services/error/app-error";
 import { createErrorFromResponse } from "@/services/error/response-to-error";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
+import { buildEndpointUriFromIri } from "@/utils/iri-util";
 
 /**
  * API Proxy route for client-side requests
@@ -76,7 +77,7 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
 
 async function handleProxyRequest(request: NextRequest, method: string) {
   try {
-    const apiUrl = getServerApiUrl();
+    const apiUrl = getApiUrl();
     if (!apiUrl) {
       const error = new AppError({
         message: "Brak konfiguracji serwera API",
@@ -120,7 +121,15 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       try {
         body = await request.json();
       } catch {
-        // No body or invalid JSON
+        return NextResponse.json(
+          new AppError({
+            message: "Nieprawidłowe dane JSON w body",
+            code: "VALIDATION_ERROR",
+            status: 400,
+            context: "API Proxy",
+          }).toJSON(),
+          { status: 400 },
+        );
       }
     }
 
@@ -131,7 +140,7 @@ async function handleProxyRequest(request: NextRequest, method: string) {
           ? "application/merge-patch+json"
           : "application/ld+json";
 
-      return fetch(`${apiUrl}${endpoint}`, {
+      return fetch(buildEndpointUriFromIri(apiUrl, endpoint), {
         method,
         headers: {
           Authorization: `Bearer ${authToken}`,

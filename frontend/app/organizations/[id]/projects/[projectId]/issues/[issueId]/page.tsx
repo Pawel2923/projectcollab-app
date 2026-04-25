@@ -5,8 +5,8 @@ import { IssueDetails } from "@/components/IssueDetails/IssueDetails";
 import type { SelectOption } from "@/components/IssueDetails/types";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { apiGet } from "@/services/fetch/api-service";
+import { getApiUrl } from "@/utils/get-api-url";
 import { extractIdFromIri } from "@/utils/iri-util";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 type Resolution = {
   "@id"?: string;
@@ -33,7 +33,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { issueId } = await params;
   const token = await getAccessTokenReadOnly();
-  const apiUrl = getServerApiUrl();
+  const apiUrl = getApiUrl();
 
   if (!token || !apiUrl) {
     return {
@@ -70,7 +70,7 @@ export default async function IssuePage({
     redirect("/signin");
   }
 
-  const apiUrl = getServerApiUrl();
+  const apiUrl = getApiUrl();
   if (!apiUrl) {
     throw new Error("Brak konfiguracji adresu API");
   }

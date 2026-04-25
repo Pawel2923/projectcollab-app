@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 interface ApiCallOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -25,7 +25,7 @@ export async function apiCall<T = unknown>(
   const { method = "GET", body, headers = {}, requireAuth = true } = options;
 
   try {
-    const apiUrl = getServerApiUrl();
+    const apiUrl = getApiUrl();
     if (!apiUrl) {
       console.error("NEXT_PUBLIC_API_URL not configured");
       return {

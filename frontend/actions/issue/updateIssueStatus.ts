@@ -5,8 +5,8 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { getApiUrl } from "@/utils/get-api-url";
 import { buildResourceIri } from "@/utils/iri-util";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 const updateIssueStatusSchema = z.object({
   issueId: z.string().min(1, "Identyfikator zadania jest wymagany"),
@@ -32,7 +32,7 @@ export async function updateIssueStatus(
       };
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

@@ -1,7 +1,7 @@
 "use server";
 
 import { getAccessToken } from "@/services/auth/token-service";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 export type SearchResults = {
   issues: Array<{
@@ -43,7 +43,7 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
   }
 
   try {
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       console.error("NEXT_PUBLIC_API_URL is not defined");
       return emptyResults;

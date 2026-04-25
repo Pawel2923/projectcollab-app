@@ -2,7 +2,7 @@ import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { AppError } from "@/services/error/app-error";
 import { parseJsonCode } from "@/services/message-mapper/json-code-parser";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -17,7 +17,7 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json(error.toJSON(), { status: 400 });
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       const error = new AppError({
         message: "API URL not configured",

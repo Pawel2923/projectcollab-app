@@ -9,8 +9,8 @@ import {
   isValidTimeString,
   parseEstimatedTime,
 } from "@/services/issue/issue-date-time-service";
+import { getApiUrl } from "@/utils/get-api-url";
 import { buildResourceIri } from "@/utils/iri-util";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 const NO_RESOLUTION_VALUE = "__none__";
 
@@ -255,7 +255,7 @@ export default async function updateIssue(
       };
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

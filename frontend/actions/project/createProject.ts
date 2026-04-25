@@ -6,8 +6,8 @@ import { z } from "zod";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
+import { getApiUrl } from "@/utils/get-api-url";
 import { buildResourceIri } from "@/utils/iri-util";
-import { getServerApiUrl } from "@/utils/server-api-url";
 
 const schema = z.object({
   name: z.string().min(1, "Project name is required"),
@@ -49,7 +49,7 @@ export default async function createProject(
       };
     }
 
-    const nextApiUrl = getServerApiUrl();
+    const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
       return {
         ok: false,

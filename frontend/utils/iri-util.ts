@@ -39,3 +39,17 @@ export function buildResourceIri(
 
   return `${getApiRoutePrefix()}/${normalizedResource}/${normalizedId}`;
 }
+
+function stripApiRoutePrefixAndNormalize(resourceIri: string): string {
+  return normalizeSegment(resourceIri).replace(/^core-api\/?/, "");
+}
+
+export function buildEndpointUriFromIri(
+  baseUrl: string,
+  resourceIri: string,
+): string {
+  const normalizedBaseUrl = normalizeSegment(baseUrl);
+  const normalizedResourceIri = stripApiRoutePrefixAndNormalize(resourceIri);
+
+  return `${normalizedBaseUrl}/${normalizedResourceIri}`;
+}

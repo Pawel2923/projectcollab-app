@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/actions/types/ActionResult";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { handleApiError } from "@/services/error/api-error-handler";
-import { getServerApiUrl } from "@/utils/server-api-url";
+import { getApiUrl } from "@/utils/get-api-url";
 
 export async function uploadAttachment(
   formData: FormData,
@@ -36,7 +36,7 @@ export async function uploadAttachment(
 
   try {
     const token = await getAccessTokenReadOnly();
-    const apiUrl = getServerApiUrl();
+    const apiUrl = getApiUrl();
     if (!apiUrl) {
       return {
         ok: false,
