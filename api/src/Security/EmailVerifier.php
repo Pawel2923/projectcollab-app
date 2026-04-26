@@ -11,6 +11,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Throwable;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 readonly class EmailVerifier implements EmailVerifierInterface
 {
@@ -18,7 +19,8 @@ readonly class EmailVerifier implements EmailVerifierInterface
         private VerifyEmailHelperInterface $helper,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
-        private UrlManagerInterface $urlManager
+        private UrlManagerInterface $urlManager,
+        #[Autowire(env: 'SERVER_NAME')] private string $serverName
     ) {
     }
 
@@ -48,7 +50,7 @@ readonly class EmailVerifier implements EmailVerifierInterface
         $this->logger->info('Generated verification URL: ' . $frontendVerifyUrl);
 
         $email = new TemplatedEmail()
-            ->from('no-reply@example.com')
+            ->from("no-reply@{$this->serverName}")
             ->to($user->getEmail())
             ->subject('Zweryfikuj swój adres e-mail')
             ->context([

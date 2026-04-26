@@ -9,6 +9,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 readonly class ResetPasswordService implements ResetPasswordServiceInterface
 {
@@ -16,6 +17,7 @@ readonly class ResetPasswordService implements ResetPasswordServiceInterface
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private MailerInterface $mailer,
         private UrlManagerInterface $urlManager,
+        #[Autowire(env: 'SERVER_NAME')] private string $serverName
     ) {
     }
 
@@ -36,7 +38,7 @@ readonly class ResetPasswordService implements ResetPasswordServiceInterface
         );
 
         $email = new TemplatedEmail()
-            ->from('no-reply@example.com')
+            ->from("no-reply@{$this->serverName}")
             ->to($user->getEmail())
             ->subject('Zresetuj swoje hasło')
             ->context([
