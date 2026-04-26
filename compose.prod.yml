@@ -10,6 +10,7 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MAILER_DSN: ${MAILER_DSN}
 
   frontend:
     image: pawel2923/projectcollab-frontend:${IMAGE_TAG:-latest}
