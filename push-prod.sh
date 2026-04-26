@@ -4,7 +4,6 @@ set -euo pipefail
 COMPOSE_ARGS=(
   -f compose.yml
   -f compose.prod.yml
-  --env-file .env
   --env-file .env.prod.local
 )
 
