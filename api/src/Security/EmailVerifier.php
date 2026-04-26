@@ -10,18 +10,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
-use Throwable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Throwable;
 
 readonly class EmailVerifier implements EmailVerifierInterface
 {
     public function __construct(
-        private VerifyEmailHelperInterface $helper,
-        private MailerInterface $mailer,
-        private LoggerInterface $logger,
-        private UrlManagerInterface $urlManager,
+        private VerifyEmailHelperInterface             $helper,
+        private MailerInterface                        $mailer,
+        private LoggerInterface                        $logger,
+        private UrlManagerInterface                    $urlManager,
         #[Autowire(env: 'SERVER_NAME')] private string $serverName
-    ) {
+    )
+    {
     }
 
     /**
@@ -29,33 +30,29 @@ readonly class EmailVerifier implements EmailVerifierInterface
      */
     public function send(User $user): void
     {
-        // Generate the signature using the SymfonyCasts helper with the API route
         $signatureComponents = $this->helper->generateSignature(
-            '_api_/verify-email_get', // Use the actual API resource route
-            (string) $user->getId(),
+            '_api_/verify-email_get',
+            (string)$user->getId(),
             $user->getEmail(),
             [
                 'id' => $user->getId(),
             ]
         );
 
-        // Extract query parameters from the generated URL
         $backendUrl = $signatureComponents->getSignedUrl();
         $parsedUrl = parse_url($backendUrl);
         $queryString = $parsedUrl['query'] ?? '';
 
-        // Create frontend verification URL that will call the API
-        $frontendVerifyUrl = $this->urlManager->getFrontendUrl() . '/verify-email/verify?' . $queryString;
-
-        $this->logger->info('Generated verification URL: ' . $frontendVerifyUrl);
+        $frontendVerifyUrl = "{$this->urlManager->getFrontendUrl()}/verify-email/verify?$queryString";
+        $this->logger->info("Generated verification URL: $frontendVerifyUrl");
 
         $email = new TemplatedEmail()
-            ->from("no-reply@{$this->serverName}")
+            ->from("no-reply@$this->serverName")
             ->to($user->getEmail())
             ->subject('Zweryfikuj swój adres e-mail')
             ->context([
-                    'verificationUrl' => $frontendVerifyUrl,
-                ])
+                'verificationUrl' => $frontendVerifyUrl,
+            ])
             ->htmlTemplate('email/verify_email.html.twig');
 
         $this->mailer->send($email);
@@ -66,17 +63,23 @@ readonly class EmailVerifier implements EmailVerifierInterface
      */
     public function handleConfirmation(Request $request, User $user): void
     {
-        $this->logger->info('Starting email confirmation validation');
-        $this->logger->info('Request URL: ' . $request->getUri());
-        $this->logger->info('Query params: ' . json_encode($request->query->all()));
+        $this->logger->info('Starting email confirmation validation', [
+            'request_uri' => $request->getUri(),
+            'query_params' => $request->query->all(),
+            'user_id' => $user->getId(),
+            'user_email' => $user->getEmail(),
+        ]);
 
         try {
-            $this->helper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), $user->getEmail());
+            $this->helper->validateEmailConfirmationFromRequest($request, (string)$user->getId(), $user->getEmail());
             $user->setIsVerified(true);
             $this->logger->info('Email confirmation validation successful');
         } catch (Throwable $e) {
-            $this->logger->error('Email confirmation validation failed: ' . $e->getMessage());
-            $this->logger->error('Exception class: ' . get_class($e));
+            $this->logger->error('Email confirmation validation failed', [
+                'exception_class' => get_class($e),
+                'exception' => $e,
+            ]);
+
             throw $e;
         }
     }
