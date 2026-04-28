@@ -30,5 +30,5 @@ services:
   mailer:
     image: schickling/mailcatcher
     ports:
-      - "1025"
-      - "1080"
+      - "1025:1025"
+      - "44949:1080"

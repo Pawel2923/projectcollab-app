@@ -1,10 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
+if [[ $# -lt 1 ]]; then
+  echo "Usage: $0 <env file>" >&2
+  exit 1
+fi
+
+ENV_FILE="$1"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "Error: Env file '$ENV_FILE' not found" >&2
+  exit 1
+fi
+
 COMPOSE_ARGS=(
   -f compose.yml
   -f compose.prod.yml
-  --env-file .env.prod.local
+  --env-file "$ENV_FILE"
 )
 
 run_compose() {
@@ -16,15 +28,10 @@ if ! command -v docker &> /dev/null; then
   exit 1
 fi
 
-if [[ ! -f ".env" || ! -f ".env.prod.local" ]]; then
-  echo "Error: Missing required env files (.env and/or .env.prod.local)" >&2
-  exit 1
-fi
-
-echo "Building production image with latest tag..."
+echo "Building production image..."
 run_compose build --no-cache
 
-echo "Pushing production image with latest tag to registry..."
+echo "Pushing production image to registry..."
 run_compose push
 
 echo "Production image pushed successfully."
