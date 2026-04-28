@@ -13,15 +13,16 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mime\Address;
 
-readonly class ResetPasswordService implements ResetPasswordServiceInterface
+readonly class ResetPasswordService
 {
     public function __construct(
-        private ResetPasswordHelperInterface $resetPasswordHelper,
-        private MailerInterface $mailer,
-        private UrlManagerInterface $urlManager,
+        private ResetPasswordHelperInterface           $resetPasswordHelper,
+        private MailerInterface                        $mailer,
+        private UrlManagerInterface                    $urlManager,
         #[Autowire(env: 'SERVER_NAME')] private string $serverName,
-        private LoggerInterface $logger
-    ) {
+        private LoggerInterface                        $logger
+    )
+    {
     }
 
     /**
@@ -31,13 +32,10 @@ readonly class ResetPasswordService implements ResetPasswordServiceInterface
     public function sendRequest(User $user): void
     {
         $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-        $fromAddress = "no-reply@{$this->serverName}";
+        $fromAddress = "no-reply@$this->serverName";
 
-        $this->logger->info('From address for reset password request', [
-            'fromAddress' => $fromAddress,
-        ]);
+        $this->logger->debug('[ResetPasswordService]: Value of $fromAddress variable used with SERVER_NAME', ['fromAddress' => $fromAddress]);
 
-        // Point directly to the frontend form with the token
         $url = $this->urlManager->addSearchParamsToUrl(
             "{$this->urlManager->getFrontendUrl()}/reset-password/form",
             [
@@ -50,8 +48,8 @@ readonly class ResetPasswordService implements ResetPasswordServiceInterface
             ->to($user->getEmail())
             ->subject('Zresetuj swoje hasło')
             ->context([
-                    'resetUrl' => $url,
-                ])
+                'resetUrl' => $url,
+            ])
             ->htmlTemplate('email/reset_password.html.twig');
 
         $this->mailer->send($email);
