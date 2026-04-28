@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       FRONTEND_UPSTREAM: ${FRONTEND_UPSTREAM:-frontend:3000}
-      SERVER_NAME: ${SERVER_NAME:-localhost}, api:80
+      SERVER_NAME: ${SERVER_NAME:-localhost}
       APP_SECRET: ${APP_SECRET:-ChangeMeInLocalEnvFile}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -58,6 +58,7 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/core-api}
         NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
         NEXT_PUBLIC_MERCURE_URL: ${NEXT_PUBLIC_MERCURE_URL:-http://localhost/.well-known/mercure}
+        NEXT_PUBLIC_SEVER_NAME: ${SERVER_NAME:-localhost}
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost/core-api}
       NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
