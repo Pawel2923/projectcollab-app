@@ -8,7 +8,7 @@ FROM node:lts AS node_upstream
 # Base stage for dev and build
 FROM node_upstream AS base
 
-WORKDIR /app
+WORKDIR /srv/app
 
 RUN npm install -g corepack@latest && \
     corepack enable && \
@@ -33,16 +33,6 @@ CMD ["sh", "-c", "pnpm install; pnpm dev"]
 
 FROM base AS builder
 
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_API_ROUTE_PREFIX
-ARG NEXT_PUBLIC_MERCURE_URL
-ARG NEXT_PUBLIC_SEVER_NAME
-
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ENV NEXT_PUBLIC_API_ROUTE_PREFIX=${NEXT_PUBLIC_API_ROUTE_PREFIX}
-ENV NEXT_PUBLIC_MERCURE_URL=${NEXT_PUBLIC_MERCURE_URL}
-ENV NEXT_PUBLIC_SEVER_NAME=${NEXT_PUBLIC_SEVER_NAME}
-
 COPY --link pnpm-lock.yaml ./
 RUN pnpm fetch
 
@@ -55,7 +45,7 @@ RUN	pnpm install --frozen-lockfile --offline && \
 # Production image, copy all the files and run next
 FROM node_upstream AS prod
 
-WORKDIR /app
+WORKDIR /srv/app
 
 ENV NODE_ENV production
 # Delete the following line in case you want to enable telemetry during runtime.
@@ -64,7 +54,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN groupadd -g 1234 next && \
     useradd -m -u 1234 -g next next
 
-COPY --from=builder --link /app/public ./public
+COPY --from=builder --link /srv/app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next; \
@@ -72,8 +62,8 @@ RUN mkdir .next; \
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --link --chown=1234:1234 /app/.next/standalone ./
-COPY --from=builder --link --chown=1234:1234 /app/.next/static ./.next/static
+COPY --from=builder --link --chown=1234:1234 /srv/app/.next/standalone ./
+COPY --from=builder --link --chown=1234:1234 /srv/app/.next/static ./.next/static
 
 USER next
 

@@ -6,8 +6,6 @@
 **/*.cache
 **/._*
 **/.dockerignore
-**/.env.local
-**/.env.*.local
 **/.DS_Store
 **/.git/
 **/.gitattributes
@@ -30,3 +28,7 @@ tests/
 var/
 vendor/
 .editorconfig
+.env.*.local
+.env.local
+.env.local.php
+.env.test

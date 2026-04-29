@@ -1,25 +1,30 @@
 services:
   api:
     build:
+      context: ./api
       target: frankenphp_dev
     volumes:
       - ./api:/app
       - /app/var
+      - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
       - ./api/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
     environment:
-      FRONTEND_UPSTREAM: frontend:3000
-      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
-      MAILER_DSN: ${MAILER_DSN}
+      MERCURE_EXTRA_DIRECTIVES: demo
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+    extra_hosts:
+      - host.docker.internal:host-gateway
     tty: true
 
   frontend:
     build:
+      context: ./frontend
       target: dev
     volumes:
-      - ./frontend:/app
+      - ./frontend:/srv/app
     environment:
-      NODE_ENV: development
-      NEXT_PUBLIC_API_URL: http://api/core-api
+      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://api
+      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
+      WATCHPACK_POLLING: "true"
 
   database:
     ports:
