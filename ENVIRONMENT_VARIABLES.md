@@ -1,43 +1,63 @@
 # Environment variables — where to configure (concise reference)
 
 Summary  
-Keep runtime secrets out of the repo. Configure developer defaults with local `.env*` files, and inject production values via your container/orchestration or a secret manager. Follow the project-specific Symfony/API Platform and Next.js variables listed below.
+Keep runtime secrets out of the repo. For local work, set defaults in the app-specific `.env.local` files and in a compose override if needed. For production, inject values from your orchestrator or secret manager.
+
+This project splits envs into three layers:
+- Compose/deployment values used to start containers.
+- Backend runtime values consumed by Symfony/API Platform.
+- Frontend runtime values consumed by Next.js.
 
 ---
 
-## Principles (quick)
-- Do: keep `.env.local`, `.env.local.php`, and any secret files out of VCS. Add them to .gitignore.  
-- Precedence (typical): container/process env > docker-compose `environment` / `env_file` > `.env.local` > `.env`. Symfony’s Dotenv loads `.env` and overlays later files, but real process environment still wins.  
-- Secrets: use Docker secrets, environment injection from your CI/CD, or a secret manager (Vault, AWS Secrets Manager). Never commit private keys / JWT secrets.  
-- Frontend: Next.js exposes only variables prefixed with `NEXT_PUBLIC_` to client code — those become public and are baked at build-time unless you configure runtime env.
+## Start Here
+If you just want the minimum to run the project locally, set these first:
+- API backend: `APP_ENV`, `APP_DEBUG`, `APP_SECRET`, `DATABASE_URL`, `TRUSTED_PROXIES`, `TRUSTED_HOSTS`, `TRUSTED_HEADERS`, `CORS_ALLOW_ORIGIN`, `MAILER_DSN`, `JWT_SECRET_KEY`, `JWT_PUBLIC_KEY`, `JWT_PASSPHRASE`, `MERCURE_URL`, `MERCURE_PUBLIC_URL`, `MERCURE_JWT_SECRET`.
+- Frontend: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_MERCURE_URL`, `NEXT_PUBLIC_API_ROUTE_PREFIX`, and one of `AUTH_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SITE_URL`, or `NEXT_PUBLIC_FRONTEND_URL`.
+- Auth providers: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_TENANT_ID`.
+- Compose: `SERVER_NAME`, `CADDY_MERCURE_JWT_SECRET`, `POSTGRES_*`, `IMAGES_PREFIX`, and the port variables if you are not using the defaults.
+
+## Rules of Thumb
+- Do: keep `.env.local`, `.env.local.php`, and any secret files out of VCS. Add them to `.gitignore`.
+- Precedence (typical): process env > compose `environment` > compose `env_file` > app `.env.local` > app `.env`.
+- Secrets: use Docker secrets, CI/CD injection, or a secret manager. Never commit private keys or JWT secrets.
+- Frontend: variables prefixed with `NEXT_PUBLIC_` are exposed to browser code. Do not put secrets there.
 
 ---
 
-## Symfony / API Platform (where & how)
-- Local dev:
-  - Use repository `env` template (e.g. `.env`) for non-sensitive defaults.
-  - Put machine-specific/secrets in `.env.local` (gitignored).
-- Production:
-  - Do NOT rely on `.env` in production. Provide environment variables to PHP-FPM/CLI (e.g., via docker container `environment`, systemd, or Kubernetes secrets).
-  - Symfony will still read the committed `.env` files during bootstrap unless you precompute `.env.local.php`; process env values override file values.
-- Common vars used by this project:
-  - `APP_ENV=dev|prod`
-  - `APP_DEBUG=0|1`
-  - `APP_SECRET=...`
-  - `DATABASE_URL=postgresql://user:pass@db:5432/dbname?serverVersion=16&charset=utf8`
-  - `TRUSTED_PROXIES`
-  - `TRUSTED_HOSTS`
-  - `TRUSTED_HEADERS`
-  - `CORS_ALLOW_ORIGIN`
-  - `MAILER_DSN`
-  - `MESSENGER_TRANSPORT_DSN`
-  - `JWT_SECRET_KEY`
-  - `JWT_PUBLIC_KEY`
-  - `JWT_PASSPHRASE`
-  - `MERCURE_URL`
-  - `MERCURE_PUBLIC_URL`
-  - `MERCURE_JWT_SECRET`
-- Example `.env.local` (dev, gitignored)
+## Backend: API Platform / Symfony
+Local dev uses `api/.env` plus optional `api/.env.local`.
+
+### Core runtime
+- `APP_ENV`
+- `APP_DEBUG`
+- `APP_SECRET`
+- `DATABASE_URL`
+- `TRUSTED_PROXIES`
+- `TRUSTED_HOSTS`
+- `TRUSTED_HEADERS`
+- `CORS_ALLOW_ORIGIN`
+- `MAILER_DSN`
+- `MESSENGER_TRANSPORT_DSN`
+- `LOCK_DSN`
+- `VAR_DUMPER_SERVER`
+
+### Mercure and JWT
+- `MERCURE_URL`
+- `MERCURE_PUBLIC_URL`
+- `MERCURE_JWT_SECRET`
+- `JWT_SECRET_KEY`
+- `JWT_PUBLIC_KEY`
+- `JWT_PASSPHRASE`
+
+### Feature-specific backend vars
+- `SERVER_NAME`
+- `FRONTEND_URL`
+- `BACKEND_URL`
+- `GOOGLE_API_KEY`
+- `GOOGLE_AUTH_CONFIG`
+
+### Example `api/.env.local`
 ```env
 APP_ENV=dev
 APP_DEBUG=1
@@ -48,67 +68,107 @@ TRUSTED_HOSTS=^(localhost|api)$
 TRUSTED_HEADERS=x-forwarded-for,x-forwarded-proto
 CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
 MAILER_DSN=null://null
+MESSENGER_TRANSPORT_DSN=doctrine://default
+LOCK_DSN=semaphore://default
+VAR_DUMPER_SERVER=127.0.0.1:9912
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=local-passphrase
 MERCURE_URL=http://api/.well-known/mercure
 MERCURE_PUBLIC_URL=https://localhost/.well-known/mercure
 MERCURE_JWT_SECRET=!ChangeThisMercureHubJWTSecretKey!
+SERVER_NAME=localhost
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:8000
+GOOGLE_API_KEY=replace-with-public-api-key
+GOOGLE_AUTH_CONFIG='{}'
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+MICROSOFT_CLIENT_ID=
+MICROSOFT_CLIENT_SECRET=
+MICROSOFT_TENANT_ID=
 ```
 - How Symfony reads them: use `%env(DATABASE_URL)%` or `%env(resolve:DATABASE_URL)%` in config.
 
 ---
 
-## Docker / docker-compose (where & how)
-- Compose root `.env` (optional): docker-compose reads an `.env` next to `docker-compose.yml` to substitute `${VAR}` in compose files. This is not automatically passed into services unless referenced under `environment` or `env_file`.
-- Preferred patterns:
-  - Development: keep `docker-compose.override.yml` or `compose.override.yaml` referencing a local `env_file` (this file is gitignored).
-  - Production: inject env vars via your deployment (CI/CD), `docker stack deploy` with `--env-file`, Kubernetes Secrets, or Docker secrets.
-- Example `docker-compose` service fragment:
+## Compose / Deployment
+Compose reads the root `.env` for variable substitution in `compose.yaml`, but that does not automatically become container environment.
+
+### Compose-only values
+- `IMAGES_PREFIX`
+- `SERVER_NAME`
+- `FRONTEND_UPSTREAM`
+- `HTTP_PORT`
+- `HTTPS_PORT`
+- `HTTP3_PORT`
+- `POSTGRES_VERSION`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_CHARSET`
+- `CADDY_MERCURE_JWT_SECRET`
+- `CADDY_MERCURE_URL`
+- `CADDY_MERCURE_PUBLIC_URL`
+
+### Example `compose.override.yaml`
 ```yaml
 services:
   api:
-    image: projectcollab-api:latest
     env_file:
-      - ./.env.local   # local, gitignored
+      - ./api/.env.local
     environment:
-      - APP_ENV=prod   # explicit overrides
-    secrets:
-      - jwt_private_key
+      APP_ENV: prod
+      SERVER_NAME: localhost
+      CADDY_MERCURE_JWT_SECRET: "!ChangeThisMercureHubJWTSecretKey!"
+  frontend:
+    env_file:
+      - ./frontend/.env.local
 ```
-- Dockerfile: use `ARG` for build-time values and `ENV` for default runtime env. Do not bake secrets into images.
-```dockerfile
-ARG APP_ENV=prod
-ENV APP_ENV=${APP_ENV}
-```
-- Docker secrets: mount secrets as files and reference them, or set entrypoint to export them as env vars at container start.
+
+### Production
+- Prefer process env or secrets injection over committed `.env` files.
+- Keep `CADDY_MERCURE_JWT_SECRET`, database credentials, OAuth client secrets, and JWT private material in your secret store.
+- Use `ARG` for build-time defaults only. Do not bake secrets into images.
 
 ---
 
-## Next.js frontend (where & how)
-- Files: `.env`, `.env.local`, `.env.development`, `.env.production`. `.env.local` is for local dev and should be gitignored.
-- Public vs server-only:
-  - Public (client): prefix with `NEXT_PUBLIC_` (e.g. `NEXT_PUBLIC_API_URL`) — these are embedded into client bundle at build time.
-  - Server-only variables can be used in Next.js API routes or server runtime but are not exposed to the browser.
-- Build-time vs runtime:
-  - If your API URL may change at runtime, either:
-    - Build per environment with the right `.env.*`, or
-    - Use runtime configuration (e.g., read from process env in a server entrypoint or use a tiny runtime config endpoint).
-- Example `.env.local` for frontend:
+## Frontend: Next.js
+Local dev uses `frontend/.env.local`.
+
+### Public client vars
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_MERCURE_URL`
+- `NEXT_PUBLIC_API_ROUTE_PREFIX`
+- `NEXT_PUBLIC_APP_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_FRONTEND_URL`
+
+### Server-side auth vars
+- `AUTH_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `MICROSOFT_CLIENT_ID`
+- `MICROSOFT_CLIENT_SECRET`
+- `MICROSOFT_TENANT_ID`
+
+### Example `frontend/.env.local`
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_MERCURE_URL=http://localhost:80/.well-known/mercure
 NEXT_PUBLIC_API_ROUTE_PREFIX=/core-api
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+MICROSOFT_CLIENT_ID=
+MICROSOFT_CLIENT_SECRET=
+MICROSOFT_TENANT_ID=
 ```
 
----
-
-## Production & secrets (recommended)
-- DO: inject secrets from CI/CD or orchestration (Kubernetes Secrets, Docker secrets, cloud secret manager). Rotate keys frequently.
-- DO: limit file permissions on env files (600).
-- DO: avoid `NEXT_PUBLIC_` for any secret — those values are public.
-- Consider storing private key files (JWT keys) as Docker secrets and mounting them into `/run/secrets/` or a secure path inside container.
+### Notes
+- If the API URL changes, rebuild the frontend because `NEXT_PUBLIC_*` values are baked at build time.
+- Use `AUTH_URL` when you want NextAuth-style helpers to resolve redirects from a canonical base URL.
 
 ---
 
@@ -126,7 +186,7 @@ docker compose exec api php -r 'echo getenv("DATABASE_URL")."\n";'
 ---
 
 ## Small checklist to fix broken config
-- Local dev: create `.env.local` (gitignored) for Symfony and `.env.local` for Next.js with proper values.
-- Docker: ensure `docker-compose.override.yml` or compose.yml points to those env files or sets `environment` for services.
-- Production: move secrets to the orchestration layer (CI/CD secrets, Docker secrets, Kubernetes secrets).
+- Local dev: create `api/.env.local` and `frontend/.env.local`, then add `compose.override.yaml` if you want local defaults in containers.
+- Docker: ensure the override file points to the right env files or sets service `environment` values.
+- Production: move secrets to the orchestration layer and keep public `NEXT_PUBLIC_*` values limited to non-sensitive data.
 - Rebuild/restart containers and rebuild Next.js after env changes.
