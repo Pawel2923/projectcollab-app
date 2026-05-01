@@ -3,12 +3,6 @@
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "API entrypoint runs migrations and role seeding during web container startup (doctrine:migrations:migrate and app:seed-roles in docker-entrypoint.sh) rather than as explicit deploy/ops steps.",
-      "issueId": "ISSUE-2"
-    },
-    {
-      "severity": "MEDIUM",
-      "status": "TO_FIX",
       "issue": "Database readiness/migration logic is gated by searching .env for DATABASE_URL (grep -q ^DATABASE_URL= .env) and can be skipped when env is injected only at runtime.",
       "issueId": "ISSUE-3"
     },
