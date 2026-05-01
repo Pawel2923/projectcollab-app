@@ -1,12 +1,6 @@
 {
   "findings": [
     {
-      "severity": "HIGH",
-      "status": "TO_FIX",
-      "issue": "API entrypoint generates and overwrites JWT keypair on every startup (php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction in docker-entrypoint.sh) instead of using externally managed production keys.",
-      "issueId": "ISSUE-1"
-    },
-    {
       "severity": "MEDIUM",
       "status": "TO_FIX",
       "issue": "API entrypoint runs migrations and role seeding during web container startup (doctrine:migrations:migrate and app:seed-roles in docker-entrypoint.sh) rather than as explicit deploy/ops steps.",

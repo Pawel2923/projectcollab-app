@@ -31,7 +31,17 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 		if [ "$( find ./migrations -iname '*.php' -print -quit )" ]; then
 			php bin/console doctrine:migrations:migrate --no-interaction --all-or-nothing
 			php bin/console app:seed-roles
-			php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction
+
+			if [ ! -f ./config/jwt/private.pem ] || [ ! -f ./config/jwt/public.pem ]; then
+				if [ "${APP_ENV:-dev}" = "prod" ]; then
+					echo "Missing JWT keypair in ./config/jwt for production."
+					echo "Provision keys externally (secret manager/volume mount) before startup."
+					exit 1
+				fi
+
+				echo "JWT keypair not found, generating development keypair..."
+				php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction
+			fi
 		fi
 	fi
 
