@@ -3,32 +3,38 @@
     {
       "severity": "HIGH",
       "status": "TO_FIX",
-      "issue": "API entrypoint generates and overwrites JWT keypair on every startup (php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction in docker-entrypoint.sh) instead of using externally managed production keys."
+      "issue": "API entrypoint generates and overwrites JWT keypair on every startup (php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction in docker-entrypoint.sh) instead of using externally managed production keys.",
+      "issueId": "ISSUE-1"
     },
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "API entrypoint runs migrations and role seeding during web container startup (doctrine:migrations:migrate and app:seed-roles in docker-entrypoint.sh) rather than as explicit deploy/ops steps."
+      "issue": "API entrypoint runs migrations and role seeding during web container startup (doctrine:migrations:migrate and app:seed-roles in docker-entrypoint.sh) rather than as explicit deploy/ops steps.",
+      "issueId": "ISSUE-2"
     },
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "Database readiness/migration logic is gated by searching .env for DATABASE_URL (grep -q ^DATABASE_URL= .env) and can be skipped when env is injected only at runtime."
+      "issue": "Database readiness/migration logic is gated by searching .env for DATABASE_URL (grep -q ^DATABASE_URL= .env) and can be skipped when env is injected only at runtime.",
+      "issueId": "ISSUE-3"
     },
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "Compose defaults include weak fallback secrets (POSTGRES_PASSWORD and Mercure JWT secret defaults in compose.yaml) that can be accidentally used in production."
+      "issue": "Compose defaults include weak fallback secrets (POSTGRES_PASSWORD and Mercure JWT secret defaults in compose.yaml) that can be accidentally used in production.",
+      "issueId": "ISSUE-4"
     },
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "Production compose uses plain environment substitution for sensitive values (APP_SECRET, DB password, Mercure key in compose.prod.yaml) without Docker secrets integration."
+      "issue": "Production compose uses plain environment substitution for sensitive values (APP_SECRET, DB password, Mercure key in compose.prod.yaml) without Docker secrets integration.",
+      "issueId": "ISSUE-5"
     },
     {
       "severity": "LOW",
       "status": "TO_FIX",
-      "issue": "Production frontend service has no healthcheck in compose configuration, reducing readiness visibility compared to API/database/redis checks."
+      "issue": "Production frontend service has no healthcheck in compose configuration, reducing readiness visibility compared to API/database/redis checks.",
+      "issueId": "ISSUE-6"
     }
   ]
 }
