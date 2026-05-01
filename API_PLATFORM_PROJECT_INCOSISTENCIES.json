@@ -29,16 +29,6 @@
       "severity": "LOW",
       "status": "TO_FIX",
       "issue": "Production frontend service has no healthcheck in compose configuration, reducing readiness visibility compared to API/database/redis checks."
-    },
-    {
-      "severity": "LOW",
-      "status": "OK",
-      "issue": "Database host port exposure (5432:5432) exists in compose.override.yaml; acceptable for local development but should never be used in production deployment commands."
-    },
-    {
-      "severity": "LOW",
-      "status": "OK",
-      "issue": "Repository already follows API Platform compose merge pattern (compose.yaml + compose.prod.yaml) and uses IMAGES_PREFIX; this is consistent with official docs and does not require changes."
     }
   ]
 }
