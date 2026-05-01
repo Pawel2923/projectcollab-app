@@ -1,0 +1,49 @@
+{
+  "findings": [
+    {
+      "severity": "HIGH",
+      "status": "TO_FIX",
+      "issue": "Deployment scripts reference non-existent compose filenames (compose.yml and compose.prod.yml) while the repository uses compose.yaml and compose.prod.yaml in root."
+    },
+    {
+      "severity": "HIGH",
+      "status": "TO_FIX",
+      "issue": "API entrypoint generates and overwrites JWT keypair on every startup (php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction in docker-entrypoint.sh) instead of using externally managed production keys."
+    },
+    {
+      "severity": "MEDIUM",
+      "status": "TO_FIX",
+      "issue": "API entrypoint runs migrations and role seeding during web container startup (doctrine:migrations:migrate and app:seed-roles in docker-entrypoint.sh) rather than as explicit deploy/ops steps."
+    },
+    {
+      "severity": "MEDIUM",
+      "status": "TO_FIX",
+      "issue": "Database readiness/migration logic is gated by searching .env for DATABASE_URL (grep -q ^DATABASE_URL= .env) and can be skipped when env is injected only at runtime."
+    },
+    {
+      "severity": "MEDIUM",
+      "status": "TO_FIX",
+      "issue": "Compose defaults include weak fallback secrets (POSTGRES_PASSWORD and Mercure JWT secret defaults in compose.yaml) that can be accidentally used in production."
+    },
+    {
+      "severity": "MEDIUM",
+      "status": "TO_FIX",
+      "issue": "Production compose uses plain environment substitution for sensitive values (APP_SECRET, DB password, Mercure key in compose.prod.yaml) without Docker secrets integration."
+    },
+    {
+      "severity": "LOW",
+      "status": "TO_FIX",
+      "issue": "Production frontend service has no healthcheck in compose configuration, reducing readiness visibility compared to API/database/redis checks."
+    },
+    {
+      "severity": "LOW",
+      "status": "OK",
+      "issue": "Database host port exposure (5432:5432) exists in compose.override.yaml; acceptable for local development but should never be used in production deployment commands."
+    },
+    {
+      "severity": "LOW",
+      "status": "OK",
+      "issue": "Repository already follows API Platform compose merge pattern (compose.yaml + compose.prod.yaml) and uses IMAGES_PREFIX; this is consistent with official docs and does not require changes."
+    }
+  ]
+}
