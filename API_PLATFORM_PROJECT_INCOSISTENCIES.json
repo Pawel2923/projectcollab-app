@@ -3,11 +3,6 @@
     {
       "severity": "HIGH",
       "status": "TO_FIX",
-      "issue": "Deployment scripts reference non-existent compose filenames (compose.yml and compose.prod.yml) while the repository uses compose.yaml and compose.prod.yaml in root."
-    },
-    {
-      "severity": "HIGH",
-      "status": "TO_FIX",
       "issue": "API entrypoint generates and overwrites JWT keypair on every startup (php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction in docker-entrypoint.sh) instead of using externally managed production keys."
     },
     {

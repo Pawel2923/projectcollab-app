@@ -14,8 +14,8 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 COMPOSE_ARGS=(
-  -f compose.yml
-  -f compose.prod.yml
+  -f compose.yaml
+  -f compose.prod.yaml
   --env-file "$ENV_FILE"
 )
 
