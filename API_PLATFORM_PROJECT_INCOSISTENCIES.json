@@ -3,18 +3,6 @@
     {
       "severity": "MEDIUM",
       "status": "TO_FIX",
-      "issue": "Database readiness/migration logic is gated by searching .env for DATABASE_URL (grep -q ^DATABASE_URL= .env) and can be skipped when env is injected only at runtime.",
-      "issueId": "ISSUE-3"
-    },
-    {
-      "severity": "MEDIUM",
-      "status": "TO_FIX",
-      "issue": "Compose defaults include weak fallback secrets (POSTGRES_PASSWORD and Mercure JWT secret defaults in compose.yaml) that can be accidentally used in production.",
-      "issueId": "ISSUE-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "status": "TO_FIX",
       "issue": "Production compose uses plain environment substitution for sensitive values (APP_SECRET, DB password, Mercure key in compose.prod.yaml) without Docker secrets integration.",
       "issueId": "ISSUE-5"
     },
