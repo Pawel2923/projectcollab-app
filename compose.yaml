@@ -6,6 +6,7 @@ services:
       - redis
     restart: unless-stopped
     environment:
+      APP_SECRET: ${APP_SECRET:?APP_SECRET not set}
       FRONTEND_UPSTREAM: frontend:3000
       SERVER_NAME: ${SERVER_NAME:-localhost}, api:80
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
@@ -16,8 +17,8 @@ services:
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://api/.well-known/mercure}
       MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}/.well-known/mercure}
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-"%kernel.project_dir%/config/jwt/private.pem"}
-      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-"%kernel.project_dir%/config/jwt/public.pem"}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-%kernel.project_dir%/config/jwt/private.pem}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-%kernel.project_dir%/config/jwt/public.pem}
       JWT_PASSPHRASE: ${JWT_PASSPHRASE:-!ChangeThisJWTKeyPassphrase!}
       MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN:-doctrine://default?auto_setup=0}
       MAILER_DSN: ${MAILER_DSN:-null://null}
@@ -50,6 +51,7 @@ services:
       MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
       MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
       MICROSOFT_TENANT_ID: ${MICROSOFT_TENANT_ID}
+      API_URL: ${API_URL:-http://api/core-api}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost/core-api}
       NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
       NEXT_PUBLIC_MERCURE_URL: ${NEXT_PUBLIC_MERCURE_URL:-https://localhost/.well-known/mercure}
