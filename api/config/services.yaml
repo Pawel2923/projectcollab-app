@@ -3,13 +3,6 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters:
-    google.client_id: '%env(GOOGLE_CLIENT_ID)%'
-    google.client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
-    
-    microsoft.client_id: '%env(MICROSOFT_CLIENT_ID)%'
-    microsoft.client_secret: '%env(MICROSOFT_CLIENT_SECRET)%'
-    
 services:
   # default configuration for services in *this* file
   _defaults:
@@ -108,16 +101,6 @@ services:
         email: 'partial'
         username: 'partial'
     tags: ['api_platform.filter']
-
-  # Google Client service
-  Google\Client:
-    arguments:
-      $config:
-        client_id: '%google.client_id%'
-        client_secret: '%google.client_secret%'
-    calls:
-      - [ setAccessType, [ 'offline' ] ]
-      - [ setPrompt, [ 'consent' ] ]
 
   # Microsoft Graph Client
   microsoft.graph.client:
