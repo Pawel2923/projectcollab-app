@@ -20,7 +20,7 @@ services:
       context: ./frontend
       target: dev
     volumes:
-      - ./frontend:/srv/app
+      - ./frontend:/app
     environment:
       API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://api
       API_PLATFORM_CREATE_CLIENT_OUTPUT: .
