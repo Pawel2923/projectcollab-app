@@ -65,6 +65,15 @@ export default async function signUp(
       password,
     });
   } catch (error) {
+    console.error("signUp serverAction error occured:", {
+      context: {
+        email: formData.get("email"),
+        nextApiUrl: getApiUrl(),
+        requestUrl: `${getApiUrl()}/users`,
+      },
+      error,
+    });
+
     if (error instanceof Error && error.message === "NEXT_REDIRECT") {
       throw error;
     }
