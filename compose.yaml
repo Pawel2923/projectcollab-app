@@ -16,6 +16,16 @@ services:
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://api/.well-known/mercure}
       MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}/.well-known/mercure}
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-"%kernel.project_dir%/config/jwt/private.pem"}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-"%kernel.project_dir%/config/jwt/public.pem"}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-!ChangeThisJWTKeyPassphrase!}
+      MESSENGER_TRANSPORT_DSN: ${MESSENGER_TRANSPORT_DSN:-doctrine://default?auto_setup=0}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
+      MICROSOFT_TENANT_ID: ${MICROSOFT_TENANT_ID}
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -33,7 +43,16 @@ services:
   frontend:
     image: ${IMAGES_PREFIX:-}app-frontend
     environment:
-      NEXT_PUBLIC_ENTRYPOINT: http://api
+      AUTH_URL: ${AUTH_URL:-https://localhost}
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET not set}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
+      MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
+      MICROSOFT_TENANT_ID: ${MICROSOFT_TENANT_ID}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost/core-api}
+      NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
+      NEXT_PUBLIC_MERCURE_URL: ${NEXT_PUBLIC_MERCURE_URL:-https://localhost/.well-known/mercure}
 
   ###> doctrine/doctrine-bundle ###
   database:

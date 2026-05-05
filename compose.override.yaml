@@ -11,6 +11,7 @@ services:
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      MAILER_DSN: smtp://localhost:1025
     extra_hosts:
       - host.docker.internal:host-gateway
     tty: true
@@ -22,8 +23,6 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://api
-      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
       WATCHPACK_POLLING: "true"
 
   database:
