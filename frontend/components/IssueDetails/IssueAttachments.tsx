@@ -7,7 +7,6 @@ import { deleteAttachment } from "@/actions/issue/deleteAttachment";
 import { uploadAttachment } from "@/actions/issue/uploadAttachment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import type { IssueDetails } from "@/types/api/issue";
-import { getApiUrl } from "@/utils/get-api-url";
 import { extractIdFromIri } from "@/utils/iri-util";
 
 import {
@@ -116,7 +115,7 @@ export function IssueAttachments({ issue }: IssueAttachmentsProps) {
                 {attachments.map((attachment) => {
                   const id = extractIdFromIri(attachment["@id"]);
                   const fileName = attachment.path.split("/").pop();
-                  const apiUrl = getApiUrl() || "";
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
                   const fileUrl = `${apiUrl}${attachment.path}`;
 
                   return (
