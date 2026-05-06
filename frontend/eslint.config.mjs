@@ -1,4 +1,5 @@
 import { FlatCompat } from "@eslint/eslintrc";
+import nextPlugin from "@next/eslint-plugin-next";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -53,6 +54,7 @@ const eslintConfig = defineConfig([
       },
     },
     plugins: {
+      "@next/next": nextPlugin,
       "@typescript-eslint": tsPlugin,
       "unused-imports": unusedImports,
       import: importPlugin,
@@ -62,6 +64,7 @@ const eslintConfig = defineConfig([
       boundaries,
     },
     rules: {
+      ...nextPlugin.configs.recommended.rules,
       "@typescript-eslint/no-deprecated": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
