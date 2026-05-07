@@ -1,6 +1,6 @@
 services:
   api:
-    image: ${IMAGES_PREFIX:-}app-api
+    image: ${IMAGES_PREFIX:-}projectcollab-api:${IMAGES_TAG:-latest}
     depends_on:
       - database
       - redis
@@ -42,7 +42,7 @@ services:
         protocol: udp
 
   frontend:
-    image: ${IMAGES_PREFIX:-}app-frontend
+    image: ${IMAGES_PREFIX:-}projectcollab-frontend:${IMAGES_TAG:-latest}
     environment:
       AUTH_URL: ${AUTH_URL:-https://localhost}
       AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET not set}
@@ -51,7 +51,6 @@ services:
       MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
       MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
       MICROSOFT_TENANT_ID: ${MICROSOFT_TENANT_ID}
-      # // TODO: Fix API URL and HTTPS
       API_URL: ${API_URL:-http://api/core-api}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost/core-api}
       NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
