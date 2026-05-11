@@ -43,6 +43,11 @@ services:
 
   frontend:
     image: ${IMAGES_PREFIX:-}projectcollab-frontend:${IMAGES_TAG:-latest}
+    build:
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost/core-api}
+        NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
+        NEXT_PUBLIC_MERCURE_URL: ${NEXT_PUBLIC_MERCURE_URL:-https://localhost/.well-known/mercure}
     environment:
       AUTH_URL: ${AUTH_URL:-https://localhost}
       AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET not set}

@@ -20,6 +20,13 @@ RUN npm install -g corepack@latest && \
 # Delete the following line in case you want to enable telemetry during dev and build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_ROUTE_PREFIX
+ARG NEXT_PUBLIC_MERCURE_URL
+
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_API_ROUTE_PREFIX=${NEXT_PUBLIC_API_ROUTE_PREFIX}
+ENV NEXT_PUBLIC_MERCURE_URL=${NEXT_PUBLIC_MERCURE_URL}
 
 # Development image
 FROM base as dev
