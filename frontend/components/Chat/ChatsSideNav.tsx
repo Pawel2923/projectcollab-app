@@ -12,7 +12,6 @@ interface ChatsSideNavProps {
   organizationId: string;
   currentUserId: number;
   initialChats: Chat[];
-  mercureUrl: string;
   directChatsExpanded: boolean;
   groupChatsExpanded: boolean;
   isSideNavExpanded?: boolean;
@@ -22,7 +21,6 @@ export function ChatsSideNav({
   organizationId,
   currentUserId,
   initialChats,
-  mercureUrl,
   directChatsExpanded,
   groupChatsExpanded,
   isSideNavExpanded,
@@ -38,7 +36,6 @@ export function ChatsSideNav({
     organizationId,
     currentUserId,
     initialChats,
-    mercureUrl,
   });
 
   const groupedChats = categorizeChatsByType(

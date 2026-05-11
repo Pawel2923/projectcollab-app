@@ -19,7 +19,6 @@ interface ChatWindowProps {
   chatId: string;
   initialMessages: Message[];
   currentUserId: string;
-  mercureUrl: string;
   initialDate: string;
   totalChatMessages: number;
   organizationId: string;
@@ -31,7 +30,6 @@ export function ChatWindow({
   chatId,
   initialMessages,
   currentUserId,
-  mercureUrl,
   initialDate,
   totalChatMessages,
   organizationId,
@@ -67,7 +65,6 @@ export function ChatWindow({
   }, [initialMessages, initialDate, totalChatMessages]);
 
   useMercureObserver<Message>({
-    hubUrl: mercureUrl,
     topics: [`/chats/${chatId}`],
     onUpdate: (data) => {
       let messageData = data;

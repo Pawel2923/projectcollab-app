@@ -108,10 +108,6 @@ export default async function ChatsLayout({
     isSideNavExpanded = true;
   }
 
-  const mercureUrl =
-    process.env.NEXT_PUBLIC_MERCURE_URL ||
-    "http://localhost/.well-known/mercure";
-
   return (
     <div className="grid grid-rows-[auto_auto_1fr] md:grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[auto_1fr] min-h-screen">
       <TopNav
@@ -125,7 +121,6 @@ export default async function ChatsLayout({
           organizationId={organizationId}
           currentUserId={currentUserId || 0}
           initialChats={chats}
-          mercureUrl={mercureUrl}
           directChatsExpanded={directChatsExpanded}
           groupChatsExpanded={groupChatsExpanded}
           isSideNavExpanded={isSideNavExpanded}

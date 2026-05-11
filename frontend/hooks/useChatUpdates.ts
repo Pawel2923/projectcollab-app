@@ -16,7 +16,6 @@ interface UseChatUpdatesOptions {
   organizationId: string;
   currentUserId: number;
   initialChats: Chat[];
-  mercureUrl: string;
 }
 
 interface UseChatUpdatesReturn {
@@ -32,7 +31,6 @@ export function useChatUpdates({
   organizationId,
   currentUserId,
   initialChats,
-  mercureUrl,
 }: UseChatUpdatesOptions): UseChatUpdatesReturn {
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +82,6 @@ export function useChatUpdates({
   };
 
   useMercureObserver<Chat>({
-    hubUrl: mercureUrl,
     topics: [`/users/${currentUserId}/chats`],
     onUpdate: handleUpdate,
   });

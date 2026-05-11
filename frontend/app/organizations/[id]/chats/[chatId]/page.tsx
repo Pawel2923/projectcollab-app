@@ -63,10 +63,6 @@ export default async function ChatPage({
     const messages = messagesResponse.data?.member || [];
     const totalMessagesCount = totalCountResponse.data?.totalItems || 0;
 
-    const mercureUrl =
-      process.env.NEXT_PUBLIC_MERCURE_URL ||
-      "http://localhost/.well-known/mercure";
-
     return (
       <ErrorBoundary>
         <ChatWindow
@@ -74,7 +70,6 @@ export default async function ChatPage({
           chatId={chat.id.toString()}
           initialMessages={messages}
           currentUserId={user.id.toString()}
-          mercureUrl={mercureUrl}
           initialDate={todayIso}
           totalChatMessages={totalMessagesCount}
           organizationId={organizationId}

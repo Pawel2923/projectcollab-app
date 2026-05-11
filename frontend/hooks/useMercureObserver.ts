@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface UseMercureObserverOptions<T = unknown> {
-  hubUrl?: string;
   topics: string[];
   onUpdate?: (data: T) => void;
 }
@@ -17,7 +16,6 @@ import {
 const MAX_RETRIES = 5;
 
 export function useMercureObserver<T = unknown>({
-  hubUrl,
   topics,
   onUpdate,
 }: UseMercureObserverOptions<T>) {
@@ -44,11 +42,14 @@ export function useMercureObserver<T = unknown>({
       handleSessionExpired();
       return;
     }
-    const url = new URL(
-      hubUrl ||
-        process.env.NEXT_PUBLIC_MERCURE_URL ||
-        "http://localhost:80/.well-known/mercure",
-    );
+
+    const hubUrl = process.env.NEXT_PUBLIC_MERCURE_URL;
+    if (!hubUrl) {
+      throw new Error(
+        "NEXT_PUBLIC_MERCURE_URL environment variable is not set",
+      );
+    }
+    const url = new URL(hubUrl);
 
     topics.forEach((topic) => {
       url.searchParams.append("topic", topic);
@@ -112,5 +113,5 @@ export function useMercureObserver<T = unknown>({
       eventSource.close();
       eventSourceRef.current = null;
     };
-  }, [hubUrl, topicsStr, router, retryCount, topics]);
+  }, [topicsStr, router, retryCount, topics]);
 }
