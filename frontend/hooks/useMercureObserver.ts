@@ -12,6 +12,7 @@ import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
+import { getMercureUrl } from "@/utils/client-env-utils";
 
 const MAX_RETRIES = 5;
 
@@ -43,13 +44,7 @@ export function useMercureObserver<T = unknown>({
       return;
     }
 
-    const hubUrl = process.env.NEXT_PUBLIC_MERCURE_URL;
-    if (!hubUrl) {
-      throw new Error(
-        "NEXT_PUBLIC_MERCURE_URL environment variable is not set",
-      );
-    }
-    const url = new URL(hubUrl);
+    const url = new URL(getMercureUrl());
 
     topics.forEach((topic) => {
       url.searchParams.append("topic", topic);

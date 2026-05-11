@@ -45,7 +45,7 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
   try {
     const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
-      console.error("NEXT_PUBLIC_API_URL is not defined");
+      console.error("Server config error: NEXT_PUBLIC_API_URL is not set");
       return emptyResults;
     }
 

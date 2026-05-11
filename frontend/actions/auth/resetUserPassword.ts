@@ -39,7 +39,6 @@ export default async function resetUserPassword(
 
     const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
-      console.error("Server config error: NEXT_PUBLIC_API_URL is not set");
       return {
         ok: false,
         code: "SERVER_CONFIG_ERROR",

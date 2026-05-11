@@ -38,6 +38,7 @@ import {
   getReports,
 } from "@/services/report/report-service";
 import type { Report } from "@/types/api/report";
+import { getApiUrlForClient } from "@/utils/client-env-utils";
 
 export function ReportsTab() {
   const params = useParams();
@@ -239,7 +240,7 @@ export function ReportsTab() {
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <a
-                              href={`${process.env.NEXT_PUBLIC_API_URL}${report.fileUrl}`}
+                              href={`${getApiUrlForClient()}${report.fileUrl}`}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
