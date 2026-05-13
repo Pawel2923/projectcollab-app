@@ -22,53 +22,61 @@ opracowana na pracę inżynierską.
 
 ### Przed uruchomieniem
 
-**Narzędzia**
+**Wymagane narzędzia**
 
 - [Docker](https://www.docker.com/)
 - [Node.js (wersja 22 lub nowsza)](https://nodejs.org/en/download)
 
 **Zmienne środowiskowe**
 
-Należy odpowiednio skonfigurować zmienne środowiskowe dla aplikacji, aby mogła prawidłowo działać.
-Szczegółowe nazwy zmiennych znajdziesz w plikach `.env` w głównym katalogu, a także `api` i `frontend`.
+Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` w głównym katalogu projektu. Dokumentacja zmiennych znajduje się w pliku `.env.example`.
 
 ### Instrukcja uruchomienia aplikacji
 
-1. Budowa i uruchamianie wersji dev:
+#### Wersja development
+
+1. Budowa i uruchamianie wersji:
 
 ```bash
 docker compose up --build --wait
 ```
 
-2. Wygeneruj klucz dla lexik:
+2. <a id="dev-step-2"></a>Wygeneruj klucz dla pakietu `lexik`:
 
 ```bash
 docker compose exec api php bin/console lexik:jwt:generate-keypair
 ```
-
-3. Wszystkie serwisy powinny być uruchomione. 
-
-- Dostęp do aplikacji znajduje się pod adresem [http://localhost](http://localhost). 
-- Dokumentacja OpenAPI jest dostępna pod adresem [http://localhost/docs](http://localhost/docs).
-
-4. Zatrzymywanie aplikacji
+3. Zatrzymanie działania aplikacji
 
 ```bash
 docker compose stop
 ```
+#### Wersja production
 
-Dla wersji produkcyjnej i staging należy skonfigurować pod te środowiska odpowiednie zmienne. Uruchamianie prod i staging odpowiednio:
+> Przed budową obrazu wersji production i uruchomieniem aplikacji, upewnij się, że skonfigurowano zmienne środowiskowe dla środowiska production w pliku `.env`.
+
+1. Budowa wersji:
 
 ```bash
-docker compose -f compose.yml -f compose.prod.yml up --wait
-docker compose -f compose.yml -f compose.staging.yml up --wait
+docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
 ```
 
+2. Uruchomienie aplikacji:
+
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml up --wait --no-build
+```
+
+3. Generowanie klucza dla pakietu `lexik`, tak samo jak w wersji development ([generowanie klucza](#dev-step-2)).
+
+```bash
+docker compose exec api php bin/console lexik:jwt:generate-keypair
+```
 Dodatkowe informacje
 
 - Upewnij się, że porty `80`, `443` oraz `5432` nie są zajęte przez inne aplikacje.
 - Dane przechowywane w bazie danych są utrwalone w wolumenie Dockera.
-- Szyfrowane hasła zależne są od wygenerowanych kluczy, ponowne budowanie obrazów, może uniemożliwić na ponowne logowanie. W logach serwisu `api` będzie wtedy widoczny wyjątek z LexikJWTAuthenticationBundle. Należy użyć nowych kluczy do szyfrowania haseł użytkowników.
+- Mogą wystąpić błędy podczas logowania, co widać w logach serwisu `api` wyjątek z pakietu LexikJWTAuthenticationBundle. Aby naprawić ten problem, wygeneruj klucze JWT.
 - Wczytywanie przykładowych danych do aplikacji:
 
 ```bash
