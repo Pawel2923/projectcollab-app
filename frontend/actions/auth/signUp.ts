@@ -59,12 +59,15 @@ export default async function signUp(
       return handleApiError({ ...data, status: res.status }, "Create user");
     }
 
-    // Automatically log in the user after successful registration
     return await login(null, {
       email,
       password,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
+
     console.error("signUp serverAction error occured:", {
       context: {
         email: formData.get("email"),
@@ -74,9 +77,6 @@ export default async function signUp(
       error,
     });
 
-    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
-      throw error;
-    }
     return handleApiError(error, "Create user");
   }
 }
