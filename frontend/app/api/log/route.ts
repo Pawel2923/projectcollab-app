@@ -15,27 +15,36 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return new NextResponse(null, { status: 204 });
     }
 
-    if (result.error instanceof AppError) {
-      logError(result.error);
-      return NextResponse.json(result.error, { status: result.error.status });
-    }
-
-    return NextResponse.json(createAndLogUnknownAppError(), { status: 500 });
+    logError(result.error);
+    return NextResponse.json(
+      {
+        code: result.error.code,
+        message: result.error.message,
+      },
+      { status: result.error.status },
+    );
   } catch (error) {
-    return NextResponse.json(createAndLogUnknownAppError(error), { status: 500 });
+    const unknownAppError = createAndLogUnknownAppError(error);
+    return NextResponse.json(
+      {
+        code: unknownAppError.code,
+        message: unknownAppError.message,
+      },
+      { status: unknownAppError.status },
+    );
   }
 }
 
-function createAndLogUnknownAppError(error?: unknown): AppError {
-    const appError = new AppError({
-      code: "UNKNOWN_ERROR",
-      message: "An unknown error occurred while processing the log entry.",
-      status: 500,
-      severity: "error",
-      context: "Error in POST /api/log",
-      originalError: error,
-    });
-    logError(appError);
+function createAndLogUnknownAppError(error: unknown): AppError {
+  const appError = new AppError({
+    code: "UNKNOWN_ERROR",
+    message: "An unknown error occurred while processing the log entry.",
+    status: 500,
+    severity: "error",
+    context: "Error in POST /api/log",
+    originalError: error,
+  });
+  logError(appError);
 
-    return appError;
+  return appError;
 }
