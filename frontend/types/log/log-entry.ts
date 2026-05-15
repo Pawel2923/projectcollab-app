@@ -11,5 +11,5 @@ export interface LogEntry {
   requestId?: string;
   userId?: string;
   statusCode?: number;
-  environment?: "dev" | "staging" | "prod";
+  environment?: "development" | "production" | "test";
 }

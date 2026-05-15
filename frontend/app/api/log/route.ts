@@ -18,7 +18,7 @@ const logEntrySchema = z.object({
   requestId: z.string().optional(),
   userId: z.string().optional(),
   statusCode: z.number().int().optional(),
-  environment: z.enum(["dev", "staging", "prod"]).optional(),
+  environment: z.enum(["development", "production", "test"]).optional(),
 }) satisfies z.ZodType<LogEntry>;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
