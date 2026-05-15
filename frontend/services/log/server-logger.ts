@@ -1,67 +1,36 @@
 import "server-only";
 
+import type { LogEntry } from "@/types/log/log-entry";
 import type { Result } from "@/utils/result";
-import { Err, isOk, Ok } from "@/utils/result";
+import { Err, Ok } from "@/utils/result";
 
 import { AppError } from "../error/app-error";
 
-interface LogEntry {
-  level: "info" | "warn" | "debug" | "error";
-  message: string;
-  context?: object;
-  timestamp?: Date;
-  source?: string;
+interface ServerLogEntry extends LogEntry {
+  timestamp: string;
 }
 
 export async function logToServer(
-  body: LogEntry | AppError | unknown,
+  logEntryData: LogEntry,
 ): Promise<Result<null, AppError>> {
-  const parseResult = parseBody(body);
-  if (!isOk(parseResult)) {
-    return Err(parseResult.error);
-  }
-
-  const logResult = writeLogEntryToStdout(parseResult.value);
-  if (!isOk(logResult)) {
-    return Err(logResult.error);
-  }
-
-  return Ok(null);
-}
-
-function parseBody(body: unknown): Result<LogEntry, AppError> {
-  if (body instanceof AppError) {
-    return Ok({
-      level: "error",
-      message: body.message,
-      context: body,
-      timestamp: body.timestamp || new Date(),
-      source: "logToServer",
-    });
-  } else if (typeof body === "object" && body !== null) {
-    return Ok({
-      level: "info",
-      message: "Log entry",
-      context: body,
-      timestamp: new Date(),
-      source: "logToServer",
-    });
-  } else {
-    return Err(
-      new AppError({
-        message: "Invalid log entry format",
-        code: "VALIDATION_ERROR",
-        status: 400,
-        severity: "warning",
-      }),
-    );
-  }
-}
-
-function writeLogEntryToStdout(entry: LogEntry): Result<null, AppError> {
   try {
-    const ndjson = JSON.stringify(entry) + "\n";
+    const finalEntry: ServerLogEntry = {
+      level: logEntryData.level,
+      message: logEntryData.message,
+      serviceName: logEntryData.serviceName || "unknown",
+      context: logEntryData.context,
+      errorCode: logEntryData.errorCode,
+      errorStack: logEntryData.errorStack,
+      requestId: logEntryData.requestId,
+      userId: logEntryData.userId,
+      statusCode: logEntryData.statusCode,
+      environment: logEntryData.environment || process.env.NODE_ENV || "development",
+      timestamp: new Date().toISOString(),
+    };
+    const ndjson = `${JSON.stringify(finalEntry)}\n`;
+
     process.stdout.write(ndjson);
+
     return Ok(null);
   } catch (error) {
     return Err(
