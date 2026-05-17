@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const { logToServerMock, logErrorMock } = vi.hoisted(() => ({
-  logToServerMock: vi.fn(),
+const { validateAndLogMock, logErrorMock } = vi.hoisted(() => ({
+  validateAndLogMock: vi.fn(),
   logErrorMock: vi.fn(),
 }));
 
@@ -10,7 +10,7 @@ vi.mock("@/services/error/error-logger", () => ({
 }));
 
 vi.mock("@/services/log/server-logger", () => ({
-  logToServer: logToServerMock,
+  validateAndLog: validateAndLogMock,
 }));
 
 import { POST } from "./route";
@@ -20,8 +20,8 @@ describe("/api/log route", () => {
     vi.clearAllMocks();
   });
 
-  test("should call logToServer and return 204 with valid log entry", async () => {
-    logToServerMock.mockResolvedValueOnce({ ok: true, value: null });
+  test("should call validateAndLog and return 204 with valid log entry", async () => {
+    validateAndLogMock.mockResolvedValueOnce({ ok: true, value: null });
 
     const request = {
       json: vi.fn().mockResolvedValue({
@@ -33,8 +33,8 @@ describe("/api/log route", () => {
 
     const response = await POST(request as never);
 
-    expect(logToServerMock).toHaveBeenCalledOnce();
-    expect(logToServerMock).toHaveBeenCalledWith({
+    expect(validateAndLogMock).toHaveBeenCalledOnce();
+    expect(validateAndLogMock).toHaveBeenCalledWith({
       level: "info",
       message: "Test log message",
       serviceName: "frontend",
@@ -45,6 +45,15 @@ describe("/api/log route", () => {
   });
 
   test("should return 400 and log validation error when log entry is invalid", async () => {
+    validateAndLogMock.mockResolvedValueOnce({
+      ok: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Invalid log entry format",
+        status: 400,
+      }
+    });
+
     const request = {
       json: vi.fn().mockResolvedValue({
         level: "info",
@@ -53,7 +62,7 @@ describe("/api/log route", () => {
 
     const response = await POST(request as never);
 
-    expect(logToServerMock).not.toHaveBeenCalled();
+    expect(validateAndLogMock).toHaveBeenCalled();
     expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({
@@ -63,7 +72,7 @@ describe("/api/log route", () => {
   });
 
   test("should return error if logToServer returns an error", async () => {
-    logToServerMock.mockResolvedValueOnce({
+    validateAndLogMock.mockResolvedValueOnce({
       ok: false,
       error: {
         code: "UNKNOWN_ERROR",
@@ -81,7 +90,7 @@ describe("/api/log route", () => {
 
     const response = await POST(request as never);
 
-    expect(logToServerMock).toHaveBeenCalledOnce();
+    expect(validateAndLogMock).toHaveBeenCalledOnce();
     expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
@@ -97,7 +106,7 @@ describe("/api/log route", () => {
 
     const response = await POST(request as never);
 
-    expect(logToServerMock).not.toHaveBeenCalled();
+    expect(validateAndLogMock).not.toHaveBeenCalled();
     expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
