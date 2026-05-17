@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const { validateAndLogMock, logErrorMock } = vi.hoisted(() => ({
+const { validateAndLogMock } = vi.hoisted(() => ({
   validateAndLogMock: vi.fn(),
-  logErrorMock: vi.fn(),
-}));
-
-vi.mock("@/services/error/error-logger", () => ({
-  logError: logErrorMock,
 }));
 
 vi.mock("@/services/log/server-logger", () => ({
@@ -39,7 +34,6 @@ describe("/api/log route", () => {
       message: "Test log message",
       serviceName: "frontend",
     });
-    expect(logErrorMock).not.toHaveBeenCalled();
     expect(response.status).toBe(204);
     expect(await response.text()).toBe("");
   });
@@ -63,7 +57,6 @@ describe("/api/log route", () => {
     const response = await POST(request as never);
 
     expect(validateAndLogMock).toHaveBeenCalled();
-    expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({
       code: "VALIDATION_ERROR",
@@ -91,7 +84,6 @@ describe("/api/log route", () => {
     const response = await POST(request as never);
 
     expect(validateAndLogMock).toHaveBeenCalledOnce();
-    expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
       code: "UNKNOWN_ERROR",
@@ -107,7 +99,6 @@ describe("/api/log route", () => {
     const response = await POST(request as never);
 
     expect(validateAndLogMock).not.toHaveBeenCalled();
-    expect(logErrorMock).toHaveBeenCalledOnce();
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
       code: "UNKNOWN_ERROR",

@@ -71,14 +71,15 @@ export async function logToServer(
 
     return Ok(null);
   } catch (error) {
-    return Err(
-      new AppError({
-        message: "Failed to write log entry to stdout",
-        code: "UNKNOWN_ERROR",
-        status: 500,
-        severity: "error",
-        originalError: error,
-      }),
-    );
+    const unknownAppError = new AppError({
+      message: "Failed to write log entry to stdout",
+      code: "UNKNOWN_ERROR",
+      status: 500,
+      severity: "error",
+      originalError: error,
+    });
+
+    logError(unknownAppError);
+    return Err(unknownAppError);
   }
 }
