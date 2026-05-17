@@ -1,10 +1,77 @@
-import { afterEach,beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import type { LogEntry } from "@/types/log/log-entry";
 import { match } from "@/utils/result";
 
 import { AppError } from "../error/app-error";
-import { logToServer } from "./server-logger";
+import * as errorLogger from "../error/error-logger";
+import { logToServer, validateAndLog } from "./server-logger";
+
+describe("validateAndLog", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("should call logToServer with valid log entry and return Ok result", async () => {
+    const stdoutWriteSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
+
+    const logEntry: LogEntry = {
+      level: "info",
+      message: "Valid message",
+      serviceName: "test-service",
+    };
+
+    match(await validateAndLog(logEntry), {
+      ok: (value) => {
+        expect(value).toBeNull();
+        expect(stdoutWriteSpy).toHaveBeenCalled();
+      },
+      err: () => {
+        expect.fail("Expected validateAndLog to return Ok result");
+      },
+    });
+  });
+
+  test("should logError and return Err result when log entry validation fails", async () => {
+    const logErrorSpy = vi.spyOn(errorLogger, "logError").mockImplementation(() => undefined);
+
+    const invalidBody = { unexpected: true };
+
+    match(await validateAndLog(invalidBody), {
+      ok: () => {
+        expect.fail("Expected validateAndLog to return Err result");
+      },
+      err: (error) => {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe("VALIDATION_ERROR");
+        expect(logErrorSpy).toHaveBeenCalled();
+      },
+    });
+  });
+
+  test("should return Err result with AppError if logToServer returns an error", async () => {
+    vi.spyOn(process.stdout, "write").mockImplementation(() => {
+      throw new Error("Write failed");
+    });
+
+    const logEntry: LogEntry = {
+      level: "error",
+      message: "Will fail to write",
+      serviceName: "test-service",
+    };
+
+    match(await validateAndLog(logEntry), {
+      ok: () => {
+        expect.fail("Expected validateAndLog to return Err result");
+      },
+      err: (error) => {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toBe("Failed to write log entry to stdout");
+        expect(error.code).toBe("UNKNOWN_ERROR");
+      },
+    });
+  });
+});
 
 describe("logToServer", () => {
   let stdoutWriteSpy: ReturnType<typeof vi.spyOn>;
