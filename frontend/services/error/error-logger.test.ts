@@ -1,13 +1,9 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import { AppError } from "./app-error";
 import { logError } from "./error-logger";
 
 describe("error-logger", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("should log error to stdout in NDJSON format", () => {
     const stdoutWriteSpy = vi
       .spyOn(process.stdout, "write")

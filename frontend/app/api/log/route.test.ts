@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const { validateAndLogMock } = vi.hoisted(() => ({
   validateAndLogMock: vi.fn(),
@@ -11,10 +11,6 @@ vi.mock("@/services/log/server-logger", () => ({
 import { POST } from "./route";
 
 describe("/api/log route", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("should call validateAndLog and return 204 with valid log entry", async () => {
     validateAndLogMock.mockResolvedValueOnce({ ok: true, value: null });
 

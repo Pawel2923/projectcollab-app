@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import type { LogEntry } from "@/types/log/log-entry";
 import { match } from "@/utils/result";
@@ -8,10 +8,6 @@ import * as errorLogger from "../error/error-logger";
 import { logToServer, validateAndLog } from "./server-logger";
 
 describe("validateAndLog", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("should call logToServer with valid log entry and return Ok result", async () => {
     const stdoutWriteSpy = vi
       .spyOn(process.stdout, "write")
@@ -87,10 +83,6 @@ describe("logToServer", () => {
 
   beforeEach(() => {
     stdoutWriteSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   test("should write log entry to stdout in NDJSON format", async () => {
