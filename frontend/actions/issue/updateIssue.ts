@@ -363,7 +363,7 @@ export default async function updateIssue(
             createdTagIris.push(createdTag["@id"]);
           }
         } catch (error) {
-          console.error("Failed to create new tag:", error);
+          handleApiError(error, "Create new tag for issue update");
         }
       }
     }

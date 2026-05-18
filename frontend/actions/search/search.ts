@@ -1,6 +1,7 @@
 "use server";
 
 import { getAccessToken } from "@/services/auth/token-service";
+import { handleApiError } from "@/services/error/api-error-handler";
 import { getApiUrl } from "@/utils/get-api-url";
 
 export type SearchResults = {
@@ -45,13 +46,13 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
   try {
     const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
-      console.error("Server config error: NEXT_PUBLIC_API_URL is not set");
+      handleApiError(new Error("NEXT_PUBLIC_API_URL is not set"), "Search");
       return emptyResults;
     }
 
     const token = await getAccessToken(nextApiUrl);
     if (!token) {
-      console.error("No access token available for search");
+      handleApiError(new Error("Unauthorized"), "Search");
       return emptyResults;
     }
 
@@ -68,14 +69,14 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
     );
 
     if (!response.ok) {
-      console.error(`Search failed with status: ${response.status}`);
+      handleApiError(new Error(`Search API error: ${response.statusText}`), "Search");
       return emptyResults;
     }
 
     const data = await response.json();
     return data as SearchResults;
   } catch (error) {
-    console.error("Search error:", error);
+    handleApiError(error, "Search");
     return emptyResults;
   }
 }

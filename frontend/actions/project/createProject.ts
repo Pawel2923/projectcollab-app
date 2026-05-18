@@ -86,7 +86,6 @@ export default async function createProject(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create project failed:", res.status, data);
       return handleApiError({ ...data, status: res.status }, "Create project");
     }
 

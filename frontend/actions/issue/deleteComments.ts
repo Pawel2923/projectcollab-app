@@ -57,7 +57,6 @@ export default async function deleteComment(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Delete comment failed:", res.status, data);
       return handleApiError(data, "Delete comment");
     }
 

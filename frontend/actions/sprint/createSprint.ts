@@ -136,7 +136,6 @@ export default async function createSprint(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create sprint failed:", res.status, data);
       return handleApiError({ ...data, status: res.status }, "Create sprint");
     }
 

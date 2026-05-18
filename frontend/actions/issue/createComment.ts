@@ -81,7 +81,6 @@ export default async function createComment(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create comment failed:", res.status, data);
       return handleApiError(data, "Create comment");
     }
 

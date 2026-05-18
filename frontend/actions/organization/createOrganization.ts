@@ -77,7 +77,6 @@ export default async function createOrganization(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create organization failed:", res.status, data);
       return handleApiError(
         { ...data, status: res.status },
         "Create organization",

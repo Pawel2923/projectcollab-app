@@ -109,7 +109,6 @@ export default async function updateSprintStatus(
     const updatedSprint: Sprint = await res.json();
 
     if (!res.ok) {
-      console.error("Update sprint failed:", res.status, updatedSprint);
       return handleApiError(updatedSprint, "Update sprint");
     }
 
@@ -122,7 +121,6 @@ export default async function updateSprintStatus(
       content: updatedSprint,
     };
   } catch (error) {
-    console.log(error);
     return handleApiError(error, "Update sprint");
   }
 }

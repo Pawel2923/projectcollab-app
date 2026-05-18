@@ -119,8 +119,6 @@ export default async function createIssue(
       requestBody.relatedIssues = validated.data.relatedIssues;
     }
 
-    console.log("Issue create request body:", requestBody);
-
     const res = await fetch(`${nextApiUrl}/issues`, {
       method: "POST",
       headers: {
@@ -134,7 +132,6 @@ export default async function createIssue(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create issue failed:", res.status, data);
       return handleApiError({ ...data, status: res.status }, "Create issue");
     }
 

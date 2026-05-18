@@ -39,8 +39,6 @@ export default async function syncCalendar(
     };
   }
 
-  console.log("Syncing calendar with body: ", JSON.stringify(params));
-
   const response = await fetch(`${nextApiUrl}/calendar/sync`, {
     method: "POST",
     headers: {

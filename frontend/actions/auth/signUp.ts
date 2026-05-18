@@ -55,7 +55,6 @@ export default async function signUp(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Create user failed:", res.status, data);
       return handleApiError({ ...data, status: res.status }, "Create user");
     }
 
@@ -67,15 +66,6 @@ export default async function signUp(
     if (error instanceof Error && error.message === "NEXT_REDIRECT") {
       throw error;
     }
-
-    console.error("signUp serverAction error occured:", {
-      context: {
-        email: formData.get("email"),
-        nextApiUrl: getApiUrl(),
-        requestUrl: `${getApiUrl()}/users`,
-      },
-      error,
-    });
 
     return handleApiError(error, "Create user");
   }

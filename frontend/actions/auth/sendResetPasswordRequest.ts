@@ -56,7 +56,6 @@ export default async function sendResetPasswordRequest(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Reset password request failed:", res.status, data);
       const handledError = handleApiError(data, "Send reset password request");
       return {
         ...handledError,

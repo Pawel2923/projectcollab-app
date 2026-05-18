@@ -28,7 +28,6 @@ export default async function resetUserPassword(
     });
 
     if (!validated.success) {
-      console.error("Validation error", validated.error);
       return {
         ok: false,
         code: "VALIDATION_ERROR",
@@ -61,7 +60,6 @@ export default async function resetUserPassword(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Reset password failed:", res.status, data);
       return handleApiError(data, "Reset password");
     }
 

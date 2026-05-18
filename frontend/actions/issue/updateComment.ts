@@ -78,7 +78,6 @@ export default async function createComment(
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error("Update comment failed:", res.status, data);
       return handleApiError(data, "Update comment");
     }
 
