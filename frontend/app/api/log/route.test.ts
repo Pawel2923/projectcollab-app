@@ -45,7 +45,7 @@ describe("/api/log route", () => {
         code: "VALIDATION_ERROR",
         message: "Invalid log entry format",
         status: 400,
-      }
+      },
     });
 
     const request = {

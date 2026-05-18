@@ -69,7 +69,10 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
     );
 
     if (!response.ok) {
-      handleApiError(new Error(`Search API error: ${response.statusText}`), "Search");
+      handleApiError(
+        new Error(`Search API error: ${response.statusText}`),
+        "Search",
+      );
       return emptyResults;
     }
 
