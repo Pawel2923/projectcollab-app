@@ -13,7 +13,9 @@ describe("validateAndLog", () => {
   });
 
   test("should call logToServer with valid log entry and return Ok result", async () => {
-    const stdoutWriteSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
+    const stdoutWriteSpy = vi
+      .spyOn(process.stdout, "write")
+      .mockReturnValue(true);
 
     const logEntry: LogEntry = {
       level: "info",
@@ -32,8 +34,10 @@ describe("validateAndLog", () => {
     });
   });
 
-  test("should logError and return Err result when log entry validation fails", async () => {
-    const logErrorSpy = vi.spyOn(errorLogger, "logError").mockImplementation(() => undefined);
+  test("should call logError and return Err result when log entry validation fails", async () => {
+    const logErrorSpy = vi
+      .spyOn(errorLogger, "logError")
+      .mockImplementation(() => undefined);
 
     const invalidBody = { unexpected: true };
 
@@ -50,6 +54,10 @@ describe("validateAndLog", () => {
   });
 
   test("should return Err result with AppError if logToServer returns an error", async () => {
+    const logErrorSpy = vi
+      .spyOn(errorLogger, "logError")
+      .mockImplementation(() => undefined);
+
     vi.spyOn(process.stdout, "write").mockImplementation(() => {
       throw new Error("Write failed");
     });
@@ -68,6 +76,7 @@ describe("validateAndLog", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.message).toBe("Failed to write log entry to stdout");
         expect(error.code).toBe("UNKNOWN_ERROR");
+        expect(logErrorSpy).toHaveBeenCalled();
       },
     });
   });
@@ -129,6 +138,10 @@ describe("logToServer", () => {
   });
 
   test("should return Result with AppError if writing to stdout fails", async () => {
+    const logErrorSpy = vi
+      .spyOn(errorLogger, "logError")
+      .mockImplementation(() => undefined);
+
     stdoutWriteSpy.mockImplementationOnce(() => {
       throw new Error("Write failed");
     });
@@ -147,6 +160,7 @@ describe("logToServer", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.message).toBe("Failed to write log entry to stdout");
         expect(error.code).toBe("UNKNOWN_ERROR");
+        expect(logErrorSpy).toHaveBeenCalled();
       },
     });
   });
