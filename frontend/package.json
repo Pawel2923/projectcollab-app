@@ -11,7 +11,7 @@
     "check-types": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,mjs}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,mjs}\"",
-    "dev-check": "pnpm check-types && pnpm lint:fix && pnpm format",
+    "dev-check": "pnpm check-types && pnpm lint:fix && pnpm format && pnpm vitest run",
     "test": "vitest"
   },
   "dependencies": {
