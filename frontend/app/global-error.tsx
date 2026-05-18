@@ -13,7 +13,24 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Global error:", error);
+    try {
+      fetch("/api/log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify({
+          level: "error",
+          message: error.message,
+          errorCode: error.digest,
+        }),
+      }).catch(() => {
+        console.warn("Failed to log error to server");
+      });
+    } catch (error) {
+      console.warn("Failed to log error to server", error);
+    }
   }, [error]);
 
   return (
