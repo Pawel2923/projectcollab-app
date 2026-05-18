@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { AppError } from "@/services/error/app-error";
 import type { ServerLogEntry } from "@/types/log/log-entry";
 

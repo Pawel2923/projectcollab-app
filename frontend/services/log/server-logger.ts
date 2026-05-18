@@ -1,5 +1,3 @@
-import "server-only";
-
 import { z } from "zod";
 
 import type { LogEntry, ServerLogEntry } from "@/types/log/log-entry";
