@@ -2,16 +2,12 @@ import "server-only";
 
 import { z } from "zod";
 
-import type { LogEntry } from "@/types/log/log-entry";
+import type { LogEntry, ServerLogEntry } from "@/types/log/log-entry";
 import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
 
 import { AppError } from "../error/app-error";
 import { logError } from "../error/error-logger";
-
-interface ServerLogEntry extends LogEntry {
-  timestamp: string;
-}
 
 const logEntrySchema = z.object({
   level: z.enum(["info", "warn", "debug", "error"]),

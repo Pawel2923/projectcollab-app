@@ -13,3 +13,7 @@ export interface LogEntry {
   statusCode?: number;
   environment?: "development" | "production" | "test";
 }
+
+export interface ServerLogEntry extends LogEntry {
+  timestamp: string;
+}
