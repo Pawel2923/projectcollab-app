@@ -4,6 +4,7 @@ import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type {
@@ -137,7 +138,14 @@ export function ActiveFilters() {
         if (typesData) setIssueTypes(typesData.member || []);
         if (resolutionsData) setResolutions(resolutionsData.member || []);
       } catch (error) {
-        console.error("Failed to fetch filter entities:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch filter entities",
+          serviceName: "ActiveFilters",
+          context: {
+            error,
+          },
+        });
       }
     };
 

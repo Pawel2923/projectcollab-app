@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState } from "react";
 
+import { fetchApiLog } from "@/services/log/fetch-api-log";
+
 export type IssueSortOption = {
   sortBy: string;
   sortOrder: "asc" | "desc";
@@ -50,8 +52,17 @@ export function IssuesOptionsProvider({
     setFilterOptionsState(options);
   };
 
-  console.log("IssuesOptionsContext - sortOptions:", sortOptions);
-  console.log("IssuesOptionsContext - filterOptions:", filterOptions);
+  React.useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "IssuesOptionsContext updated",
+      serviceName: "IssuesOptionsContext",
+      context: {
+        sortOptions,
+        filterOptions,
+      },
+    });
+  }, [filterOptions, sortOptions]);
 
   return (
     <IssuesOptionsContext.Provider

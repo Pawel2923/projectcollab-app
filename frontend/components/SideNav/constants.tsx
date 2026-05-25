@@ -5,6 +5,7 @@ import { SettingsIcon } from "@/assets/icons/SettingsIcon";
 import { SprintIcon } from "@/assets/icons/SprintIcon";
 import { StarIcon } from "@/assets/icons/StarIcon";
 import { TableIcon } from "@/assets/icons/TableIcon";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { NavigationItem } from "@/types/ui/navigation-item";
 
 export type ContentType = "project" | "chat";
@@ -26,22 +27,41 @@ export const getNavigationItems = (
   organizationId?: string,
 ): NavigationItem[] => {
   if (!isValidContentType(contentType)) {
-    console.error(`Invalid content type: ${contentType}`);
+    fetchApiLog({
+      level: "error",
+      message: "Invalid content type",
+      serviceName: "SideNavConstants",
+      context: {
+        contentType,
+      },
+    });
     return [];
   }
 
   const getItems = navigationRegistry[contentType];
   if (!getItems) {
-    console.error(
-      `No navigation items registered for content type: ${contentType}`,
-    );
+    fetchApiLog({
+      level: "error",
+      message: "No navigation items registered for content type",
+      serviceName: "SideNavConstants",
+      context: {
+        contentType,
+      },
+    });
     return [];
   }
 
   if (!contentId || !organizationId) {
-    console.warn(
-      `Missing required parameters for ${contentType} navigation items`,
-    );
+    fetchApiLog({
+      level: "warn",
+      message: "Missing required parameters for navigation items",
+      serviceName: "SideNavConstants",
+      context: {
+        contentType,
+        contentId,
+        organizationId,
+      },
+    });
     return [];
   }
 

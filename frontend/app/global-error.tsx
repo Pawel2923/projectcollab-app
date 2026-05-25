@@ -18,7 +18,7 @@ export default function GlobalError({
       level: "error",
       message: error.message,
       errorCode: error.digest,
-    })
+    });
   }, [error]);
 
   return (

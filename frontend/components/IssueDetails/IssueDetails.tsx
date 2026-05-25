@@ -29,6 +29,7 @@ import {
   formatEstimatedTime,
   isValidTimeString,
 } from "@/services/issue/issue-date-time-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import type { Collection } from "@/types/api/collection";
 import type { IssueDetails as IssueDetailsType } from "@/types/api/issue";
@@ -225,7 +226,14 @@ export function IssueDetails({
       showSuccess("Zadanie zostało zaktualizowane");
       router.refresh();
     } else if (state?.message && state?.code !== "VALIDATION_ERROR") {
-      console.log("Error state:", state);
+      fetchApiLog({
+        level: "error",
+        message: "IssueDetails mutation returned error state",
+        serviceName: "IssueDetails",
+        context: {
+          state,
+        },
+      });
       const message =
         state.message || getMessageTitle(state.code) || state.code;
       showError(
@@ -269,7 +277,16 @@ export function IssueDetails({
     typeof issue.type === "string" ? issue.type : issue.type["@id"];
   const typeId = extractIdFromIri(typeIri) ?? "";
 
-  console.log(issue);
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "IssueDetails rendered",
+      serviceName: "IssueDetails",
+      context: {
+        issue,
+      },
+    });
+  }, [issue]);
 
   return (
     <>

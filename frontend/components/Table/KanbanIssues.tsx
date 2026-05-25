@@ -4,12 +4,13 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Loader2, XCircle } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { updateIssueStatus } from "@/actions/issue/updateIssueStatus";
 import { useAlert } from "@/hooks/useAlert";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
@@ -38,9 +39,14 @@ export function KanbanIssues({ projectId, issueStatuses }: KanbanIssuesProps) {
   useMercureObserver<Issue>({
     topics: [`/projects/${projectId}/issues`],
     onUpdate: async () => {
-      console.log(
-        "KanbanIssues: Received Mercure update, invalidating queries",
-      );
+      fetchApiLog({
+        level: "debug",
+        message: "KanbanIssues received Mercure update",
+        serviceName: "KanbanIssues",
+        context: {
+          projectId,
+        },
+      });
       await queryClient.invalidateQueries({
         queryKey: ["issues"],
         exact: false,
@@ -48,14 +54,23 @@ export function KanbanIssues({ projectId, issueStatuses }: KanbanIssuesProps) {
     },
   });
 
-  console.log("KanbanIssues render - filterOptions:", filterOptions);
-  console.log("KanbanIssues render - sortOptions:", sortOptions);
-  console.log("KanbanIssues render - queryKey will be:", [
-    "issues",
-    projectId,
-    JSON.stringify(sortOptions),
-    JSON.stringify(filterOptions),
-  ]);
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "KanbanIssues render state",
+      serviceName: "KanbanIssues",
+      context: {
+        filterOptions,
+        sortOptions,
+        queryKey: [
+          "issues",
+          projectId,
+          JSON.stringify(sortOptions),
+          JSON.stringify(filterOptions),
+        ],
+      },
+    });
+  }, [filterOptions, projectId, sortOptions]);
 
   const {
     data: issues,

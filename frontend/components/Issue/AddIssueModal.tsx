@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 type AddIssueModalProps = {
   projectId: string;
@@ -84,7 +85,14 @@ export function AddIssueModal({
           );
         }
       } catch (error) {
-        console.error("Failed to fetch issue metadata:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch issue metadata",
+          serviceName: "AddIssueModal",
+          context: {
+            error,
+          },
+        });
         showError(error);
       } finally {
         setLoading(false);

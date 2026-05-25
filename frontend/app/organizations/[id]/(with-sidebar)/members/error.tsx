@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function MembersError({
   error,
@@ -13,7 +14,14 @@ export default function MembersError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Members route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Members route error",
+      serviceName: "MembersError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

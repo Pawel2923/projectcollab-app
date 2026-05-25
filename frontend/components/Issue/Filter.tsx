@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type {
@@ -88,7 +89,14 @@ export function Filter({ projectId }: { projectId?: string | number }) {
         if (typesData) setIssueTypes(typesData.member || []);
         if (resolutionsData) setResolutions(resolutionsData.member || []);
       } catch (error) {
-        console.error("Failed to fetch filter entities:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch filter entities",
+          serviceName: "Filter",
+          context: {
+            error,
+          },
+        });
       } finally {
         setIsLoadingEntities(false);
       }
@@ -98,7 +106,11 @@ export function Filter({ projectId }: { projectId?: string | number }) {
   }, [isOpen, projectId]);
 
   if (!issuesOptions) {
-    console.error("Filter: issuesOptions context is not available");
+    fetchApiLog({
+      level: "error",
+      message: "Filter: issuesOptions context is not available",
+      serviceName: "Filter",
+    });
     return null;
   }
 
@@ -224,7 +236,14 @@ export function Filter({ projectId }: { projectId?: string | number }) {
       value: filterValue,
       operator: filterOperator,
     };
-    console.log("Adding filter:", newFilterOption);
+    fetchApiLog({
+      level: "debug",
+      message: "Adding filter",
+      serviceName: "Filter",
+      context: {
+        newFilterOption,
+      },
+    });
 
     const existingIndex = draftFilters.findIndex(
       (opt) => opt.field === filterField,
@@ -235,11 +254,22 @@ export function Filter({ projectId }: { projectId?: string | number }) {
       const updated = [...draftFilters];
       updated[existingIndex] = newFilterOption;
       setDraftFilters(updated);
-      console.log("Updated existing filter at index", existingIndex);
+      fetchApiLog({
+        level: "debug",
+        message: "Updated existing filter",
+        serviceName: "Filter",
+        context: {
+          existingIndex,
+        },
+      });
     } else {
       // Add new filter
       setDraftFilters([...draftFilters, newFilterOption]);
-      console.log("Added new filter");
+      fetchApiLog({
+        level: "debug",
+        message: "Added new filter",
+        serviceName: "Filter",
+      });
     }
 
     // Reset local state after adding
@@ -249,9 +279,20 @@ export function Filter({ projectId }: { projectId?: string | number }) {
   };
 
   const handleApplyFilters = () => {
-    console.log("handleApplyFilters called with draftFilters:", draftFilters);
+    fetchApiLog({
+      level: "debug",
+      message: "Applying draft filters",
+      serviceName: "Filter",
+      context: {
+        draftFilters,
+      },
+    });
     setFilterOptions(draftFilters);
-    console.log("Filters applied to context");
+    fetchApiLog({
+      level: "debug",
+      message: "Filters applied to context",
+      serviceName: "Filter",
+    });
     setIsOpen(false);
   };
 

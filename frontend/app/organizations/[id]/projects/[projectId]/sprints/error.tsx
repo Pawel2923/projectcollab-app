@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function SprintsError({
   error,
@@ -13,7 +14,14 @@ export default function SprintsError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Sprints route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Sprints route error",
+      serviceName: "SprintsError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

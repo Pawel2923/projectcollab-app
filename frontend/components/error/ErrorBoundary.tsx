@@ -6,6 +6,7 @@ import React, { Component } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AppError } from "@/services/error/app-error";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 import type { ErrorCode } from "@/types/error/error-code";
@@ -34,16 +35,29 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo);
+    fetchApiLog({
+      level: "error",
+      message: "Error caught by boundary",
+      serviceName: "ErrorBoundary",
+      context: {
+        error,
+        errorInfo,
+      },
+    });
 
     // Log AppError details if available
     if (error instanceof AppError) {
-      console.error("AppError details:", {
-        code: error.code,
-        status: error.status,
-        message: error.message,
-        violations: error.violations,
-        context: error.context,
+      fetchApiLog({
+        level: "error",
+        message: "AppError details",
+        serviceName: "ErrorBoundary",
+        context: {
+          code: error.code,
+          status: error.status,
+          message: error.message,
+          violations: error.violations,
+          context: error.context,
+        },
       });
     }
 

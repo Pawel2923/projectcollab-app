@@ -1,9 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { User } from "@/types/api/user";
 import { isOk } from "@/utils/result";
 import { generateUserInitials } from "@/utils/user-initials-generator";
@@ -36,9 +37,17 @@ export function AssigneeAvatar({
     staleTime: 5 * 60 * 1000,
   });
 
-  if (error) {
-    console.error("Failed to load user:", error);
-  }
+  useEffect(() => {
+    if (error) {
+      fetchApiLog({
+        level: "error",
+        message: "Failed to load user for AssigneeAvatar",
+        context: {
+          error,
+        },
+      });
+    }
+  }, [error]);
 
   if (isLoading) {
     return (

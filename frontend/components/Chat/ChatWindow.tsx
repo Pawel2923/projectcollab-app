@@ -7,6 +7,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMentionData } from "@/hooks/useMentionData";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { apiGet } from "@/services/fetch/api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 
@@ -64,15 +65,31 @@ export function ChatWindow({
     setRemainingOlderMessages(Math.max(0, totalChatMessages - loadedCount));
   }, [initialMessages, initialDate, totalChatMessages]);
 
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "ChatWindow updated",
+      serviceName: "ChatWindow",
+      context: {
+        chatId,
+        messages,
+      },
+    });
+  }, [chatId, messages]);
+
   useMercureObserver<Message>({
     topics: [`/chats/${chatId}`],
     onUpdate: (data) => {
       let messageData = data;
       if (messageData.parent && typeof messageData.parent === "object") {
-        console.warn(
-          "Received parent as object, converting to IRI:",
-          messageData.parent,
-        );
+        fetchApiLog({
+          level: "warn",
+          message: "Received parent as object, converting to IRI",
+          serviceName: "ChatWindow",
+          context: {
+            parent: messageData.parent,
+          },
+        });
         messageData = {
           ...messageData,
           parent: (messageData.parent as { "@id": string })["@id"],
@@ -160,7 +177,14 @@ export function ChatWindow({
           return newParents;
         });
       } catch (error) {
-        console.error("Error fetching parent messages:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Error fetching parent messages",
+          serviceName: "ChatWindow",
+          context: {
+            error,
+          },
+        });
       }
     };
 

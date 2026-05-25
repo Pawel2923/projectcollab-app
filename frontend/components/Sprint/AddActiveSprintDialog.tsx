@@ -12,6 +12,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import { AppError } from "@/services/error/app-error";
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Collection } from "@/types/api/collection";
 import type { Sprint } from "@/types/api/sprint";
@@ -99,7 +100,14 @@ export function AddActiveSprintDialog({
 
   // log state changes
   useEffect(() => {
-    console.log(state);
+    fetchApiLog({
+      level: "debug",
+      message: "Sprint activation state changed",
+      serviceName: "AddActiveSprintDialog",
+      context: {
+        state,
+      },
+    });
 
     if (state?.ok) {
       setOpen(false);

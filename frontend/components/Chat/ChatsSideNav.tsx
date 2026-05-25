@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { useChatUpdates } from "@/hooks/useChatUpdates";
 import { categorizeChatsByType } from "@/services/chat/chat-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Chat } from "@/types/api/chat";
 
 interface ChatsSideNavProps {
@@ -25,12 +26,17 @@ export function ChatsSideNav({
   groupChatsExpanded,
   isSideNavExpanded,
 }: ChatsSideNavProps) {
-  console.log(
-    "[ChatsSideNav] Rendered. initialChats length:",
-    initialChats.length,
-    "currentUserId:",
-    currentUserId,
-  );
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "ChatsSideNav rendered",
+      serviceName: "ChatsSideNav",
+      context: {
+        initialChatsLength: initialChats.length,
+        currentUserId,
+      },
+    });
+  }, [currentUserId, initialChats.length]);
 
   const { chats, isLoading } = useChatUpdates({
     organizationId,

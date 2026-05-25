@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
 import { isApiPlatformError } from "@/types/error/api-platform-error";
 
@@ -90,7 +91,14 @@ export function ResendVerifyEmailButton() {
         hasCloseButton: true,
       });
     } catch (error) {
-      console.error("Network error:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Network error while resending verification email",
+        serviceName: "ResendVerifyEmailButton",
+        context: {
+          error,
+        },
+      });
       showError(error);
       setTimer(0);
     } finally {

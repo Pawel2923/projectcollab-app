@@ -32,6 +32,7 @@ import {
   clientApiCall,
   clientApiGet,
 } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Collection } from "@/types/api/collection";
 import type { IssueStatus, IssueType } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
@@ -111,7 +112,14 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
           }
         }
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch data in ColumnSettingsDialog",
+          serviceName: "ColumnSettingsDialog",
+          context: {
+            error,
+          },
+        });
       } finally {
         setLoading(false);
       }
@@ -137,7 +145,14 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
         setNewStatusValue("");
       }
     } catch (error) {
-      console.error("Failed to add status:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to add status",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -161,7 +176,16 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
       );
       setEditingStatusId(null);
     } catch (error) {
-      console.error("Failed to update status:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to update status",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+          id,
+          value,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -176,7 +200,15 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
 
       setIssueStatuses(issueStatuses.filter((s) => s.id !== id));
     } catch (error) {
-      console.error("Failed to delete status:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to delete status",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+          id,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -199,7 +231,14 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
         setNewTypeValue("");
       }
     } catch (error) {
-      console.error("Failed to add type:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to add type",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -223,7 +262,16 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
       );
       setEditingTypeId(null);
     } catch (error) {
-      console.error("Failed to update type:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to update type",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+          id,
+          value,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -238,7 +286,15 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
 
       setIssueTypes(issueTypes.filter((t) => t.id !== id));
     } catch (error) {
-      console.error("Failed to delete type:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to delete type",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+          id,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -255,12 +311,27 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
       const now = new Date();
 
       if (start < now) {
-        console.error("Start date cannot be in the past");
+        fetchApiLog({
+          level: "warn",
+          message: "Start date cannot be in the past",
+          serviceName: "ColumnSettingsDialog",
+          context: {
+            newSprintStartDate,
+          },
+        });
         return;
       }
 
       if (end <= start) {
-        console.error("End date must be after start date");
+        fetchApiLog({
+          level: "warn",
+          message: "End date must be after start date",
+          serviceName: "ColumnSettingsDialog",
+          context: {
+            newSprintStartDate,
+            newSprintEndDate,
+          },
+        });
         return;
       }
     }
@@ -298,7 +369,14 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
       setNewSprintStartDate("");
       setNewSprintEndDate("");
     } catch (error) {
-      console.error("Failed to add sprint:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to add sprint",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+        },
+      });
     } finally {
       setSaving(false);
     }
@@ -340,7 +418,15 @@ export function ColumnSettingsDialog({ projectId }: ColumnSettingsDialogProps) {
         sprintsRes && isOk(sprintsRes) ? sprintsRes.value : null;
       if (sprintsData) setSprints(sprintsData.member || []);
     } catch (error) {
-      console.error("Failed to change current sprint:", error);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to change current sprint",
+        serviceName: "ColumnSettingsDialog",
+        context: {
+          error,
+          currentSprint,
+        },
+      });
     } finally {
       setSaving(false);
     }

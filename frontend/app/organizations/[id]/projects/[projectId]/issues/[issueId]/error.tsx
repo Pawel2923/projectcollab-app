@@ -4,6 +4,7 @@ import { RefreshCw } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function IssueDetailsError({
   error,
@@ -13,7 +14,14 @@ export default function IssueDetailsError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Issue details route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Issue details route error",
+      serviceName: "IssueDetailsError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

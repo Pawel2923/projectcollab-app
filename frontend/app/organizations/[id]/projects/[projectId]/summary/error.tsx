@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function SummaryError({
   error,
@@ -13,7 +14,14 @@ export default function SummaryError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Summary route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Summary route error",
+      serviceName: "SummaryError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

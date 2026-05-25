@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function ResetPasswordError({
   error,
@@ -13,7 +14,14 @@ export default function ResetPasswordError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Reset password error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Reset password error",
+      serviceName: "ResetPasswordError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

@@ -2,10 +2,11 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { useIssuesOptions } from "@/store/IssuesOptionsContext";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
@@ -27,10 +28,30 @@ export function ListIssues({ projectId }: ListIssuesProps) {
   useMercureObserver<Issue>({
     topics: [`/projects/${projectId}/issues`],
     onUpdate: async () => {
-      console.log("ListIssues: Received Mercure update, invalidating queries");
+      fetchApiLog({
+        level: "debug",
+        message: "ListIssues received Mercure update",
+        serviceName: "ListIssues",
+        context: {
+          projectId,
+        },
+      });
       await queryClient.invalidateQueries({ queryKey: ["issues"] });
     },
   });
+
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "ListIssues render state",
+      serviceName: "ListIssues",
+      context: {
+        projectId,
+        sortOptions,
+        filterOptions,
+      },
+    });
+  }, [filterOptions, projectId, sortOptions]);
 
   // Fetch issues with React Query
   const {

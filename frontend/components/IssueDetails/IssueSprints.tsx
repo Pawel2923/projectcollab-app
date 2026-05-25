@@ -2,7 +2,7 @@
 
 import { Loader2Icon, PlusCircleIcon, XIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 
 import addIssueToSprint from "@/actions/sprint/addIssueToSprint";
 import removeIssueFromSprint from "@/actions/sprint/removeIssueFromSprint";
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/popover";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { AppError } from "@/services/error/app-error";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageTitle } from "@/services/message-mapper/message-mapper";
 import type { IssueDetails } from "@/types/api/issue";
 import type { Sprint } from "@/types/api/sprint";
@@ -51,7 +52,14 @@ export function IssueSprints({
       !is.sprint || typeof is.sprint === "string" || !is.sprint.isArchived,
   );
 
-  console.log("issueSprints: ", issueSprints);
+  fetchApiLog({
+    level: "debug",
+    message: "Loaded issue sprints",
+    serviceName: "IssueSprints",
+    context: {
+      issueSprints,
+    },
+  });
 
   const assignedSprintIris = issueSprints.map((is) => {
     if (!is.sprint) return "";
@@ -63,6 +71,17 @@ export function IssueSprints({
     (sprint) =>
       !sprint.isArchived && !assignedSprintIris.includes(sprint["@id"]),
   );
+
+  useEffect(() => {
+    fetchApiLog({
+      level: "debug",
+      message: "Loaded issue sprints",
+      serviceName: "IssueSprints",
+      context: {
+        issueSprints,
+      },
+    });
+  }, [issueSprints]);
 
   const handleAddSprint = (sprintIri: string) => {
     startTransition(async () => {

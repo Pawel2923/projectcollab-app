@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function ProjectError({
   error,
@@ -13,7 +14,14 @@ export default function ProjectError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Project route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Project route error",
+      serviceName: "ProjectError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

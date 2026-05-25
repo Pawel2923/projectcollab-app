@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function AuthError({
   error,
@@ -13,7 +14,14 @@ export default function AuthError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Authentication error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Authentication error",
+      serviceName: "SigninError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

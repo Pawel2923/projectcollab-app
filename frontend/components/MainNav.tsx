@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useRecentProjects } from "@/hooks/useRecentProjects";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { useOrganization } from "@/store/OrganizationContext";
 import type { Collection } from "@/types/api/collection";
 import type { Project } from "@/types/api/project";
@@ -59,7 +60,13 @@ export function MainNav({
 
         setProjects(sortedProjects.slice(0, 4));
       } catch (error) {
-        console.error("Failed to fetch projects:", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch projects",
+          context: {
+            error,
+          },
+        });
         showError(error);
       }
     };

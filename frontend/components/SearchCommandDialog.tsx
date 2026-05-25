@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 
 import { searchGlobal, type SearchResults } from "@/actions/search/search";
 import {
@@ -23,15 +23,16 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useDebounce } from "@/hooks/useDebounce";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export function SearchCommandDialog({ open, onOpenChange }: DialogProps) {
   const router = useRouter();
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 300);
-  const [results, setResults] = React.useState<SearchResults | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [results, setResults] = useState<SearchResults | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!debouncedQuery) {
       setResults(null);
       return;
@@ -43,7 +44,13 @@ export function SearchCommandDialog({ open, onOpenChange }: DialogProps) {
         const data = await searchGlobal(debouncedQuery);
         setResults(data);
       } catch (error) {
-        console.error("Search failed", error);
+        fetchApiLog({
+          level: "error",
+          message: "Search failed",
+          context: {
+            error,
+          },
+        });
       } finally {
         setLoading(false);
       }

@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAlert } from "@/hooks/useAlert";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { formatDateTime } from "@/utils/date-utils";
 
 interface SyncCalendarDropdownProps {
@@ -44,7 +45,15 @@ export function SyncCalendarDropdown({
     setIsLoading(false);
 
     if (!response.ok) {
-      console.error(response);
+      fetchApiLog({
+        level: "error",
+        message: "Calendar synchronization failed",
+        serviceName: "SyncCalendarDropdown",
+        context: {
+          provider,
+          response,
+        },
+      });
       notify({
         title: "Błąd synchronizacji",
         description: `Synchronizacja z ${mapProviderName(provider)} nie powiodła się`,
@@ -56,7 +65,15 @@ export function SyncCalendarDropdown({
     }
 
     if (!("content" in response) || !response.content) {
-      console.error("Missing content in response");
+      fetchApiLog({
+        level: "error",
+        message: "Missing content in calendar sync response",
+        serviceName: "SyncCalendarDropdown",
+        context: {
+          provider,
+          response,
+        },
+      });
       notify({
         title: "Błąd synchronizacji",
         description: `Błąd odpowiedzi serwera`,

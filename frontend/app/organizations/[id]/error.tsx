@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function OrganizationError({
   error,
@@ -13,7 +14,14 @@ export default function OrganizationError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Organization route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Organization route error",
+      serviceName: "OrganizationError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

@@ -5,6 +5,7 @@ import React from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/services/fetch/client-api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Collection } from "@/types/api/collection";
 import type { Sprint } from "@/types/api/sprint";
 import { isOk } from "@/utils/result";
@@ -32,7 +33,14 @@ export function SprintsList({
   } = useQuery({
     queryKey: ["sprints", projectId],
     queryFn: async () => {
-      console.log("useQuery queryFn EXECUTING");
+      fetchApiLog({
+        level: "debug",
+        message: "SprintsList query function executing",
+        serviceName: "SprintsList",
+        context: {
+          projectId,
+        },
+      });
       return await clientApiGet<Collection<Sprint>>(
         `/sprints?project=${projectId}`,
       );
@@ -57,14 +65,19 @@ export function SprintsList({
 
   const hasActiveSprint = started.length > 0;
 
-  console.log("Rendering SprintsList:", {
-    sprints,
-    isLoading,
-    error,
-    isFetching,
-    created,
-    started,
-    completed,
+  fetchApiLog({
+    level: "debug",
+    message: "Rendering SprintsList",
+    serviceName: "SprintsList",
+    context: {
+      sprints,
+      isLoading,
+      error,
+      isFetching,
+      created,
+      started,
+      completed,
+    },
   });
 
   return sprints?.totalItems && sprints?.totalItems > 0 ? (

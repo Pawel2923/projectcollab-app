@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function VerifyEmailError({
   error,
@@ -13,7 +14,14 @@ export default function VerifyEmailError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Email verification error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Email verification error",
+      serviceName: "VerifyEmailError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (

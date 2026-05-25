@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function ChatsError({
   error,
@@ -13,7 +14,14 @@ export default function ChatsError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Chats route error:", error);
+    fetchApiLog({
+      level: "error",
+      message: "Chats route error",
+      serviceName: "ChatsError",
+      context: {
+        error,
+      },
+    });
   }, [error]);
 
   return (
