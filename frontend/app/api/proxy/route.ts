@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { AppError } from "@/services/error/app-error";
 import { createErrorFromResponse } from "@/services/error/response-to-error";
+import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
 import { buildEndpointUriFromIri } from "@/utils/iri-util";
 
@@ -69,7 +70,13 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
       }
     }
   } catch (error) {
-    console.error("Token refresh failed:", error);
+    await logToServer({
+      level: "error",
+      message: "Token refresh failed",
+      serviceName: "route.api.proxy.refreshToken",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
   }
 
   return null;
@@ -154,14 +161,29 @@ async function handleProxyRequest(request: NextRequest, method: string) {
     let response = await makeApiRequest(token);
 
     if (response.status === 401) {
-      console.log("Got 401, attempting token refresh...");
+      await logToServer({
+        level: "debug",
+        message: "Got 401, attempting token refresh",
+        serviceName: "route.api.proxy",
+        context: { endpoint },
+      });
       const newToken = await refreshToken(apiUrl);
 
       if (newToken) {
-        console.log("Token refreshed, retrying request...");
+        await logToServer({
+          level: "debug",
+          message: "Token refreshed, retrying request",
+          serviceName: "route.api.proxy",
+          context: { endpoint },
+        });
         response = await makeApiRequest(newToken);
       } else {
-        console.log("Token refresh failed");
+        await logToServer({
+          level: "warn",
+          message: "Token refresh failed",
+          serviceName: "route.api.proxy",
+          context: { endpoint },
+        });
         const error = new AppError({
           message: "Sesja wygasła. Proszę zalogować się ponownie.",
           code: "UNAUTHORIZED",
@@ -191,7 +213,13 @@ async function handleProxyRequest(request: NextRequest, method: string) {
 
     return nextResponse;
   } catch (error) {
-    console.error("Proxy request error:", error);
+    await logToServer({
+      level: "error",
+      message: "Proxy request error",
+      serviceName: "route.api.proxy",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
     const appError = new AppError({
       message:
         error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd",

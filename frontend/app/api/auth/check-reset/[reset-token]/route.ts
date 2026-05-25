@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { handleApiError } from "@/services/error/api-error-handler";
 import { AppError } from "@/services/error/app-error";
+import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
 
 export async function GET(req: NextRequest) {
@@ -20,7 +21,11 @@ export async function GET(req: NextRequest) {
 
     const nextApiUrl = getApiUrl();
     if (!nextApiUrl) {
-      console.error("NextApi URL is missing");
+      await logToServer({
+        level: "error",
+        message: "NextApi URL is missing",
+        serviceName: "route.api.auth.check-reset",
+      });
       const error = new AppError({
         message: "API URL not configured",
         code: "SERVER_CONFIG_ERROR",
@@ -44,12 +49,12 @@ export async function GET(req: NextRequest) {
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      console.error(
-        "Reset password token validation failed with status:",
-        res.status,
-        "and body:",
-        data,
-      );
+      await logToServer({
+        level: "error",
+        message: "Reset password token validation failed",
+        serviceName: "route.api.auth.check-reset",
+        context: { status: res.status, body: data },
+      });
 
       const errorResult = handleApiError(data, "Check Reset Token");
       return NextResponse.json(
@@ -74,7 +79,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(error.toJSON(), { status: 400 });
     }
   } catch (error) {
-    console.error(error);
+    await logToServer({
+      level: "error",
+      message: "Check reset token error",
+      serviceName: "route.api.auth.check-reset",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
     const errorResult = handleApiError(error, "Check Reset Token");
     return NextResponse.json(
       {

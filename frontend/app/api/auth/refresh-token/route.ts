@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { AppError } from "@/services/error/app-error";
+import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
 
 export async function POST() {
@@ -85,7 +86,13 @@ export async function POST() {
 
     return NextResponse.json({ token: newToken });
   } catch (error) {
-    console.error("Token refresh error:", error);
+    await logToServer({
+      level: "error",
+      message: "Token refresh error",
+      serviceName: "api.auth.refresh-token",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
     const errorResult = handleApiError(error, "Token Refresh");
     return NextResponse.json(
       {

@@ -6,6 +6,7 @@ import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { TopNav } from "@/components/TopNav";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
@@ -75,7 +76,13 @@ export default async function ChatsLayout({
     }
   } catch (e) {
     await rethrowIfRedirect(e);
-    console.error("Failed to fetch chats:", e);
+    await logToServer({
+      level: "error",
+      message: "Failed to fetch chats",
+      serviceName: "layout.organizations.chats",
+      context: { error: String(e) },
+      errorStack: (e as Error)?.stack,
+    });
   }
 
   // Get collapse state from cookies

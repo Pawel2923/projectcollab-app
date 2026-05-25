@@ -4,6 +4,7 @@ import { OrganizationsContent } from "@/components/Organization/OrganizationsCon
 import { PageHeader } from "@/components/PageHeader";
 import { TopNav } from "@/components/TopNav";
 import { apiGet } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import type { Collection } from "@/types/api/collection";
 import type { Organization } from "@/types/api/organization";
 
@@ -21,7 +22,18 @@ export default async function OrganizationsPage({
   );
 
   if (error) {
-    console.error("Failed to load organizations:", error);
+    const errorStack =
+      typeof error === "object" && error !== null && "stack" in error
+        ? (error as { stack?: string }).stack
+        : undefined;
+
+    await logToServer({
+      level: "error",
+      message: "Failed to load organizations",
+      serviceName: "page.organizations",
+      context: { error: String(error) },
+      errorStack,
+    });
   }
 
   return (

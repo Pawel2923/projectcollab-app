@@ -10,6 +10,7 @@ import { ColumnSettingsDialog } from "@/components/Table/ColumnSettingsDialog";
 import { KanbanIssues } from "@/components/Table/KanbanIssues";
 import { apiGet } from "@/services/fetch/api-service";
 import { fetchIssueStatusObjects } from "@/services/issue/issue-status-fetcher";
+import { logToServer } from "@/services/log/server-logger";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
 import type { Project } from "@/types/api/project";
@@ -44,10 +45,26 @@ export default async function KanbanPage({
   );
 
   if (error) {
-    console.error("Failed to load issues:", error);
+    const errorStack =
+      typeof error === "object" && error !== null && "stack" in error
+        ? (error as { stack?: string }).stack
+        : undefined;
+
+    await logToServer({
+      level: "error",
+      message: "Failed to load issues",
+      serviceName: "page.project.kanban",
+      context: { error: String(error) },
+      errorStack,
+    });
   }
 
-  console.log("Loaded issues:", issues);
+  await logToServer({
+    level: "debug",
+    message: "Loaded issues",
+    serviceName: "page.project.kanban",
+    context: { issues },
+  });
 
   return (
     <>

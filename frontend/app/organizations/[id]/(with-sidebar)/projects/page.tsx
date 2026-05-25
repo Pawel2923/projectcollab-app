@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { ProjectsContent } from "@/components/Project/ProjectsContent";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 
 export default async function ProjectsPage({
   params,
@@ -37,17 +38,33 @@ export default async function ProjectsPage({
     if (!orgResp.error && orgResp.data) {
       organization = orgResp.data as typeof organization;
     } else {
-      console.error("Failed to fetch organization:", orgResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch organization",
+        serviceName: "page.organization.projects",
+        context: { status: orgResp.status },
+      });
     }
 
     if (!projectsResp.error && projectsResp.data) {
       projects = projectsResp.data as typeof projects;
     } else {
-      console.error("Failed to fetch projects:", projectsResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch projects",
+        serviceName: "page.organization.projects",
+        context: { status: projectsResp.status },
+      });
     }
   } catch (error) {
     await rethrowIfRedirect(error);
-    console.error("Error fetching organization data:", error);
+    await logToServer({
+      level: "error",
+      message: "Error fetching organization data",
+      serviceName: "page.organization.projects",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
   }
 
   return (

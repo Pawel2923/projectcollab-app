@@ -5,6 +5,7 @@ import { OrganizationSummary } from "@/components/Organization/OrganizationSumma
 import { PageHeader } from "@/components/PageHeader";
 import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import type { Chat } from "@/types/api/chat";
 import type { Organization } from "@/types/api/organization";
 import type { Project } from "@/types/api/project";
@@ -49,30 +50,56 @@ export default async function OrganizationOverviewPage({
     if (!orgResp.error && orgResp.data) {
       organization = orgResp.data;
     } else {
-      console.error("Failed to fetch organization:", orgResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch organization",
+        serviceName: "page.organization.overview",
+        context: { status: orgResp.status },
+      });
     }
 
     if (!projectsResp.error && projectsResp.data) {
       recentProjects = projectsResp.data.member || [];
       totalProjects = projectsResp.data.totalItems || 0;
     } else {
-      console.error("Failed to fetch projects:", projectsResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch projects",
+        serviceName: "page.organization.overview",
+        context: { status: projectsResp.status },
+      });
     }
 
     if (!membersResp.error && membersResp.data) {
       totalMembers = membersResp.data.totalItems || 0;
     } else {
-      console.error("Failed to fetch members:", membersResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch members",
+        serviceName: "page.organization.overview",
+        context: { status: membersResp.status },
+      });
     }
 
     if (!chatsResp.error && chatsResp.data) {
       recentChats = chatsResp.data.member || [];
     } else {
-      console.error("Failed to fetch chats:", chatsResp.status);
+      await logToServer({
+        level: "error",
+        message: "Failed to fetch chats",
+        serviceName: "page.organization.overview",
+        context: { status: chatsResp.status },
+      });
     }
   } catch (error) {
     await rethrowIfRedirect(error);
-    console.error("Error fetching organization data:", error);
+    await logToServer({
+      level: "error",
+      message: "Error fetching organization data",
+      serviceName: "page.organization.overview",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
   }
 
   return (

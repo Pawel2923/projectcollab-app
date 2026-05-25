@@ -3,6 +3,7 @@ import React from "react";
 
 import { getCurrentUser } from "@/services/auth/user-service";
 import { apiGet } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 
@@ -58,7 +59,13 @@ export default async function ChatsPage({
       throw e;
     }
 
-    console.error("Failed to fetch chats:", e);
+    await logToServer({
+      level: "error",
+      message: "Failed to fetch chats",
+      serviceName: "page.organizations.chats",
+      context: { error: String(e) },
+      errorStack: (e as Error)?.stack,
+    });
     return (
       <ChatsPageLayout>
         <div className="flex items-center justify-center h-full text-red-500">

@@ -5,6 +5,7 @@ import { ChatWindow } from "@/components/Chat/ChatWindow";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { apiGet } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import type { Chat, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 
@@ -41,11 +42,18 @@ export default async function ChatPage({
 
     const currentUserRole = currentUserChatMember.role?.value;
 
-    console.log(
-      "[ChatPage:33]: CurrentUserChatMember: ",
-      currentUserChatMember,
-    );
-    console.log("[ChatPage:36]: CurrentUserRole: ", currentUserRole);
+    await logToServer({
+      level: "debug",
+      message: "CurrentUserChatMember",
+      serviceName: "page.organizations.chat",
+      context: { currentUserChatMember },
+    });
+    await logToServer({
+      level: "debug",
+      message: "CurrentUserRole",
+      serviceName: "page.organizations.chat",
+      context: { currentUserRole },
+    });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -89,7 +97,13 @@ export default async function ChatPage({
       throw e;
     }
 
-    console.error("Failed to load chat:", e);
+    await logToServer({
+      level: "error",
+      message: "Failed to load chat",
+      serviceName: "page.organizations.chat",
+      context: { error: String(e) },
+      errorStack: (e as Error)?.stack,
+    });
     return (
       <div className="flex items-center justify-center h-full text-red-500">
         Nie udało się załadować czatów.

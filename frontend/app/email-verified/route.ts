@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { addAlert } from "@/services/alert/alert-service";
+import { logToServer } from "@/services/log/server-logger";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
 
 export async function GET(req: NextRequest) {
@@ -26,7 +27,13 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch (e) {
-    console.error(e);
+    await logToServer({
+      level: "error",
+      message: "Email verified redirect error",
+      serviceName: "route.email-verified",
+      context: { error: String(e) },
+      errorStack: (e as Error)?.stack,
+    });
     return NextResponse.json({ code: "EMAIL_NOT_VERIFIED" }, { status: 500 });
   }
 }

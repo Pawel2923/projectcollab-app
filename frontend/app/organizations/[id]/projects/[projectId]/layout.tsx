@@ -4,6 +4,7 @@ import React from "react";
 import { ServerSideNav } from "@/components/ServerSideNav";
 import { TopNav } from "@/components/TopNav";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
+import { logToServer } from "@/services/log/server-logger";
 import { IssuesOptionsProvider } from "@/store/IssuesOptionsContext";
 import type { Project } from "@/types/api/project";
 import { generateAcronym } from "@/utils/acronym-generator";
@@ -39,8 +40,13 @@ export default async function ProjectsLayout({
     }
   } catch (error) {
     await rethrowIfRedirect(error);
-    console.error("Failed to fetch project info:", error);
-    // Continue with undefined values - component will use defaults
+    await logToServer({
+      level: "error",
+      message: "Failed to fetch project info",
+      serviceName: "layout.project.info",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
   }
 
   return (

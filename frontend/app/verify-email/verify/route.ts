@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { addAlert } from "@/services/alert/alert-service";
+import { logToServer } from "@/services/log/server-logger";
 import { mapMessage } from "@/services/message-mapper/message-mapper";
 import { getApiUrl } from "@/utils/get-api-url";
 
@@ -60,7 +61,13 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch (e) {
-    console.error(e);
+    await logToServer({
+      level: "error",
+      message: "Verify email processing error",
+      serviceName: "route.verify-email.verify",
+      context: { error: String(e) },
+      errorStack: (e as Error)?.stack,
+    });
 
     const { title, description } = mapMessage("INTERNAL_SERVER_ERROR");
 

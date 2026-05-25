@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 import { signOut } from "@/auth";
+import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
 
 export async function GET() {
@@ -21,7 +22,13 @@ export async function GET() {
         cache: "no-store",
       });
     } catch (error) {
-      console.error("Backend refresh token revocation failed:", error);
+      await logToServer({
+        level: "error",
+        message: "Backend refresh token revocation failed",
+        serviceName: "route.logout",
+        context: { error: String(error) },
+        errorStack: (error as Error)?.stack,
+      });
     }
   }
 
