@@ -6,6 +6,7 @@ import type {
   FailedActionResult,
 } from "@/actions/types/ActionResult";
 import { messagesMap } from "@/constants/messages-map";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 import {
@@ -182,9 +183,16 @@ function addErrorsFromViolations(
   violations.forEach((violation) => {
     const mappedField = serverFieldsMap?.[violation.field];
     if (mappedField && !fields.includes(mappedField)) {
-      console.error(
-        `Incorrect mapping: "${violation.field}" is mapped to "${mappedField}", which is not in the tracked fields. Ensure the mapped field is included in the fields array or change mapping configuration.`,
-      );
+      fetchApiLog({
+        level: "error",
+        message: "Incorrect server field mapping in validation hook",
+        serviceName: "useServerValidation",
+        context: {
+          violationField: violation.field,
+          mappedField,
+          trackedFields: fields,
+        },
+      });
     }
 
     const fieldName = mappedField || violation.field;

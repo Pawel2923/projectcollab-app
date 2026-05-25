@@ -4,6 +4,7 @@ import {
   fetchMentionData,
   type MentionData,
 } from "@/services/chat/mention-data-fetcher";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export function useMentionData(
   organizationId: string,
@@ -35,7 +36,18 @@ export function useMentionData(
           setData(result);
         }
       } catch (error) {
-        console.error("Failed to fetch mention data", error);
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch mention data",
+          serviceName: "useMentionData",
+          context: {
+            error,
+            organizationId,
+            projectId,
+            chatId,
+            currentUserId,
+          },
+        });
       } finally {
         if (isMounted) {
           setIsLoading(false);

@@ -12,6 +12,7 @@ import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMercureUrl } from "@/utils/client-env-utils";
 
 const MAX_RETRIES = 5;
@@ -37,9 +38,15 @@ export function useMercureObserver<T = unknown>({
     }
 
     if (retryCount >= MAX_RETRIES) {
-      console.error(
-        `[MercureObserver] Max retries (${MAX_RETRIES}) reached, giving up.`,
-      );
+      fetchApiLog({
+        level: "error",
+        message: "Max Mercure retries reached",
+        serviceName: "MercureObserver",
+        context: {
+          maxRetries: MAX_RETRIES,
+          retryCount,
+        },
+      });
       handleSessionExpired();
       return;
     }
@@ -50,10 +57,15 @@ export function useMercureObserver<T = unknown>({
       url.searchParams.append("topic", topic);
     });
 
-    console.log(
-      `[MercureObserver] Connecting to ${url.toString()} with topics:`,
-      topics,
-    );
+    fetchApiLog({
+      level: "debug",
+      message: "Connecting Mercure observer",
+      serviceName: "MercureObserver",
+      context: {
+        url: url.toString(),
+        topics,
+      },
+    });
 
     const eventSource = new EventSource(url.toString(), {
       withCredentials: true,
@@ -61,42 +73,75 @@ export function useMercureObserver<T = unknown>({
 
     eventSource.onmessage = (event) => {
       try {
-        console.log("[MercureObserver] Received message:", event.data);
+        fetchApiLog({
+          level: "debug",
+          message: "Mercure message received",
+          serviceName: "MercureObserver",
+          context: {
+            data: event.data,
+          },
+        });
         const data = JSON.parse(event.data);
 
         if (onUpdateRef.current) {
-          console.log("[MercureObserver] Calling custom onUpdate");
+          fetchApiLog({
+            level: "debug",
+            message: "Calling custom Mercure onUpdate",
+            serviceName: "MercureObserver",
+          });
           onUpdateRef.current(data as T);
         } else {
-          console.log(
-            "[MercureObserver] No onUpdate provided, triggering router.refresh()",
-          );
+          fetchApiLog({
+            level: "debug",
+            message: "No Mercure onUpdate provided, refreshing router",
+            serviceName: "MercureObserver",
+          });
           router.refresh();
         }
       } catch (e) {
-        console.error("[MercureObserver] Error parsing message:", e);
+        fetchApiLog({
+          level: "error",
+          message: "Error parsing Mercure message",
+          serviceName: "MercureObserver",
+          context: {
+            error: e,
+          },
+        });
       }
     };
 
     eventSource.onerror = async (e) => {
       // Don't log error immediately, just warn/debug
-      console.debug(
-        "[MercureObserver] Connection lost, attempting recovery...",
-      );
+      fetchApiLog({
+        level: "debug",
+        message: "Mercure connection lost, attempting recovery",
+        serviceName: "MercureObserver",
+      });
       eventSource.close();
 
       // Attempt silent refresh
-      console.log(
-        "[MercureObserver] Attempting silent refresh before reconnect...",
-      );
+      fetchApiLog({
+        level: "debug",
+        message: "Attempting silent refresh before Mercure reconnect",
+        serviceName: "MercureObserver",
+      });
       const refreshed = await refreshSession();
       if (refreshed) {
-        console.log(
-          "[MercureObserver] Refresh successful, retrying connection...",
-        );
+        fetchApiLog({
+          level: "debug",
+          message: "Mercure refresh successful, retrying connection",
+          serviceName: "MercureObserver",
+        });
         setRetryCount((c: number) => c + 1);
       } else {
-        console.error("[MercureObserver] Refresh failed, redirecting...", e);
+        fetchApiLog({
+          level: "error",
+          message: "Mercure refresh failed, redirecting",
+          serviceName: "MercureObserver",
+          context: {
+            error: e,
+          },
+        });
         handleSessionExpired();
       }
     };
@@ -104,7 +149,11 @@ export function useMercureObserver<T = unknown>({
     eventSourceRef.current = eventSource;
 
     return () => {
-      console.log("[MercureObserver] Closing connection");
+      fetchApiLog({
+        level: "debug",
+        message: "Closing Mercure connection",
+        serviceName: "MercureObserver",
+      });
       eventSource.close();
       eventSourceRef.current = null;
     };

@@ -9,6 +9,7 @@ import {
   refreshSession,
 } from "@/services/auth/client-token-refresh";
 import { apiGet } from "@/services/fetch/api-service";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 
@@ -41,11 +42,26 @@ export function useChatUpdates({
   }, [initialChats]);
 
   const handleUpdate = async (data: Chat) => {
-    console.log("[useChatUpdates] Received Mercure message:", data);
+    fetchApiLog({
+      level: "debug",
+      message: "Received Mercure message for chat updates",
+      serviceName: "useChatUpdates",
+      context: {
+        data,
+      },
+    });
 
     // If a chat was created or updated, refetch the chat list
     if (data["@type"] === "Chat" || data.id) {
-      console.log("[useChatUpdates] Refetching chat list...");
+      fetchApiLog({
+        level: "debug",
+        message: "Refetching chat list",
+        serviceName: "useChatUpdates",
+        context: {
+          organizationId,
+          currentUserId,
+        },
+      });
       setIsLoading(true);
 
       const query = `/chats?organizationId=${organizationId}&chatMembers.member=${currentUserId}`;
@@ -53,15 +69,38 @@ export function useChatUpdates({
 
       // Silent refresh retry logic for the API call
       if (chatsResponse.status === 401) {
-        console.log(
-          "[useChatUpdates] 401 detected, attempting silent refresh...",
-        );
+        fetchApiLog({
+          level: "debug",
+          message:
+            "401 detected while fetching chats, attempting silent refresh",
+          serviceName: "useChatUpdates",
+          context: {
+            organizationId,
+            currentUserId,
+          },
+        });
         const refreshed = await refreshSession();
         if (refreshed) {
-          console.log("[useChatUpdates] Refresh successful, retrying fetch...");
+          fetchApiLog({
+            level: "debug",
+            message: "Refresh successful, retrying chat fetch",
+            serviceName: "useChatUpdates",
+            context: {
+              organizationId,
+              currentUserId,
+            },
+          });
           chatsResponse = await apiGet<Collection<Chat>>(query);
         } else {
-          console.log("[useChatUpdates] Refresh failed, redirecting...");
+          fetchApiLog({
+            level: "error",
+            message: "Refresh failed while fetching chats",
+            serviceName: "useChatUpdates",
+            context: {
+              organizationId,
+              currentUserId,
+            },
+          });
           handleSessionExpired();
           return;
         }
@@ -69,12 +108,27 @@ export function useChatUpdates({
 
       if (chatsResponse.data) {
         const updatedChats = chatsResponse.data.member || [];
-        console.log("[useChatUpdates] Updated chats:", updatedChats.length);
+        fetchApiLog({
+          level: "debug",
+          message: "Updated chats fetched",
+          serviceName: "useChatUpdates",
+          context: {
+            updatedChatsCount: updatedChats.length,
+          },
+        });
         setChats(updatedChats);
 
         router.refresh();
       } else {
-        console.error("[useChatUpdates] Failed to fetch chats");
+        fetchApiLog({
+          level: "error",
+          message: "Failed to fetch chats",
+          serviceName: "useChatUpdates",
+          context: {
+            organizationId,
+            currentUserId,
+          },
+        });
       }
 
       setIsLoading(false);

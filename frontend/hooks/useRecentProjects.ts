@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Project } from "@/types/api/project";
 
 const STORAGE_KEY = "projectcollab:recent-projects";
@@ -22,7 +23,14 @@ export function useRecentProjects() {
         return indexA - indexB;
       });
     } catch (e) {
-      console.error("Failed to sort projects", e);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to sort projects",
+        serviceName: "useRecentProjects",
+        context: {
+          error: e,
+        },
+      });
       return projects;
     }
   }, []);
@@ -36,7 +44,15 @@ export function useRecentProjects() {
       recentIds = recentIds.slice(0, MAX_RECENT_PROJECTS);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(recentIds));
     } catch (e) {
-      console.error("Failed to save recent project", e);
+      fetchApiLog({
+        level: "error",
+        message: "Failed to save recent project",
+        serviceName: "useRecentProjects",
+        context: {
+          error: e,
+          projectId,
+        },
+      });
     }
   }, []);
 

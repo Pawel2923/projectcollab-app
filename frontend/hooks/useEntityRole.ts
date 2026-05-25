@@ -7,6 +7,7 @@ import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { EntityType } from "@/types/permissions/entity";
 import type { Role } from "@/types/permissions/roles";
 
@@ -44,15 +45,37 @@ export function useEntityRole(
         !result.ok &&
         (result.code === "UNAUTHORIZED" || result.status === 401)
       ) {
-        console.log(
-          "[useEntityRole] 401 detected, attempting silent refresh...",
-        );
+        fetchApiLog({
+          level: "debug",
+          message: "401 detected while fetching entity role",
+          serviceName: "useEntityRole",
+          context: {
+            entityType,
+            entityId,
+          },
+        });
         const refreshed = await refreshSession();
         if (refreshed) {
-          console.log("[useEntityRole] Refresh successful, retrying fetch...");
+          fetchApiLog({
+            level: "debug",
+            message: "Refresh successful, retrying entity role fetch",
+            serviceName: "useEntityRole",
+            context: {
+              entityType,
+              entityId,
+            },
+          });
           result = await getEntityRole(entityType, entityId);
         } else {
-          console.log("[useEntityRole] Refresh failed, redirecting...");
+          fetchApiLog({
+            level: "error",
+            message: "Refresh failed while fetching entity role",
+            serviceName: "useEntityRole",
+            context: {
+              entityType,
+              entityId,
+            },
+          });
           handleSessionExpired();
           return;
         }
