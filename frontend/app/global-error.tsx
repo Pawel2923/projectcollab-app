@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 
 export default function GlobalError({
   error,
@@ -13,24 +14,11 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    try {
-      fetch("/api/log", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          level: "error",
-          message: error.message,
-          errorCode: error.digest,
-        }),
-      }).catch(() => {
-        console.warn("Failed to log error to server");
-      });
-    } catch (error) {
-      console.warn("Failed to log error to server", error);
-    }
+    fetchApiLog({
+      level: "error",
+      message: error.message,
+      errorCode: error.digest,
+    })
   }, [error]);
 
   return (
