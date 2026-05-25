@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
+import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
+
+const PROXY_SERVICE_NAME = "proxy.middleware";
 
 export const proxy = auth(async (request) => {
   // Skip for public routes and API routes
@@ -19,6 +22,15 @@ export const proxy = auth(async (request) => {
     request.nextUrl.pathname === "/" ||
     request.nextUrl.pathname === "/logout"
   ) {
+    await logToServer({
+      level: "debug",
+      message: "Proxy skipped for public route",
+      serviceName: PROXY_SERVICE_NAME,
+      context: {
+        pathname: request.nextUrl.pathname,
+      },
+    });
+
     return NextResponse.next();
   }
 
@@ -27,11 +39,31 @@ export const proxy = auth(async (request) => {
 
   const session = request.auth;
 
+  await logToServer({
+    level: "debug",
+    message: "Proxy evaluated authenticated request",
+    serviceName: PROXY_SERVICE_NAME,
+    context: {
+      pathname: request.nextUrl.pathname,
+      hasAccessTokenCookie: Boolean(accessToken),
+      hasRefreshTokenCookie: Boolean(refreshToken),
+      hasSession: Boolean(session),
+      hasSessionAccessToken: Boolean(session?.accessToken),
+      hasSessionError: Boolean(session?.error),
+    },
+  });
+
   if (session && session.accessToken) {
     if (session.error === "RefreshAccessTokenError") {
-      console.log(
-        "Middleware: Session has RefreshAccessTokenError. Redirecting to signin.",
-      );
+      await logToServer({
+        level: "warn",
+        message: "Proxy redirecting due to session refresh error",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+        },
+      });
+
       const signInUrl = new URL("/signin", request.url);
       signInUrl.searchParams.set("redirectUrl", request.nextUrl.pathname);
       const response = NextResponse.redirect(signInUrl);
@@ -42,6 +74,17 @@ export const proxy = auth(async (request) => {
     }
 
     if (!accessToken) {
+      await logToServer({
+        level: "debug",
+        message: "Proxy setting access token cookie from session",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+          hasRefreshToken: Boolean(session.refreshToken),
+          hasRefreshTokenCookie: Boolean(refreshToken),
+        },
+      });
+
       const response = NextResponse.next();
       response.cookies.set("access_token", session.accessToken, {
         httpOnly: true,
@@ -52,6 +95,15 @@ export const proxy = auth(async (request) => {
       });
 
       if (session.refreshToken && !refreshToken) {
+        await logToServer({
+          level: "debug",
+          message: "Proxy setting refresh token cookie from session",
+          serviceName: PROXY_SERVICE_NAME,
+          context: {
+            pathname: request.nextUrl.pathname,
+          },
+        });
+
         response.cookies.set("refresh_token", session.refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
@@ -64,6 +116,15 @@ export const proxy = auth(async (request) => {
     }
 
     if (session.refreshToken && !refreshToken) {
+      await logToServer({
+        level: "debug",
+        message: "Proxy setting refresh token cookie from session",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+        },
+      });
+
       const response = NextResponse.next();
       response.cookies.set("refresh_token", session.refreshToken, {
         httpOnly: true,
@@ -78,13 +139,40 @@ export const proxy = auth(async (request) => {
   }
 
   if (accessToken) {
+    await logToServer({
+      level: "debug",
+      message: "Proxy allowed request with access token cookie",
+      serviceName: PROXY_SERVICE_NAME,
+      context: {
+        pathname: request.nextUrl.pathname,
+      },
+    });
+
     return NextResponse.next();
   }
 
   if (refreshToken) {
     try {
+      await logToServer({
+        level: "debug",
+        message: "Proxy attempting token refresh",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+        },
+      });
+
       const nextApiUrl = getApiUrl();
       if (!nextApiUrl) {
+        await logToServer({
+          level: "error",
+          message: "Proxy missing API URL during token refresh",
+          serviceName: PROXY_SERVICE_NAME,
+          context: {
+            pathname: request.nextUrl.pathname,
+          },
+        });
+
         const signInUrl = new URL("/signin", request.url);
         signInUrl.searchParams.set("redirectUrl", request.nextUrl.pathname);
         return NextResponse.redirect(signInUrl);
@@ -106,18 +194,20 @@ export const proxy = auth(async (request) => {
         const data = await refreshResponse.json();
         const newToken = data?.token;
 
+        await logToServer({
+          level: "info",
+          message: "Proxy token refresh succeeded",
+          serviceName: PROXY_SERVICE_NAME,
+          context: {
+            pathname: request.nextUrl.pathname,
+            hasToken: Boolean(newToken),
+          },
+        });
+
         if (newToken) {
           const response = NextResponse.next();
 
           // Propagate new token to request cookies for downstream components
-          response.cookies.set("access_token", newToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 5, // 5 minutes
-          });
-
           response.cookies.set("access_token", newToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -143,11 +233,50 @@ export const proxy = auth(async (request) => {
 
           return response;
         }
+
+        await logToServer({
+          level: "warn",
+          message: "Proxy token refresh response missing token",
+          serviceName: PROXY_SERVICE_NAME,
+          context: {
+            pathname: request.nextUrl.pathname,
+          },
+        });
       }
+
+      await logToServer({
+        level: "warn",
+        message: "Proxy token refresh failed",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+          status: refreshResponse.status,
+        },
+      });
     } catch (error) {
-      console.error("Token refresh failed in middleware:", error);
+      await logToServer({
+        level: "error",
+        message: "Token refresh failed in middleware",
+        serviceName: PROXY_SERVICE_NAME,
+        context: {
+          pathname: request.nextUrl.pathname,
+          error: error instanceof Error ? error.message : String(error),
+          errorStack: error instanceof Error ? error.stack : undefined,
+        },
+      });
     }
   }
+
+  await logToServer({
+    level: "info",
+    message: "Proxy redirecting to signin",
+    serviceName: PROXY_SERVICE_NAME,
+    context: {
+      pathname: request.nextUrl.pathname,
+      hasAccessTokenCookie: Boolean(accessToken),
+      hasRefreshTokenCookie: Boolean(refreshToken),
+    },
+  });
 
   const signInUrl = new URL("/signin", request.url);
   signInUrl.searchParams.set("redirectUrl", request.nextUrl.pathname);
