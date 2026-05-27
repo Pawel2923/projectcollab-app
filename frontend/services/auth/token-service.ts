@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-export async function getAccessToken(
+export async function getOrRefreshAccessToken(
   nextApiUrl: string,
 ): Promise<string | undefined> {
   try {
@@ -18,10 +18,25 @@ export async function getAccessToken(
   }
 }
 
-async function refreshAccessToken(
+export async function hasAuthCookies(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    return (
+      !!cookieStore.get("access_token")?.value ||
+      !!cookieStore.get("refresh_token")?.value
+    );
+  } catch (e) {
+    console.error("Error checking authentication state:", e);
+    return false;
+  }
+}
+
+export async function refreshAccessToken(
   nextApiUrl: string,
 ): Promise<string | undefined> {
-  const refreshToken = (await cookies()).get("refresh_token")?.value;
+  const cookieStore = await cookies();
+
+  const refreshToken = cookieStore.get("refresh_token")?.value;
   if (refreshToken) {
     const res = await fetch(`${nextApiUrl}/auth/refresh`, {
       method: "POST",
@@ -39,7 +54,7 @@ async function refreshAccessToken(
       const newToken = (await res.json())?.token;
 
       if (newToken) {
-        (await cookies()).set("access_token", newToken, {
+        cookieStore.set("access_token", newToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",

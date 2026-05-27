@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { getApiUrl } from "@/utils/get-api-url";
 
 interface ApiCallOptions {
@@ -36,7 +36,7 @@ export async function apiCall<T = unknown>(
     }
 
     if (requireAuth) {
-      const token = await getAccessTokenReadOnly();
+      const token = await getOrRefreshAccessToken(apiUrl);
       if (!token) {
         // Redirect to session expired handler to trigger refresh loop
         redirect("/api/auth/session-expired?redirect=/organizations");

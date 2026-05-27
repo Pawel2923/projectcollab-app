@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { OrganizationMember } from "@/types/api/organization";
@@ -44,7 +44,7 @@ export default async function inviteOrganizationMember(
       };
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       return {
         ok: false,

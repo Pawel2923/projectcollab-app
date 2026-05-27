@@ -1,9 +1,7 @@
-import { redirect } from "next/navigation";
 import React from "react";
 
 import { PageHeader } from "@/components/PageHeader";
 import { ProjectsContent } from "@/components/Project/ProjectsContent";
-import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
 import { logToServer } from "@/services/log/server-logger";
 
@@ -18,11 +16,6 @@ export default async function ProjectsPage({
   const urlParams = await searchParams;
   const page = parseInt(urlParams.page || "1", 10);
   const itemsPerPage = 12;
-
-  const token = await getAccessTokenReadOnly();
-  if (!token) {
-    redirect("/signin");
-  }
 
   let organization = { name: "Unknown Organization" };
   let projects = { totalItems: 0, member: [] };

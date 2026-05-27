@@ -8,5 +8,6 @@ export async function GET(request: NextRequest) {
   const redirectUrl = searchParams.get("redirect") || "/organizations";
 
   cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
   return redirect(redirectUrl);
 }

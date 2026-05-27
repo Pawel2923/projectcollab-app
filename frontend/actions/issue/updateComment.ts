@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { IssueComment } from "@/types/api/issue-metadata";
 import { getApiUrl } from "@/utils/get-api-url";
@@ -52,7 +52,7 @@ export default async function createComment(
       };
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       return {
         ok: false,

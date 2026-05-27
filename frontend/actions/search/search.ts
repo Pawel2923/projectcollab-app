@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { getApiUrl } from "@/utils/get-api-url";
 
@@ -50,7 +50,7 @@ export async function searchGlobal(query: string): Promise<SearchResults> {
       return emptyResults;
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       handleApiError(new Error("Unauthorized"), "Search");
       return emptyResults;

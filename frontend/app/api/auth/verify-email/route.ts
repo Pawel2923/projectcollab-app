@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { AppError } from "@/services/error/app-error";
 import { parseJsonCode } from "@/services/message-mapper/json-code-parser";
@@ -28,7 +28,7 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json(error.toJSON(), { status: 500 });
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       const error = new AppError({
         message: "Authentication required",

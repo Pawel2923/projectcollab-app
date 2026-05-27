@@ -1,6 +1,6 @@
 "use server";
 
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { getCurrentUser } from "@/services/auth/user-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Collection } from "@/types/api/collection";
@@ -51,7 +51,7 @@ export default async function getEntityRole(
       };
     }
 
-    const token = await getAccessToken(apiUrl);
+    const token = await getOrRefreshAccessToken(apiUrl);
 
     if (!token) {
       return {

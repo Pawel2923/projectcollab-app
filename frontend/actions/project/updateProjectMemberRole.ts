@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { ProjectMember } from "@/types/api/project";
 import { getApiUrl } from "@/utils/get-api-url";
@@ -47,7 +47,7 @@ export default async function updateProjectMemberRole(
       };
     }
 
-    const token = await getAccessToken(apiUrl);
+    const token = await getOrRefreshAccessToken(apiUrl);
 
     if (!token) {
       return {

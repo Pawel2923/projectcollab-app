@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { Sprint } from "@/types/api/sprint";
 import { SprintStatusEnum } from "@/types/api/sprint";
@@ -70,7 +70,7 @@ export default async function updateSprintStatus(
       };
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       return {
         ok: false,

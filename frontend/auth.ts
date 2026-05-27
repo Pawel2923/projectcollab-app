@@ -57,11 +57,11 @@ async function exchangeToken(
       message: "Starting OAuth token exchange",
       serviceName: AUTH_SERVICE_NAME,
       context: {
-      provider,
-      hasAccessToken: Boolean(payloadObject?.access_token),
-      hasRefreshToken: Boolean(payloadObject?.refresh_token),
-      hasIdToken: Boolean(payloadObject?.id_token),
-      expiresAt: payloadObject?.expires_at,
+        provider,
+        hasAccessToken: Boolean(payloadObject?.access_token),
+        hasRefreshToken: Boolean(payloadObject?.refresh_token),
+        hasIdToken: Boolean(payloadObject?.id_token),
+        expiresAt: payloadObject?.expires_at,
       },
     });
 
@@ -478,7 +478,8 @@ export const { handlers, auth, signOut } = NextAuth({
         });
       }
 
-      const expiresAt = typeof token.expiresAt === "number" ? token.expiresAt : 0;
+      const expiresAt =
+        typeof token.expiresAt === "number" ? token.expiresAt : 0;
       if (Date.now() < expiresAt * 1000 - 10000) {
         await logToServer({
           level: "debug",

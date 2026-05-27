@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { getApiUrl } from "@/utils/get-api-url";
 
@@ -35,7 +35,6 @@ export async function uploadAttachment(
   }
 
   try {
-    const token = await getAccessTokenReadOnly();
     const apiUrl = getApiUrl();
     if (!apiUrl) {
       return {
@@ -43,6 +42,16 @@ export async function uploadAttachment(
         code: "SERVER_CONFIG_ERROR",
         status: 500,
         message: "API URL is not configured",
+      };
+    }
+
+    const token = await getOrRefreshAccessToken(apiUrl);
+    if (!token) {
+      return {
+        ok: false,
+        code: "UNAUTHORIZED",
+        status: 401,
+        message: "Authentication required",
       };
     }
 

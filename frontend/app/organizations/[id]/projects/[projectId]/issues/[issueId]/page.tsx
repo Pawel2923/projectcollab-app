@@ -3,7 +3,7 @@ import React from "react";
 
 import { IssueDetails } from "@/components/IssueDetails/IssueDetails";
 import type { SelectOption } from "@/components/IssueDetails/types";
-import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { apiGet } from "@/services/fetch/api-service";
 import { getApiUrl } from "@/utils/get-api-url";
 import { extractIdFromIri } from "@/utils/iri-util";
@@ -32,8 +32,8 @@ export async function generateMetadata({
   params: Promise<{ id: string; projectId: string; issueId: string }>;
 }): Promise<Metadata> {
   const { issueId } = await params;
-  const token = await getAccessTokenReadOnly();
   const apiUrl = getApiUrl();
+  const token = apiUrl ? await getOrRefreshAccessToken(apiUrl) : undefined;
 
   if (!token || !apiUrl) {
     return {
@@ -65,14 +65,14 @@ export default async function IssuePage({
 }) {
   const { id: organizationId, projectId, issueId } = await params;
 
-  const token = await getAccessTokenReadOnly();
-  if (!token) {
-    redirect("/signin");
-  }
-
   const apiUrl = getApiUrl();
   if (!apiUrl) {
     throw new Error("Brak konfiguracji adresu API");
+  }
+
+  const token = await getOrRefreshAccessToken(apiUrl);
+  if (!token) {
+    redirect("/signin");
   }
 
   const issueResponse = await fetchWithAuth<IssueDetailsType>(

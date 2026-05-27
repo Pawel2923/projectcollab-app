@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
-import { getAccessToken } from "@/services/auth/token-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { handleApiError } from "@/services/error/api-error-handler";
 import { getApiUrl } from "@/utils/get-api-url";
 import { buildResourceIri } from "@/utils/iri-util";
@@ -41,7 +41,7 @@ export async function updateIssueStatus(
       };
     }
 
-    const token = await getAccessToken(nextApiUrl);
+    const token = await getOrRefreshAccessToken(nextApiUrl);
     if (!token) {
       return {
         ok: false,

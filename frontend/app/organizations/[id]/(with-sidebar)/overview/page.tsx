@@ -3,12 +3,14 @@ import React from "react";
 
 import { OrganizationSummary } from "@/components/Organization/OrganizationSummary";
 import { PageHeader } from "@/components/PageHeader";
-import { getAccessTokenReadOnly } from "@/services/auth/token-read-service";
+import { getOrRefreshAccessToken } from "@/services/auth/token-service";
+import { AppError } from "@/services/error/app-error";
 import { apiGet, rethrowIfRedirect } from "@/services/fetch/api-service";
 import { logToServer } from "@/services/log/server-logger";
 import type { Chat } from "@/types/api/chat";
 import type { Organization } from "@/types/api/organization";
 import type { Project } from "@/types/api/project";
+import { getApiUrl } from "@/utils/get-api-url";
 
 export default async function OrganizationOverviewPage({
   params,
@@ -16,11 +18,6 @@ export default async function OrganizationOverviewPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: orgId } = await params;
-
-  const token = await getAccessTokenReadOnly();
-  if (!token) {
-    redirect("/signin");
-  }
 
   let organization: Organization = {
     "@id": "",
@@ -34,6 +31,19 @@ export default async function OrganizationOverviewPage({
   let totalMembers = 0;
 
   try {
+    const apiUrl = getApiUrl();
+    if (!apiUrl) {
+      throw new AppError({
+        code: "SERVER_CONFIG_ERROR",
+        message: "API URL is not configured",
+        status: 500,
+      });
+    }
+
+    if (!(await getOrRefreshAccessToken(apiUrl))) {
+      redirect("/signin");
+    }
+
     const [orgResp, projectsResp, membersResp, chatsResp] = await Promise.all([
       apiGet<Organization>(`/organizations/${orgId}`),
       apiGet<{ member: Project[]; totalItems: number }>(
