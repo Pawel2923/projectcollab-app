@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers";
 
+import { getApiUrl } from "@/utils/get-api-url";
+
 import { logToServer } from "../log/server-logger";
 
 export async function getOrRefreshAccessToken(
@@ -98,6 +100,54 @@ export async function clearAuthCookies(): Promise<boolean> {
       context: { error: String(error) },
       errorStack: (error as Error)?.stack,
     });
+    return false;
+  }
+}
+
+export async function revokeRefreshToken(): Promise<boolean> {
+  const nextApiUrl = getApiUrl();
+  if (!nextApiUrl) {
+    await logToServer({
+      level: "error",
+      message: "API URL not found when revoking refresh token",
+      serviceName: "tokenService.revokeRefreshToken",
+    });
+
+    return false;
+  }
+
+  const refreshToken = (await cookies()).get("refresh_token")?.value;
+  if (!refreshToken) {
+    await logToServer({
+      level: "warn",
+      message: "No refresh token found when attempting to revoke",
+      serviceName: "tokenService.revokeRefreshToken",
+    });
+
+    return false;
+  }
+
+  try {
+    await fetch(`${nextApiUrl}/auth/logout`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+      cache: "no-store",
+    });
+
+    return true;
+  } catch (error) {
+    await logToServer({
+      level: "error",
+      message: "Failed to revoke refresh token",
+      serviceName: "tokenService.revokeRefreshToken",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
+
     return false;
   }
 }

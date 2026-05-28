@@ -11,6 +11,13 @@ vi.mock("next/headers", () => {
   };
 });
 
+vi.mock("@/utils/get-api-url", () => ({
+  getApiUrl: () => (globalThis as any).__API_URL,
+}));
+
+vi.mock("../log/server-logger", () => ({
+  logToServer: vi.fn(),
+}));
 beforeEach(() => {
   cookieStore = {
     get: vi.fn(),
@@ -207,5 +214,82 @@ describe("clearAuthCookies", async () => {
     const result = await tokenService.clearAuthCookies();
 
     expect(result).toBe(false);
+  });
+});
+
+describe("revokeRefreshToken", () => {
+  test("should call API to revoke token and return true", async () => {
+    (globalThis as any).__API_URL = "http://api";
+
+    cookieStore.get.mockImplementation((name: string) =>
+      name === "refresh_token" ? { value: "r" } : undefined,
+    );
+
+    (global.fetch as any).mockResolvedValueOnce({});
+
+    const result = await tokenService.revokeRefreshToken();
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "http://api/auth/logout",
+      expect.objectContaining({ method: "POST" }),
+    );
+
+    expect(result).toBe(true);
+  });
+
+  test("should log error and return false when API URL is not defined", async () => {
+    (globalThis as any).__API_URL = undefined;
+
+    const serverLogger = await import("../log/server-logger");
+
+    const result = await tokenService.revokeRefreshToken();
+
+    expect(result).toBe(false);
+    expect(serverLogger.logToServer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        level: "error",
+        serviceName: "tokenService.revokeRefreshToken",
+      }),
+    );
+  });
+
+  test("should log warn and return false when refresh token is not found", async () => {
+    (globalThis as any).__API_URL = "http://api";
+
+    cookieStore.get.mockReturnValue(undefined);
+
+    const serverLogger = await import("../log/server-logger");
+
+    const result = await tokenService.revokeRefreshToken();
+
+    expect(result).toBe(false);
+    expect(serverLogger.logToServer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        level: "warn",
+        serviceName: "tokenService.revokeRefreshToken",
+      }),
+    );
+  });
+
+  test("should log error and return false when fetch throws", async () => {
+    (globalThis as any).__API_URL = "http://api";
+
+    cookieStore.get.mockImplementation((name: string) =>
+      name === "refresh_token" ? { value: "r" } : undefined,
+    );
+
+    (global.fetch as any).mockRejectedValueOnce(new Error("boom"));
+
+    const serverLogger = await import("../log/server-logger");
+
+    const result = await tokenService.revokeRefreshToken();
+
+    expect(result).toBe(false);
+    expect(serverLogger.logToServer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        level: "error",
+        serviceName: "tokenService.revokeRefreshToken",
+      }),
+    );
   });
 });
