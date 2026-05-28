@@ -6,8 +6,10 @@ import React, { useEffect, useState } from "react";
 
 import { ProjectCollabLogotype } from "@/assets/img/ProjectCollabLogotype";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
+import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { OrganizationProvider } from "@/store/OrganizationContext";
 import type { OrganizationMember } from "@/types/api/organization";
+import type { LogoutResponse } from "@/types/auth/logout";
 import type { ChatLinkedResources } from "@/types/ui/chat-linked-resources";
 
 import { AddChatModal } from "./Chat/AddChatModal";
@@ -45,8 +47,8 @@ export function TopNav({
   }, []);
 
   const userMenu = (
-    <DropdownMenuItem asChild>
-      <Link href="/logout">Wyloguj się</Link>
+    <DropdownMenuItem onClick={logoutBtnClickHandler}>
+      Wyloguj się
     </DropdownMenuItem>
   );
 
@@ -103,4 +105,35 @@ export function TopNav({
   }
 
   return navContent;
+}
+
+async function logoutBtnClickHandler() {
+  try {
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      fetchApiLog({
+        level: "error",
+        message: "Logout failed with non-ok response",
+        statusCode: response.status,
+        serviceName: "TopNav.logoutBtnClickHandler",
+        context: { response },
+      });
+
+      return;
+    }
+
+    const redirectResponse = ((await response.json()) as LogoutResponse)
+      .redirect;
+    window.location.href = redirectResponse?.redirect || "/signin";
+  } catch (error) {
+    fetchApiLog({
+      level: "error",
+      message: "Logout failed",
+      context: { error },
+      serviceName: "TopNav.logoutBtnClickHandler",
+    });
+  }
 }
