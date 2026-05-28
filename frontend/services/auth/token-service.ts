@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers";
 
+import { logToServer } from "../log/server-logger";
+
 export async function getOrRefreshAccessToken(
   nextApiUrl: string,
 ): Promise<string | undefined> {
@@ -77,5 +79,25 @@ export async function refreshAccessToken(
 
       return newToken;
     }
+  }
+}
+
+export async function clearAuthCookies(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
+
+    return true;
+  } catch (error) {
+    await logToServer({
+      level: "error",
+      message: "Failed to clear authentication cookies",
+      serviceName: "tokenService.clearAuthCookies",
+      context: { error: String(error) },
+      errorStack: (error as Error)?.stack,
+    });
+    return false;
   }
 }

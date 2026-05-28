@@ -187,3 +187,25 @@ describe("refreshAccessToken", () => {
     expect(cookieStore.set).not.toHaveBeenCalled();
   });
 });
+
+describe("clearAuthCookies", async () => {
+  test("should delete both cookies and return true", async () => {
+    cookieStore.delete = vi.fn();
+
+    const result = await tokenService.clearAuthCookies();
+
+    expect(cookieStore.delete).toHaveBeenCalledWith("access_token");
+    expect(cookieStore.delete).toHaveBeenCalledWith("refresh_token");
+    expect(result).toBe(true);
+  });
+
+  test("should log error and return false when error occurs", async () => {
+    cookieStore.delete = vi.fn(() => {
+      throw new Error("delete failed");
+    });
+
+    const result = await tokenService.clearAuthCookies();
+
+    expect(result).toBe(false);
+  });
+});
