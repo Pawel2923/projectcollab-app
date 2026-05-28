@@ -56,6 +56,7 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
     if (response.ok) {
       const data = await response.json();
       const newToken = data?.token;
+      const newRefreshToken = data?.refresh_token;
 
       if (newToken) {
         cookieStore.set("access_token", newToken, {
@@ -65,6 +66,16 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
           path: "/",
           maxAge: 60 * 5, // 5 minutes
         });
+
+        if (newRefreshToken) {
+          cookieStore.set("refresh_token", newRefreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+          });
+        }
 
         return newToken;
       }

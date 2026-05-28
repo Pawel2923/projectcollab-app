@@ -193,6 +193,7 @@ export const proxy = auth(async (request) => {
       if (refreshResponse.ok) {
         const data = await refreshResponse.json();
         const newToken = data?.token;
+        const newRefreshToken = data?.refresh_token;
 
         await logToServer({
           level: "info",
@@ -215,6 +216,16 @@ export const proxy = auth(async (request) => {
             path: "/",
             maxAge: 60 * 5, // 5 minutes
           });
+
+          if (newRefreshToken) {
+            response.cookies.set("refresh_token", newRefreshToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
+          }
 
           // Capture Mercure cookie if present
           const setCookie = refreshResponse.headers.get("set-cookie");

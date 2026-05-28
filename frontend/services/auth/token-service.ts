@@ -51,7 +51,8 @@ export async function refreshAccessToken(
     });
 
     if (res.ok) {
-      const newToken = (await res.json())?.token;
+      const data = await res.json();
+      const newToken = data?.token;
 
       if (newToken) {
         cookieStore.set("access_token", newToken, {
@@ -61,6 +62,17 @@ export async function refreshAccessToken(
           path: "/",
           maxAge: 60 * 5, // 5 minutes
         });
+
+        const newRefreshToken = data?.refresh_token;
+        if (newRefreshToken) {
+          cookieStore.set("refresh_token", newRefreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+          });
+        }
       }
 
       return newToken;

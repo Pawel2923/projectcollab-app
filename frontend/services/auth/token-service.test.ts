@@ -45,9 +45,9 @@ describe("getOrRefreshAccessToken", () => {
           : undefined,
     );
 
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ token: "new-token" }),
+      json: async () => ({ token: "new-token", refresh_token: "new-refresh" }),
     });
 
     const token = await tokenService.getOrRefreshAccessToken("http://api");
@@ -117,9 +117,9 @@ describe("refreshAccessToken", () => {
       name === "refresh_token" ? { value: "r" } : undefined,
     );
 
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ token: "new-token" }),
+      json: async () => ({ token: "new-token", refresh_token: "new-refresh" }),
     });
 
     vi.stubEnv("NODE_ENV", "production");
@@ -140,6 +140,18 @@ describe("refreshAccessToken", () => {
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 5,
+      }),
+    );
+
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      "refresh_token",
+      "new-refresh",
+      expect.objectContaining({
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
       }),
     );
 

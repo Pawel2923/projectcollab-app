@@ -64,6 +64,7 @@ export async function POST() {
     }
 
     const newToken = data?.token;
+    const newRefreshToken = data?.refresh_token;
 
     if (!newToken) {
       const error = new AppError({
@@ -83,6 +84,16 @@ export async function POST() {
       path: "/",
       maxAge: 60 * 5, // 5 minutes
     });
+
+    if (newRefreshToken) {
+      cookieStore.set("refresh_token", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+      });
+    }
 
     return NextResponse.json({ token: newToken });
   } catch (error) {
