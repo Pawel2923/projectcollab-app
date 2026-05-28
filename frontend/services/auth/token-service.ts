@@ -3,8 +3,10 @@
 import { cookies } from "next/headers";
 
 import { getApiUrl } from "@/utils/get-api-url";
+import type { Result } from "@/utils/result";
+import { Err, Ok } from "@/utils/result";
 
-import { logToServer } from "../log/server-logger";
+import { AppError } from "../error/app-error";
 
 export async function getOrRefreshAccessToken(
   nextApiUrl: string,
@@ -84,51 +86,52 @@ export async function refreshAccessToken(
   }
 }
 
-export async function clearAuthCookies(): Promise<boolean> {
+export async function clearAuthCookies(): Promise<Result<null, AppError>> {
   try {
     const cookieStore = await cookies();
 
     cookieStore.delete("access_token");
     cookieStore.delete("refresh_token");
 
-    return true;
+    return Ok(null);
   } catch (error) {
-    await logToServer({
-      level: "error",
-      message: "Failed to clear authentication cookies",
-      serviceName: "tokenService.clearAuthCookies",
-      context: { error: String(error) },
-      errorStack: (error as Error)?.stack,
-    });
-    return false;
+    return Err(
+      new AppError({
+        message: "Failed to clear authentication cookies",
+        code: "UNKNOWN_ERROR",
+        status: 500,
+        originalError: error,
+      }),
+    );
   }
 }
 
-export async function revokeRefreshToken(): Promise<boolean> {
-  const nextApiUrl = getApiUrl();
-  if (!nextApiUrl) {
-    await logToServer({
-      level: "error",
-      message: "API URL not found when revoking refresh token",
-      serviceName: "tokenService.revokeRefreshToken",
-    });
-
-    return false;
-  }
-
-  const refreshToken = (await cookies()).get("refresh_token")?.value;
-  if (!refreshToken) {
-    await logToServer({
-      level: "warn",
-      message: "No refresh token found when attempting to revoke",
-      serviceName: "tokenService.revokeRefreshToken",
-    });
-
-    return false;
-  }
-
+export async function revokeRefreshToken(): Promise<Result<null, AppError>> {
   try {
-    await fetch(`${nextApiUrl}/auth/logout`, {
+    const refreshToken = (await cookies()).get("refresh_token")?.value;
+    if (!refreshToken) {
+      return Err(
+        new AppError({
+          message: "No refresh token found",
+          code: "NOT_FOUND",
+          status: 404,
+          severity: "warning",
+        }),
+      );
+    }
+
+    const apiUrl = getApiUrl();
+    if (!apiUrl) {
+      return Err(
+        new AppError({
+          message: "API URL not found",
+          code: "SERVER_CONFIG_ERROR",
+          status: 500,
+        }),
+      );
+    }
+
+    await fetch(`${apiUrl}/auth/logout`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -138,16 +141,15 @@ export async function revokeRefreshToken(): Promise<boolean> {
       cache: "no-store",
     });
 
-    return true;
+    return Ok(null);
   } catch (error) {
-    await logToServer({
-      level: "error",
-      message: "Failed to revoke refresh token",
-      serviceName: "tokenService.revokeRefreshToken",
-      context: { error: String(error) },
-      errorStack: (error as Error)?.stack,
-    });
-
-    return false;
+    return Err(
+      new AppError({
+        message: "Failed to revoke refresh token",
+        code: "UNKNOWN_ERROR",
+        status: 500,
+        originalError: error,
+      }),
+    );
   }
 }

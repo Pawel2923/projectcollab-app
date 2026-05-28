@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+import { isOk, match } from "@/utils/result";
+
 import * as tokenService from "./token-service";
 
 let cookieStore: any;
@@ -196,24 +198,34 @@ describe("refreshAccessToken", () => {
 });
 
 describe("clearAuthCookies", async () => {
-  test("should delete both cookies and return true", async () => {
+  test("should delete both cookies and return Ok", async () => {
     cookieStore.delete = vi.fn();
 
     const result = await tokenService.clearAuthCookies();
 
     expect(cookieStore.delete).toHaveBeenCalledWith("access_token");
     expect(cookieStore.delete).toHaveBeenCalledWith("refresh_token");
-    expect(result).toBe(true);
+    expect(isOk(result)).toBe(true);
   });
 
-  test("should log error and return false when error occurs", async () => {
+  test("should return Err when delete throws", async () => {
     cookieStore.delete = vi.fn(() => {
       throw new Error("delete failed");
     });
 
     const result = await tokenService.clearAuthCookies();
 
-    expect(result).toBe(false);
+    match(result, {
+      ok: () => {
+        throw new Error("Expected Err result");
+      },
+      err: (error) => {
+        expect(error.message).toContain(
+          "Failed to clear authentication cookies",
+        );
+        expect(error.code).toBe("UNKNOWN_ERROR");
+      },
+    });
   });
 });
 
@@ -234,44 +246,48 @@ describe("revokeRefreshToken", () => {
       expect.objectContaining({ method: "POST" }),
     );
 
-    expect(result).toBe(true);
+    expect(isOk(result)).toBe(true);
   });
 
-  test("should log error and return false when API URL is not defined", async () => {
+  test("should return Err when API URL is not defined", async () => {
     (globalThis as any).__API_URL = undefined;
-
-    const serverLogger = await import("../log/server-logger");
+    cookieStore.get.mockImplementation((name: string) =>
+      name === "refresh_token" ? { value: "r" } : undefined,
+    );
 
     const result = await tokenService.revokeRefreshToken();
 
-    expect(result).toBe(false);
-    expect(serverLogger.logToServer).toHaveBeenCalledWith(
-      expect.objectContaining({
-        level: "error",
-        serviceName: "tokenService.revokeRefreshToken",
-      }),
-    );
+    match(result, {
+      ok: () => {
+        throw new Error("Expected Err result");
+      },
+      err: (error) => {
+        expect(error.code).toBe("SERVER_CONFIG_ERROR");
+        expect(error.status).toBe(500);
+      },
+    });
   });
 
-  test("should log warn and return false when refresh token is not found", async () => {
+  test("should return Err when refresh token is not found", async () => {
     (globalThis as any).__API_URL = "http://api";
 
     cookieStore.get.mockReturnValue(undefined);
 
-    const serverLogger = await import("../log/server-logger");
-
     const result = await tokenService.revokeRefreshToken();
 
-    expect(result).toBe(false);
-    expect(serverLogger.logToServer).toHaveBeenCalledWith(
-      expect.objectContaining({
-        level: "warn",
-        serviceName: "tokenService.revokeRefreshToken",
-      }),
-    );
+    match(result, {
+      ok: () => {
+        throw new Error("Expected Err result");
+      },
+      err: (error) => {
+        expect(error.code).toBe("NOT_FOUND");
+        expect(error.status).toBe(404);
+        expect(error.severity).toBe("warning");
+      },
+    });
   });
 
-  test("should log error and return false when fetch throws", async () => {
+  test("should return Err when fetch throws", async () => {
     (globalThis as any).__API_URL = "http://api";
 
     cookieStore.get.mockImplementation((name: string) =>
@@ -280,16 +296,16 @@ describe("revokeRefreshToken", () => {
 
     (global.fetch as any).mockRejectedValueOnce(new Error("boom"));
 
-    const serverLogger = await import("../log/server-logger");
-
     const result = await tokenService.revokeRefreshToken();
 
-    expect(result).toBe(false);
-    expect(serverLogger.logToServer).toHaveBeenCalledWith(
-      expect.objectContaining({
-        level: "error",
-        serviceName: "tokenService.revokeRefreshToken",
-      }),
-    );
+    match(result, {
+      ok: () => {
+        throw new Error("Expected Err result");
+      },
+      err: (error) => {
+        expect(error.code).toBe("UNKNOWN_ERROR");
+        expect(error.status).toBe(500);
+      },
+    });
   });
 });
