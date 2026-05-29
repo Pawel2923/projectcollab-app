@@ -7,7 +7,7 @@ import {
 } from "@/services/auth/token-service";
 import { logError } from "@/services/error/error-logger";
 import { logToServer } from "@/services/log/server-logger";
-import type { SignOutRedirectResponse } from "@/types/auth/logout";
+import type { LogoutResponse } from "@/types/auth/logout";
 import { isOk } from "@/utils/result";
 
 export async function POST() {
@@ -20,18 +20,17 @@ export async function POST() {
     const clearAuthCookiesResult = await clearAuthCookies();
     if (!isOk(clearAuthCookiesResult)) {
       logError(clearAuthCookiesResult.error);
-      return new NextResponse(JSON.stringify({ ok: false }), {
+      return new NextResponse(null, {
         status: 500,
-        headers: { "Content-Type": "application/json" },
       });
     }
 
-    const redirect: SignOutRedirectResponse = await signOut({
+    const redirect: LogoutResponse = await signOut({
       redirect: false,
       redirectTo: "/signin",
     });
 
-    return NextResponse.json({ ok: true, redirect });
+    return NextResponse.json(redirect);
   } catch (error) {
     await logToServer({
       level: "error",
@@ -40,6 +39,8 @@ export async function POST() {
       serviceName: "api.auth.logout",
     });
 
-    return NextResponse.json({ ok: false });
+    return new NextResponse(null, {
+      status: 500,
+    });
   }
 }

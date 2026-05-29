@@ -127,7 +127,7 @@ async function logoutBtnClickHandler() {
 
     const redirectResponse = ((await response.json()) as LogoutResponse)
       .redirect;
-    window.location.href = redirectResponse?.redirect || "/signin";
+    window.location.href = redirectResponse || "/signin";
   } catch (error) {
     fetchApiLog({
       level: "error",
