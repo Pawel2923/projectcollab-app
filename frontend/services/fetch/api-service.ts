@@ -10,6 +10,7 @@ interface ApiCallOptions {
   body?: object;
   headers?: Record<string, string>;
   requireAuth?: boolean;
+  refreshTokenOnAuthFailure?: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -22,7 +23,13 @@ export async function apiCall<T = unknown>(
   endpoint: string,
   options: ApiCallOptions = {},
 ): Promise<ApiResponse<T>> {
-  const { method = "GET", body, headers = {}, requireAuth = true } = options;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    requireAuth = true,
+    refreshTokenOnAuthFailure = true,
+  } = options;
 
   try {
     const apiUrl = getApiUrl();
@@ -36,11 +43,23 @@ export async function apiCall<T = unknown>(
     }
 
     if (requireAuth) {
-      const token = await getOrRefreshAccessToken(apiUrl);
+      const token = await getOrRefreshAccessToken(
+        apiUrl,
+        refreshTokenOnAuthFailure,
+      );
+
       if (!token) {
-        // Redirect to session expired handler to trigger refresh loop
+        if (!refreshTokenOnAuthFailure) {
+          return {
+            data: null,
+            error: "Unauthorized",
+            status: 401,
+          };
+        }
+
         redirect("/api/auth/session-expired?redirect=/organizations");
       }
+
       headers.Authorization = `Bearer ${token}`;
     }
 
@@ -59,7 +78,6 @@ export async function apiCall<T = unknown>(
     });
 
     if (response.status === 403) {
-      // Redirect to organizations list with error parameter query
       redirect("/organizations?error=access_denied");
     }
 
@@ -80,7 +98,6 @@ export async function apiCall<T = unknown>(
       status: response.status,
     };
   } catch (error) {
-    // Re-throw Next.js redirects
     if (
       error &&
       typeof error === "object" &&
@@ -105,23 +122,39 @@ export async function apiCall<T = unknown>(
 export async function apiGet<T = unknown>(
   endpoint: string,
   requireAuth: boolean = true,
+  refreshTokenOnAuthFailure: boolean = true,
 ): Promise<ApiResponse<T>> {
-  return apiCall<T>(endpoint, { method: "GET", requireAuth });
+  return apiCall<T>(endpoint, {
+    method: "GET",
+    requireAuth,
+    refreshTokenOnAuthFailure,
+  });
 }
 
 export async function apiPost<T = unknown>(
   endpoint: string,
   body: object,
   requireAuth: boolean = true,
+  refreshTokenOnAuthFailure: boolean = true,
 ): Promise<ApiResponse<T>> {
-  return apiCall<T>(endpoint, { method: "POST", body, requireAuth });
+  return apiCall<T>(endpoint, {
+    method: "POST",
+    body,
+    requireAuth,
+    refreshTokenOnAuthFailure,
+  });
 }
 
 export async function apiDelete<T = unknown>(
   endpoint: string,
   requireAuth: boolean = true,
+  refreshTokenOnAuthFailure: boolean = true,
 ): Promise<ApiResponse<T>> {
-  return apiCall<T>(endpoint, { method: "DELETE", requireAuth });
+  return apiCall<T>(endpoint, {
+    method: "DELETE",
+    requireAuth,
+    refreshTokenOnAuthFailure,
+  });
 }
 
 export async function rethrowIfRedirect(error: unknown): Promise<void> {

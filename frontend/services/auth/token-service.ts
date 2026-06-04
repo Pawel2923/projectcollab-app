@@ -10,10 +10,11 @@ import { AppError } from "../error/app-error";
 
 export async function getOrRefreshAccessToken(
   nextApiUrl: string,
+  refreshOnUndefined: boolean = true,
 ): Promise<string | undefined> {
   try {
     let token = (await cookies()).get("access_token")?.value;
-    if (!token) {
+    if (!token && refreshOnUndefined) {
       token = await refreshAccessToken(nextApiUrl);
     }
 

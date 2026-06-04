@@ -80,6 +80,18 @@ describe("getOrRefreshAccessToken", () => {
 
     expect(token).toBeUndefined();
   });
+
+  test("should return undefined when access_token is undefined and refreshOnUndefined is false", async () => {
+    cookieStore.get.mockReturnValue(undefined);
+
+    const token = await tokenService.getOrRefreshAccessToken(
+      "http://api",
+      false,
+    );
+
+    expect(token).toBeUndefined();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
 });
 
 describe("hasAuthCookies", () => {

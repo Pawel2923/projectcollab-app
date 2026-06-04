@@ -7,7 +7,7 @@ import { apiGet } from "../fetch/api-service";
 
 export async function getCurrentUser(): Promise<Result<User, AppError>> {
   try {
-    const response = await apiGet<User>("/users/me");
+    const response = await apiGet<User>("/users/me", true, false);
 
     if (response.status !== 200) {
       return toErrorResult(response.error, "getUser");
