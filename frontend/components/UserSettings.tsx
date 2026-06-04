@@ -17,9 +17,14 @@ import {
 interface UserSettingsProps {
   children: React.ReactNode;
   trigger?: React.ReactElement;
+  triggerMessage?: string;
 }
 
-export function UserSettings({ children, trigger }: UserSettingsProps) {
+export function UserSettings({
+  children,
+  trigger,
+  triggerMessage,
+}: UserSettingsProps) {
   const userCtx = useUserContext();
   const defaultTrigger = (
     <Button
@@ -27,6 +32,7 @@ export function UserSettings({ children, trigger }: UserSettingsProps) {
       size="dynamic"
       className="data-[state=open]:[&_svg]:rotate-180"
     >
+      {triggerMessage}
       <Avatar
         initials={generateUserInitials(userCtx?.user || null)}
         size="large"
