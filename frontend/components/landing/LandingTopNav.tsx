@@ -1,5 +1,6 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -10,13 +11,23 @@ import type { LogoutResponse } from "@/types/auth/logout";
 
 import { Button } from "../ui/button";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { UserSettings } from "../UserSettings";
 
 export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <>
       <nav
-        className="hidden h-21 w-full flex-wrap items-center justify-between gap-4 border-b border-border bg-white px-4 py-2 dark:bg-black md:flex col-span-2 sticky top-0 z-20"
+        className="h-21 w-full flex-wrap items-center justify-between gap-4 border-b border-border bg-white px-4 py-2 dark:bg-black flex col-span-2 sticky top-0 z-20"
         suppressHydrationWarning
       >
         <div className="flex items-center gap-6">
@@ -25,27 +36,76 @@ export function LandingTopNav({ user }: { user: User | null }) {
           </Link>
         </div>
         <div className="flex items-center gap-2">
-          {user ? (
-            <>
-              <UserSettings triggerMessage={`Cześć ${user.username}!`}>
-                <DropdownMenuItem onClick={logoutBtnClickHandler}>
-                  Wyloguj się
-                </DropdownMenuItem>
-              </UserSettings>
-            </>
-          ) : (
-            <>
-              <Button asChild variant="secondary">
-                <Link href="/signin">Zaloguj się</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Zarejestruj się</Link>
-              </Button>
-            </>
-          )}
+          <Sheet>
+            <SheetTrigger className="md:hidden">
+              <Menu />
+            </SheetTrigger>
+            <SheetContent className="flex flex-col">
+              <SheetHeader>
+                <SheetTitle>
+                  {user ? (
+                    <>Cześć {user.username || user.email}</>
+                  ) : (
+                    <>Rozpocznij</>
+                  )}
+                </SheetTitle>
+                <SheetDescription>
+                  {user ? (
+                    <>Sprawdź ustawienia i wyloguj się</>
+                  ) : (
+                    <>Zaloguj się lub zarejestruj się</>
+                  )}
+                </SheetDescription>
+              </SheetHeader>
+              <div className="flex-1">
+                {user ? (
+                  <Button
+                    variant={"secondary"}
+                    onClick={logoutBtnClickHandler}
+                    className="w-full"
+                  >
+                    Wyloguj się
+                  </Button>
+                ) : (
+                  <LoggedOutContent />
+                )}
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button variant="outline">Zamknij</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <div className="hidden md:flex gap-4">
+            {user ? (
+              <>
+                <UserSettings triggerMessage={`Cześć ${user.username}!`}>
+                  <DropdownMenuItem onClick={logoutBtnClickHandler}>
+                    Wyloguj się
+                  </DropdownMenuItem>
+                </UserSettings>
+              </>
+            ) : (
+              <LoggedOutContent />
+            )}
+          </div>
         </div>
       </nav>
     </>
+  );
+}
+
+function LoggedOutContent() {
+  return (
+    <div className="flex flex-col md:flex-row gap-4">
+      <Button asChild variant="secondary">
+        <Link href="/signin">Zaloguj się</Link>
+      </Button>
+      <Button asChild>
+        <Link href="/signup">Zarejestruj się</Link>
+      </Button>
+    </div>
   );
 }
 
