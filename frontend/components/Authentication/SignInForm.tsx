@@ -144,7 +144,7 @@ export function SignInForm({
 
                 <Link
                   href="/reset-password"
-                  className="underline underline-offset-4 text-sm"
+                  className="underline underline-offset-4 text-sm text-dark-primary hover:text-primary"
                 >
                   Zapomniałeś hasła?
                 </Link>
@@ -162,7 +162,10 @@ export function SignInForm({
               </div>
               <div className="text-center text-sm">
                 Nie masz konta?{" "}
-                <Link href="/signup" className="underline underline-offset-4">
+                <Link
+                  href="/signup"
+                  className="underline underline-offset-4 text-dark-primary hover:text-primary"
+                >
                   Zarejestruj się
                 </Link>
               </div>
@@ -172,7 +175,7 @@ export function SignInForm({
           </Form.Root>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
         Logując się, akceptujesz nasze{" "}
         <a href="/policy/terms?referer=/signin">Warunki korzystania z usługi</a>{" "}
         oraz <a href="/policy/privacy?referer=/signin">Politykę prywatności</a>.

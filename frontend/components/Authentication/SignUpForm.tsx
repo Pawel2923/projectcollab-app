@@ -159,7 +159,10 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
               </div>
               <div className="text-center text-sm">
                 Masz już konto?{" "}
-                <Link href="/signin" className="underline underline-offset-4">
+                <Link
+                  href="/signin"
+                  className="underline underline-offset-4 text-dark-primary hover:text-primary"
+                >
                   Zaloguj się
                 </Link>
               </div>
@@ -167,7 +170,7 @@ export function SignUpForm({ className, ...props }: { className?: string }) {
           </Form.Root>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
         Rejestrując się, akceptujesz nasze{" "}
         <a href="/policy/terms?referer=/signup">Warunki korzystania z usługi</a>{" "}
         oraz <a href="/policy/privacy?referer=/signup">Politykę prywatności</a>.
