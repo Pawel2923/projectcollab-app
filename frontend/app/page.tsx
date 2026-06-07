@@ -23,7 +23,7 @@ export default async function Home() {
   return (
     <UserProvider initial={user}>
       <LandingTopNav user={user} />
-      <div className="px-2 pb-10 md:pb-26 md:px-24 space-y-10 md:space-y-26 min-h-(--landing-page-height)">
+      <div className="px-2 pb-10 md:pb-26 md:px-24 xl:px-40 2xl:px-62 space-y-10 md:space-y-26 min-h-(--landing-page-height)">
         <div className="py-10 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="space-y-8 max-w-138">
             <h1 className="text-3xl">Planuj, twórz i współpracuj</h1>
