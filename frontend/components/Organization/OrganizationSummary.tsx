@@ -139,7 +139,7 @@ export function OrganizationSummary({
                 key={chat.id}
                 href={`/organizations/${organizationId}/chats/${chat.id}`}
               >
-                <Card className="hover:bg-accent transition-colors cursor-pointer">
+                <Card className="bg-background hover:bg-light-hover transition-colors">
                   <CardHeader>
                     <CardTitle className="text-base">{chat.name}</CardTitle>
                     <CardDescription className="flex items-center gap-2">

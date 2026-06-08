@@ -45,7 +45,11 @@ export function OrganizationCardMenu({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="circular" size="icon" className="h-8 w-8">
+          <Button
+            variant="circular"
+            size="icon"
+            className="h-8 w-8 hover:bg-light"
+          >
             <EllipsisVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>

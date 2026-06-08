@@ -50,32 +50,30 @@ export function OrganizationCard({ id, iri, name }: OrganizationCardProps) {
   }, [id, showError]);
 
   return (
-    <Card className="bg-background transition-colors">
-      <CardHeader>
-        <Link href={`/organizations/${id}/overview`}>
-          <CardTitle className="text-xl hover:text-primary transition-colors">
-            {name}
-          </CardTitle>
-        </Link>
-        <CardDescription>Organizacja</CardDescription>
-        <CardAction>
-          <OrganizationCardMenu
-            organizationId={id.toString()}
-            organizationIri={iri}
-            existingMembers={members}
-          />
-        </CardAction>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Users className="h-4 w-4" />
-          <span>
-            {isLoading
-              ? "..."
-              : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+    <Link href={`/organizations/${id}/overview`}>
+      <Card className="hover:bg-light-hover transition-colors">
+        <CardHeader>
+          <CardTitle className="text-xl">{name}</CardTitle>
+          <CardDescription>Organizacja</CardDescription>
+          <CardAction>
+            <OrganizationCardMenu
+              organizationId={id.toString()}
+              organizationIri={iri}
+              existingMembers={members}
+            />
+          </CardAction>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="h-4 w-4" />
+            <span>
+              {isLoading
+                ? "..."
+                : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
