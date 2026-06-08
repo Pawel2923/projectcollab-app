@@ -78,38 +78,57 @@ export function MainNav({
     return null;
   }
 
-  const overviewHref = organizationId
-    ? `/organizations/${organizationId}/overview`
-    : "/organizations";
-  const projectsHref = organizationId
-    ? `/organizations/${organizationId}/projects`
-    : "/organizations";
-  const chatsHref = organizationId
-    ? `/organizations/${organizationId}/chats`
-    : "/organizations";
-
-  const isOverviewActive = pathname === overviewHref;
+  const isOrganizationsActive = /^\/organizations\/[1-9]\d*\/[^\/]+\/?$/.test(
+    pathname,
+  );
   const isProjectsActive =
-    pathname === projectsHref || pathname.startsWith(`${projectsHref}/`);
+    /^\/organizations\/[1-9]\d*\/projects\/[1-9]\d*\/[^\/]+\/?$/.test(pathname);
   const isChatsActive =
-    pathname === chatsHref || pathname.startsWith(`${chatsHref}/`);
+    /^\/organizations\/[1-9]\d*\/chats\/[1-9]\d*(\/[^\/]+\/?)?$/.test(pathname);
 
   return (
     <NavigationMenu>
       <NavigationMenuList className="space-x-6">
         <NavigationMenuItem>
-          <NavigationMenuLink
+          <NavigationMenuTrigger
             className={classNamesMerger(
-              navigationMenuTriggerStyle(),
               "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
-              isOverviewActive && "bg-light dark:bg-dark",
+              isOrganizationsActive && "bg-light dark:bg-dark",
             )}
-            asChild
           >
-            <Link href={overviewHref} passHref>
-              Główna
-            </Link>
-          </NavigationMenuLink>
+            Organizacje
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-max max-w-[400px] gap-1 p-2 bg-white dark:bg-black border border-border shadow-lg rounded-lg">
+              <NavigationMenuLink asChild>
+                <Link
+                  href={`/organizations`}
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                >
+                  Wszystkie organizacje
+                </Link>
+              </NavigationMenuLink>
+              <li className="px-2 pt-1 pb-1 text-xs font-semibold text-gray-500 dark:text-gray-400 select-none cursor-default">
+                Obecna organizacja
+              </li>
+              <NavigationMenuLink asChild>
+                <Link
+                  href={`/organizations/${organizationId}/overview`}
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                >
+                  Przegląd
+                </Link>
+              </NavigationMenuLink>
+              <NavigationMenuLink asChild>
+                <Link
+                  href={`/organizations/${organizationId}/members`}
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                >
+                  Członkowie
+                </Link>
+              </NavigationMenuLink>
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
           {projects.length > 0 ? (
@@ -160,7 +179,7 @@ export function MainNav({
               )}
               asChild
             >
-              <Link href={projectsHref} passHref>
+              <Link href={`/organizations/${organizationId}/projects`} passHref>
                 Projekty
               </Link>
             </NavigationMenuLink>
@@ -175,7 +194,7 @@ export function MainNav({
             )}
             asChild
           >
-            <Link href={chatsHref} passHref>
+            <Link href={`/organizations/${organizationId}/chats`} passHref>
               Czaty
             </Link>
           </NavigationMenuLink>
