@@ -29,10 +29,12 @@ export function SideNavItem({
     <Tooltip>
       <TooltipTrigger asChild>
         <ActiveNavigationButton href={href} isCollapsed={!isExpanded}>
-          <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+          <div className="shrink-0 w-6 h-6 flex items-center justify-center">
             {IconComponent ? <IconComponent /> : (icon as React.ReactNode)}
           </div>
-          <span className={labelAnimation}>{label}</span>
+          <span className={`${labelAnimation} ${isExpanded ? "" : "hidden"}`}>
+            {label}
+          </span>
         </ActiveNavigationButton>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
