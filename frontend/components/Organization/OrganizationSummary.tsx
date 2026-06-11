@@ -17,6 +17,7 @@ import type { Chat } from "@/types/api/chat";
 import type { Organization } from "@/types/api/organization";
 import type { Project } from "@/types/api/project";
 import { formatDistanceToNow } from "@/utils/date-utils";
+import { ChatCard } from "./ChatCard";
 
 interface OrganizationSummaryProps {
   organization: Organization;
@@ -135,38 +136,19 @@ export function OrganizationSummary({
         {recentChats.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {recentChats.slice(0, 4).map((chat) => (
-              <Card
+              <ChatCard
                 key={chat.id}
-                className="relative bg-background hover:bg-light-hover transition-colors"
-              >
-                <Link
-                  aria-label={`Otwórz czat ${chat.name}`}
-                  className="absolute inset-0 z-10 rounded-xl"
-                  href={`/organizations/${organizationId}/chats/${chat.id}`}
-                />
-                <CardHeader className="pointer-events-none relative">
-                  <CardTitle className="text-base">{chat.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-2">
-                    <MessageSquare className="h-3 w-3" />
-                    {chat.type === "general" && "Czat ogólny"}
-                    {chat.type === "direct" && "Wiadomość bezpośrednia"}
-                    {chat.type === "group" && "Czat grupowy"}
-                    {chat.lastMessageAt && (
-                      <>
-                        <span>•</span>
-                        <span suppressHydrationWarning>
-                          {formatDistanceToNow(new Date(chat.lastMessageAt))}
-                        </span>
-                      </>
-                    )}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+                id={chat.id}
+                name={chat.name}
+                type={chat.type}
+                organizationId={organizationId}
+                lastMessageAt={chat.lastMessageAt}
+              />
             ))}
           </div>
         ) : (
           <Card>
-            <CardContent className="pointer-events-none relative z-0 flex flex-col items-center justify-center py-8">
+            <CardContent className="flex flex-col items-center justify-center py-8">
               <p className="text-muted-foreground">Brak czatów</p>
             </CardContent>
           </Card>
