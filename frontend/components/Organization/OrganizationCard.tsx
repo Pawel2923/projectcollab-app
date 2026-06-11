@@ -50,30 +50,33 @@ export function OrganizationCard({ id, iri, name }: OrganizationCardProps) {
   }, [id, showError]);
 
   return (
-    <Link href={`/organizations/${id}/overview`}>
-      <Card className="hover:bg-light-hover transition-colors">
-        <CardHeader>
-          <CardTitle className="text-xl">{name}</CardTitle>
-          <CardDescription>Organizacja</CardDescription>
-          <CardAction>
-            <OrganizationCardMenu
-              organizationId={id.toString()}
-              organizationIri={iri}
-              existingMembers={members}
-            />
-          </CardAction>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>
-              {isLoading
-                ? "..."
-                : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+    <Card className="relative hover:bg-light-hover transition-colors">
+      <Link
+        aria-label={`Otwórz organizację ${name}`}
+        className="absolute inset-0 z-10 rounded-xl"
+        href={`/organizations/${id}/overview`}
+      />
+      <CardHeader className="pointer-events-none relative">
+        <CardTitle className="text-xl">{name}</CardTitle>
+        <CardDescription>Organizacja</CardDescription>
+        <CardAction className="pointer-events-auto relative z-20">
+          <OrganizationCardMenu
+            organizationId={id.toString()}
+            organizationIri={iri}
+            existingMembers={members}
+          />
+        </CardAction>
+      </CardHeader>
+      <CardContent className="pointer-events-none relative z-0 space-y-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Users className="h-4 w-4" />
+          <span>
+            {isLoading
+              ? "..."
+              : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

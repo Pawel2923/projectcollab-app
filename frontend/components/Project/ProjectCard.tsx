@@ -56,31 +56,34 @@ export function ProjectCard({
   }, [id, showError]);
 
   return (
-    <Link href={`/organizations/${organizationId}/projects/${id}/summary`}>
-      <Card className="hover:bg-light-hover transition-colors">
-        <CardHeader>
-          <CardTitle className="text-xl">{name}</CardTitle>
-          <CardDescription>Projekt</CardDescription>
-          <CardAction>
-            <ProjectCardMenu
-              organizationId={organizationId}
-              projectId={id.toString()}
-              projectIri={iri}
-              existingMembers={members}
-            />
-          </CardAction>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>
-              {isLoading
-                ? "..."
-                : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+    <Card className="relative hover:bg-light-hover transition-colors">
+      <Link
+        aria-label={`Otwórz projekt ${name}`}
+        className="absolute inset-0 z-10 rounded-xl"
+        href={`/organizations/${organizationId}/projects/${id}/summary`}
+      />
+      <CardHeader className="pointer-events-none relative">
+        <CardTitle className="text-xl">{name}</CardTitle>
+        <CardDescription>Projekt</CardDescription>
+        <CardAction className="pointer-events-auto relative z-20">
+          <ProjectCardMenu
+            organizationId={organizationId}
+            projectId={id.toString()}
+            projectIri={iri}
+            existingMembers={members}
+          />
+        </CardAction>
+      </CardHeader>
+      <CardContent className="pointer-events-none relative z-0 space-y-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Users className="h-4 w-4" />
+          <span>
+            {isLoading
+              ? "..."
+              : `${memberCount} ${memberCount === 1 ? "członek" : "członków"}`}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

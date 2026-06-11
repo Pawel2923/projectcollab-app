@@ -135,35 +135,38 @@ export function OrganizationSummary({
         {recentChats.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {recentChats.slice(0, 4).map((chat) => (
-              <Link
+              <Card
                 key={chat.id}
-                href={`/organizations/${organizationId}/chats/${chat.id}`}
+                className="relative bg-background hover:bg-light-hover transition-colors"
               >
-                <Card className="bg-background hover:bg-light-hover transition-colors">
-                  <CardHeader>
-                    <CardTitle className="text-base">{chat.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      <MessageSquare className="h-3 w-3" />
-                      {chat.type === "general" && "Czat ogólny"}
-                      {chat.type === "direct" && "Wiadomość bezpośrednia"}
-                      {chat.type === "group" && "Czat grupowy"}
-                      {chat.lastMessageAt && (
-                        <>
-                          <span>•</span>
-                          <span suppressHydrationWarning>
-                            {formatDistanceToNow(new Date(chat.lastMessageAt))}
-                          </span>
-                        </>
-                      )}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
+                <Link
+                  aria-label={`Otwórz czat ${chat.name}`}
+                  className="absolute inset-0 z-10 rounded-xl"
+                  href={`/organizations/${organizationId}/chats/${chat.id}`}
+                />
+                <CardHeader className="pointer-events-none relative">
+                  <CardTitle className="text-base">{chat.name}</CardTitle>
+                  <CardDescription className="flex items-center gap-2">
+                    <MessageSquare className="h-3 w-3" />
+                    {chat.type === "general" && "Czat ogólny"}
+                    {chat.type === "direct" && "Wiadomość bezpośrednia"}
+                    {chat.type === "group" && "Czat grupowy"}
+                    {chat.lastMessageAt && (
+                      <>
+                        <span>•</span>
+                        <span suppressHydrationWarning>
+                          {formatDistanceToNow(new Date(chat.lastMessageAt))}
+                        </span>
+                      </>
+                    )}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
             ))}
           </div>
         ) : (
           <Card>
-            <CardContent className="flex flex-col items-center justify-center py-8">
+            <CardContent className="pointer-events-none relative z-0 flex flex-col items-center justify-center py-8">
               <p className="text-muted-foreground">Brak czatów</p>
             </CardContent>
           </Card>
