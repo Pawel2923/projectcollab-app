@@ -6,17 +6,11 @@ import React from "react";
 
 import { ProjectCard } from "@/components/Project/ProjectCard";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Chat } from "@/types/api/chat";
 import type { Organization } from "@/types/api/organization";
 import type { Project } from "@/types/api/project";
-import { formatDistanceToNow } from "@/utils/date-utils";
+
 import { ChatCard } from "./ChatCard";
 
 interface OrganizationSummaryProps {
