@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, FolderKanban, MessageSquare, Users } from "lucide-react";
+import { Building2, FolderKanban, SettingsIcon, Users } from "lucide-react";
 import React from "react";
 
 import { ServerSideNav } from "@/components/ServerSideNav";
@@ -36,9 +36,9 @@ export function OrganizationSideNav({
       icon: <Users />,
     },
     {
-      href: `/organizations/${organizationId}/chats`,
-      label: "Czaty",
-      icon: <MessageSquare />,
+      href: `/organizations/${organizationId}/settings`,
+      label: "Ustawienia",
+      icon: <SettingsIcon />,
     },
   ];
 

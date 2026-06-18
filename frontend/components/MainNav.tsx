@@ -127,6 +127,14 @@ export function MainNav({
                   Członkowie
                 </Link>
               </NavigationMenuLink>
+              <NavigationMenuLink asChild>
+                <Link
+                  href={`/organizations/${organizationId}/settings`}
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                >
+                  Ustawienia
+                </Link>
+              </NavigationMenuLink>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
