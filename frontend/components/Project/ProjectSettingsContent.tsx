@@ -195,28 +195,11 @@ export default function ProjectSettingsContent({
   return (
     <>
       <div className="container">
-        <Tabs defaultValue="members" className="w-full">
+        <Tabs defaultValue="general" className="w-full">
           <TabsList>
-            <TabsTrigger value="members">Członkowie</TabsTrigger>
             <TabsTrigger value="general">Ogólne</TabsTrigger>
+            <TabsTrigger value="members">Członkowie</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="members" className="mt-6">
-            <div className="mb-4">
-              <h2 className="text-xl font-semibold">Członkowie projektu</h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                Zarządzaj rolami i uprawnieniami członków projektu
-              </p>
-            </div>
-
-            <ProjectMembersTable
-              members={members}
-              onRoleChange={handleRoleChange}
-              onDelete={canDeleteMembers ? handleDeleteMember : undefined}
-              currentUserId={currentUserId}
-              availableRoles={AVAILABLE_ROLES}
-            />
-          </TabsContent>
 
           <TabsContent value="general" className="mt-6">
             <div className="space-y-4">
@@ -269,6 +252,23 @@ export default function ProjectSettingsContent({
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="members" className="mt-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold">Członkowie projektu</h2>
+              <p className="text-muted-foreground text-sm mt-1">
+                Zarządzaj rolami i uprawnieniami członków projektu
+              </p>
+            </div>
+
+            <ProjectMembersTable
+              members={members}
+              onRoleChange={handleRoleChange}
+              onDelete={canDeleteMembers ? handleDeleteMember : undefined}
+              currentUserId={currentUserId}
+              availableRoles={AVAILABLE_ROLES}
+            />
           </TabsContent>
         </Tabs>
       </div>
