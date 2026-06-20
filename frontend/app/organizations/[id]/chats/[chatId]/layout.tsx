@@ -116,7 +116,7 @@ export default async function ChatsLayout({
   }
 
   return (
-    <div className="grid grid-rows-[auto_auto_1fr] md:grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[auto_1fr] min-h-screen">
+    <div className="grid grid-rows-[auto_auto_1fr] lg:grid-rows-[auto_1fr] grid-cols-1 lg:grid-cols-[auto_1fr] min-h-screen">
       <TopNav
         organizationId={organizationId}
         organizationMembers={organizationMembers}
@@ -133,7 +133,7 @@ export default async function ChatsLayout({
           isSideNavExpanded={isSideNavExpanded}
         />
       </ErrorBoundary>
-      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-2 overflow-y-auto bg-light md:col-start-2 md:row-start-2">
+      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-2 overflow-y-auto bg-light lg:col-start-2 lg:row-start-2">
         {children}
       </main>
     </div>

@@ -52,7 +52,7 @@ export default async function OrganizationLayout({
 
   return (
     <OrganizationProvider organizationId={id}>
-      <div className="grid grid-rows-[auto_auto_1fr] md:grid-rows-[auto_1fr] grid-cols-1 md:grid-cols-[auto_1fr] min-h-screen">
+      <div className="grid grid-rows-[auto_auto_1fr] lg:grid-rows-[auto_1fr] grid-cols-1 lg:grid-cols-[auto_1fr] min-h-screen">
         <TopNav organizationId={id} />
         <OrganizationSideNav
           organizationId={id}
@@ -62,7 +62,7 @@ export default async function OrganizationLayout({
           }
           isSideNavExpanded={isSideNavExpanded}
         />
-        <main className="col-start-1 row-start-3 overflow-y-auto md:col-start-2 md:row-start-2">
+        <main className="col-start-1 row-start-3 overflow-y-auto lg:col-start-2 lg:row-start-2">
           {children}
         </main>
       </div>

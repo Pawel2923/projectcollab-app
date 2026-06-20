@@ -64,7 +64,7 @@ export function MobileSideNav({
 
     return (
       <>
-        <div className="md:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
+        <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
           <div className="flex items-center gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -95,7 +95,7 @@ export function MobileSideNav({
         <Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           <DialogContent
             hideClose
-            className="md:hidden left-0 top-0 h-[90vh] max-w-sm translate-x-0 translate-y-0 rounded-none border-l-0 border-r bg-background p-0 shadow-2xl outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left sm:max-w-md"
+            className="lg:hidden left-0 top-0 h-[90vh] max-w-sm translate-x-0 translate-y-0 rounded-none border-l-0 border-r bg-background p-0 shadow-2xl outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left sm:max-w-md"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <DialogTitle className="text-base font-semibold">
@@ -174,7 +174,7 @@ export function MobileSideNav({
   }
 
   return (
-    <div className="md:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
+    <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {resolvedNavigationItems.map(({ href, icon, label }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
