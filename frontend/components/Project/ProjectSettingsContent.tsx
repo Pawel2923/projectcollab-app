@@ -1,13 +1,26 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import * as Form from "@radix-ui/react-form";
+import { Loader2Icon, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useActionState, useEffect, useState } from "react";
 
 import deleteProjectMember from "@/actions/project/deleteProjectMember";
+import updateProjectName from "@/actions/project/updateProjectName";
+import { TypographyInvalid } from "@/components/typography/TypographyInvalid";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FormInput } from "@/components/ui/Form/FormInput";
 import { useAlert } from "@/hooks/useAlert";
 import { useEntityRole } from "@/hooks/useEntityRole";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
+import { useServerValidation } from "@/hooks/useServerValidation";
 import {
   clientApiCall,
   clientApiGet,
@@ -30,7 +43,7 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { DeleteProjectDialog } from "./DeleteProjectDialog";
+import { ArchiveProjectDialog } from "./ArchiveProjectDialog";
 import ProjectMembersTable from "./ProjectMembersTable";
 
 interface ProjectSettingsContentProps {
@@ -62,10 +75,34 @@ export default function ProjectSettingsContent({
     null,
   );
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const { showError, showSuccess } = useErrorHandler();
   const { notify } = useAlert();
   const { role: currentUserRole } = useEntityRole("project", projectId);
+
+  const [state, formAction, isPending] = useActionState(
+    updateProjectName,
+    null,
+  );
+  const { serverErrors, clearServerErrors } = useServerValidation(
+    ["name"] as const,
+    state,
+  );
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.ok) {
+      notify({
+        type: "default",
+        title: "Nazwa zmieniona",
+        description: "Pomyślnie zaktualizowano nazwę projektu.",
+        duration: 4000,
+        hasCloseButton: true,
+        icon: "check",
+      });
+      router.refresh();
+    }
+  }, [state, notify, router]);
 
   const canDeleteMembers =
     currentUserRole &&
@@ -202,29 +239,46 @@ export default function ProjectSettingsContent({
           </TabsList>
 
           <TabsContent value="general" className="mt-6">
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">
-                  Informacje o projekcie
-                </h2>
-                <div className="bg-background border border-border rounded-lg p-4 space-y-3">
-                  <div>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Nazwa projektu
-                    </span>
-                    <p className="text-base">{project.name}</p>
+            <Card key={project.name} className="mb-8">
+              <CardHeader>
+                <CardTitle className="text-xl">Zmień nazwę projektu</CardTitle>
+                <CardDescription>
+                  Zaktualizuj nazwę projektu, aby zmienić jej wyświetlanie w systemie
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form.Root action={formAction} onSubmit={clearServerErrors}>
+                  <input type="hidden" name="projectId" value={projectId} />
+
+                  <div className="grid gap-6">
+                    <FormInput
+                      name="name"
+                      label="Nowa nazwa projektu"
+                      serverInvalid={serverErrors.name?.isInvalid || false}
+                      serverMessage={serverErrors.name?.message}
+                      valueMissingMessage="Nazwa projektu jest wymagana"
+                      inputProps={{
+                        defaultValue: project.name,
+                        required: true,
+                        disabled: isPending,
+                        placeholder: "Wprowadź nową nazwę",
+                      }}
+                    />
+
+                    {serverErrors.form?.isInvalid && (
+                      <TypographyInvalid>{serverErrors.form.message}</TypographyInvalid>
+                    )}
+
+                    <Form.Submit asChild>
+                      <Button type="submit" disabled={isPending} className="w-fit">
+                        Zapisz zmiany
+                        {isPending && <Loader2Icon className="animate-spin ml-2 h-4 w-4" />}
+                      </Button>
+                    </Form.Submit>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Status
-                    </span>
-                    <p className="text-base">
-                      {project.isArchived ? "Zarchiwizowany" : "Aktywny"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                </Form.Root>
+              </CardContent>
+            </Card>
 
             {canDeleteProject && !project.isArchived && (
               <div className="mt-8 border-t pt-6">
@@ -234,20 +288,20 @@ export default function ProjectSettingsContent({
                 <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 flex items-center justify-between">
                   <div>
                     <h4 className="font-medium text-destructive">
-                      Usuń projekt
+                      Zarchiwizuj projekt
                     </h4>
                     <p className="text-sm text-destructive/80">
-                      Projekt zostanie usunięty i nie będzie dostępny dla
+                      Projekt zostanie zarchiwizowany i nie będzie dostępny dla
                       użytkowników.
                     </p>
                   </div>
                   <Button
                     variant="destructive"
-                    onClick={() => setShowDeleteDialog(true)}
+                    onClick={() => setShowArchiveDialog(true)}
                     className="flex items-center gap-2"
                   >
                     <Trash2 className="h-4 w-4" />
-                    Usuń projekt
+                    Zarchiwizuj projekt
                   </Button>
                 </div>
               </div>
@@ -300,9 +354,9 @@ export default function ProjectSettingsContent({
         </AlertDialogContent>
       </AlertDialog>
 
-      <DeleteProjectDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
+      <ArchiveProjectDialog
+        open={showArchiveDialog}
+        onOpenChange={setShowArchiveDialog}
         projectId={projectId}
       />
     </>

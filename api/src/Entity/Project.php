@@ -37,7 +37,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Patch(
             denormalizationContext: ['groups' => ['project:update']],
             security: "is_granted('PROJECT_EDIT', object)",
-            processor: ProjectUpdateProcessor::class
+            processor: ProjectUpdateProcessor::class,
         ),
     ],
     mercure: true
@@ -51,7 +51,7 @@ class Project
     #[Groups(['project:read', 'chat:read'])]
     private ?int $id = null;
 
-    #[Groups(['project:create', 'project:read', 'chat:read'])]
+    #[Groups(['project:create', 'project:read', 'project:update', 'chat:read'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

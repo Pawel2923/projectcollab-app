@@ -16,17 +16,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { useOrganization } from "@/store/OrganizationContext";
 
-interface DeleteProjectDialogProps {
+interface ArchiveProjectDialogProps {
   projectId?: string | number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function DeleteProjectDialog({
+export function ArchiveProjectDialog({
   projectId,
   open,
   onOpenChange,
-}: DeleteProjectDialogProps) {
+}: ArchiveProjectDialogProps) {
   const orgCtx = useOrganization();
 
   const actionClickHandler = async () => {
@@ -38,15 +38,16 @@ export function DeleteProjectDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogTitle>Usuń projekt</AlertDialogTitle>
+        <AlertDialogTitle>Zarchiwizuj projekt</AlertDialogTitle>
         <AlertDialogDescription>
-          Czy na pewno chcesz usunąć ten projekt?
+          Czy na pewno chcesz zarchiwizować ten projekt? Zarchiwizowany projekt nie
+          będzie dostępny dla użytkowników.
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel>Anuluj</AlertDialogCancel>
           <AlertDialogAction asChild>
             <Button variant="destructive" onClick={actionClickHandler}>
-              Usuń
+              Zarchiwizuj
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
