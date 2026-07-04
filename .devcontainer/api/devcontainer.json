@@ -1,0 +1,16 @@
+{
+  "name": "Attach to API Service",
+  "dockerComposeFile": [
+    "../../compose.yaml",
+    "../../compose.override.yaml"
+  ],
+  "service": "api",
+  "workspaceFolder": "/workspace/api",
+  "runServices": [
+    "api",
+    "database",
+    "redis",
+    "mailer"
+  ],
+  "remoteUser": "symfony"
+}

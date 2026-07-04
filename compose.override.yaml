@@ -6,6 +6,7 @@ services:
     volumes:
       - ./api:/app
       - /app/var
+      - .:/workspace:cached
       - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
       - ./api/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
     environment:
@@ -24,6 +25,7 @@ services:
     volumes:
       - ./frontend:/app
       - ./frontend/node_modules:/app/node_modules
+      - .:/workspace:cached
     environment:
       WATCHPACK_POLLING: "true"
     stdin_open: true
@@ -32,11 +34,11 @@ services:
   database:
     ports:
       - target: 5432
-        published: 5432
+        published: ${DATABASE_PORT:-5432}
         protocol: tcp
 
   mailer:
     image: schickling/mailcatcher
     ports:
-      - "1025:1025"
-      - "44949:1080"
+      - "${MAILER_SMTP_PORT:-1025}:1025"
+      - "${MAILER_WEB_PORT:-44949}:1080"

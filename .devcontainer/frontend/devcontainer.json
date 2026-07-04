@@ -1,0 +1,17 @@
+{
+  "name": "Attach to Frontend Service",
+  "dockerComposeFile": [
+    "../../compose.yaml",
+    "../../compose.override.yaml"
+  ],
+  "service": "frontend",
+  "workspaceFolder": "/workspace/frontend",
+  "runServices": [
+    "frontend",
+    "api",
+    "database",
+    "redis",
+    "mailer"
+  ],
+  "remoteUser": "next"
+}

@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 
-if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
-	if [ "$(id -u)" = "0" ]; then
+if [ "$(id -u)" = "0" ]; then
 		# Dynamically map symfony user UID/GID to match the host user (owner of /app)
 		HOST_UID=$(stat -c '%u' /app)
 		HOST_GID=$(stat -c '%g' /app)
@@ -12,13 +11,15 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
 		# Create vendor and var directories if they don't exist and chown to symfony
 		mkdir -p vendor var
-		chown -R symfony:symfony vendor var
+		chown symfony:symfony vendor var
 		setfacl -R -m u:www-data:rwX -m u:symfony:rwX var
 		setfacl -dR -m u:www-data:rwX -m u:symfony:rwX var
 
 		# Ensure Caddy volume and runtime directories are owned by the updated symfony user
 		chown -R symfony:symfony /data /config /var/run/frankenphp
 	fi
+
+if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
 	if [ -z "$(ls -A 'vendor/' 2>/dev/null)" ]; then
 		if [ "$(id -u)" = "0" ]; then
@@ -31,7 +32,7 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	if grep -q ^DATABASE_URL= .env; then
 		echo "Waiting for database to be ready..."
 		ATTEMPTS_LEFT_TO_REACH_DATABASE=60
-		
+
 		if [ "$(id -u)" = "0" ]; then
 			PHP_RUN="gosu symfony php"
 		else

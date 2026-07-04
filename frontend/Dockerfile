@@ -33,8 +33,9 @@ ENV NEXT_PUBLIC_API_ROUTE_PREFIX=${NEXT_PUBLIC_API_ROUTE_PREFIX}
 ENV NEXT_PUBLIC_MERCURE_URL=${NEXT_PUBLIC_MERCURE_URL}
 
 # Set up a non-root user
-RUN addgroup -g 1234 -S next && \
-		adduser -u 1234 -S next -G next
+RUN deluser node && \
+	addgroup -g 1000 -S next && \
+	adduser -u 1000 -S next -G next
 
 # Development image
 FROM base as dev
@@ -57,7 +58,10 @@ USER root
 RUN mkdir -p .next && \
 	chown -R next:next .next
 
-CMD ["sh", "-c", "HOST_UID=$(stat -c '%u' .) && HOST_GID=$(stat -c '%g' .) && usermod -o -u $HOST_UID next && groupmod -o -g $HOST_GID next && chown -R next:next /home/next && mkdir -p node_modules && chown -R next:next node_modules && su next -c 'pnpm install && pnpm dev'"]
+COPY --link --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+ENTRYPOINT ["docker-entrypoint"]
+
+CMD ["su", "next", "-c", "pnpm install && pnpm dev"]
 
 
 FROM base AS builder

@@ -49,8 +49,8 @@ RUN set -eux; \
 ###< recipes ###
 
 # Set up a non-root user
-RUN groupadd -g 1234 symfony && \
-	useradd -u 1234 -g symfony -m -s /bin/bash -d /home/symfony symfony
+RUN groupadd -g 1000 symfony && \
+	useradd -u 1000 -g symfony -m -s /bin/bash -d /home/symfony symfony
 
 # Ensure Caddy directories and app directory are writable by non-root user
 RUN mkdir -p /data /config /var/run/frankenphp /app/var && \
