@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	file \
 	gettext \
 	git \
+	gosu \
 	&& rm -rf /var/lib/apt/lists/*
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -47,6 +48,14 @@ RUN set -eux; \
 ###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
+# Set up a non-root user
+RUN groupadd -g 1234 symfony && \
+	useradd -u 1234 -g symfony -m -s /bin/bash -d /home/symfony symfony
+
+# Ensure Caddy directories and app directory are writable by non-root user
+RUN mkdir -p /data /config /var/run/frankenphp /app/var && \
+	chown -R symfony:symfony /data /config /var/run/frankenphp /app
+
 COPY --link frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link frankenphp/Caddyfile /etc/caddy/Caddyfile
@@ -63,6 +72,26 @@ ENV APP_ENV=dev XDEBUG_MODE=off
 VOLUME /app/var/
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Install dev tools: zsh, vim, curl, wget, postgresql-client
+RUN apt-get update && apt-get install --no-install-recommends -y \
+	zsh \
+	vim \
+	curl \
+	wget \
+	postgresql-client \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Change default shell for symfony user to zsh
+RUN chsh -s /bin/zsh symfony
+
+# Install Oh My Zsh for the root user
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install Oh My Zsh for the symfony user
+USER symfony
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+USER root
 
 RUN set -eux; \
 	install-php-extensions \
@@ -84,13 +113,16 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY --link frankenphp/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
 COPY --link frankenphp/worker.Caddyfile /etc/caddy/worker.Caddyfile
 
+# Switch to non-root user
+USER symfony
+
 # prevent the reinstallation of vendors at every changes in the source code
-COPY --link composer.* symfony.* ./
+COPY --link --chown=symfony:symfony composer.* symfony.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link . ./
+COPY --link --chown=symfony:symfony . ./
 RUN rm -Rf frankenphp/
 
 RUN set -eux; \

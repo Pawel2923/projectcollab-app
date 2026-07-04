@@ -2,13 +2,16 @@
 
 
 # Versions
-FROM node:lts AS node_upstream
+FROM node:lts-alpine AS node_upstream
 
 
 # Base stage for dev and build
 FROM node_upstream AS base
 
 WORKDIR /app
+
+# Install dependencies as root
+USER root
 
 RUN npm install -g corepack@latest && \
     corepack enable && \
@@ -19,6 +22,7 @@ RUN npm install -g corepack@latest && \
 # Learn more here: https://nextjs.org/telemetry
 # Delete the following line in case you want to enable telemetry during dev and build.
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT 0
 
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_API_ROUTE_PREFIX
@@ -28,6 +32,10 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_API_ROUTE_PREFIX=${NEXT_PUBLIC_API_ROUTE_PREFIX}
 ENV NEXT_PUBLIC_MERCURE_URL=${NEXT_PUBLIC_MERCURE_URL}
 
+# Set up a non-root user
+RUN addgroup -g 1234 -S next && \
+		adduser -u 1234 -S next -G next
+
 # Development image
 FROM base as dev
 
@@ -35,7 +43,21 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME localhost
 
-CMD ["sh", "-c", "pnpm install; pnpm dev"]
+# Install dev tools
+RUN apk add --no-cache zsh vim git curl wget bash shadow && \
+		sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+		chsh -s /bin/zsh next
+
+# Install Oh My Zsh for the next user
+USER next
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+USER root
+
+# Set the correct permission for prerender cache
+RUN mkdir -p .next && \
+	chown -R next:next .next
+
+CMD ["sh", "-c", "HOST_UID=$(stat -c '%u' .) && HOST_GID=$(stat -c '%g' .) && usermod -o -u $HOST_UID next && groupmod -o -g $HOST_GID next && chown -R next:next /home/next && mkdir -p node_modules && chown -R next:next node_modules && su next -c 'pnpm install && pnpm dev'"]
 
 
 FROM base AS builder
@@ -57,9 +79,6 @@ WORKDIR /app
 ENV NODE_ENV production
 # Delete the following line in case you want to enable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN groupadd -g 1234 next && \
-    useradd -m -u 1234 -g next next
 
 COPY --from=builder --link /app/public ./public
 
