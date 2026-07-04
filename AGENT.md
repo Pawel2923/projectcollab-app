@@ -25,7 +25,6 @@ The frontend utilizes **Next.js Server Actions** as a secure intermediate layer 
 * **Framework:** Next.js 16+ (App Router, React 19 features like `useActionState`).
 * **Styling:** Tailwind CSS.
 * **UI Components:** `shadcn/ui` for layout/card/button structures.
-* **Form Primitives:** `@radix-ui/react-form` combined with local custom wrappers located in `components/ui/Form`.
 * **Validation:** Zod.
 
 ---
@@ -38,7 +37,7 @@ When generating code for the frontend, you **must** adhere to the following arch
 1.  **No `react-hook-form`:** Do **not** use `react-hook-form` or Formik. Use native HTML `<form>` submission paired with Next.js Server Actions via the `action` attribute.
 2.  **State Handling:** Use the native React `useActionState` hook to manage the server action execution, error payloads, and pending states.
 3.  **UI Feedback:** Honor the `isPending` state returned by `useActionState`. Disable input fields and show loading indicators on buttons during submission.
-4.  **Error Rendering:** Safely parse the server action's error state to display validation messages dynamically under the respective fields using `@radix-ui/react-form` blocks.
+4.  **Error Rendering:** Safely parse the server action's error state to display validation messages dynamically under the respective fields.
 
 ### Server Action Architecture
 Every Server Action must follow the standardized structure found in existing actions (e.g., `actions/updateComment.ts`):
