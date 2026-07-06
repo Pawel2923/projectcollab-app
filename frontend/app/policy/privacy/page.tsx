@@ -42,7 +42,7 @@ export default async function PrivacyPolicyPage({
               Adres e-mail do kontaktu:
             </span>{" "}
             <span className="italic text-gray-500">
-              pawelporemba123@gmail.com
+              projectcollab@nis-lab.com
             </span>
           </div>
         </section>
