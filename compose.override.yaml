@@ -17,6 +17,8 @@ services:
       - host.docker.internal:host-gateway
     stdin_open: true
     tty: true
+    healthcheck:
+      disable: true
 
   frontend:
     build:
