@@ -12,5 +12,12 @@
     "redis",
     "mailer"
   ],
-  "remoteUser": "symfony"
+  "remoteUser": "symfony",
+  "customizations": {
+    "jetbrains": {
+      "settings": {
+        "com.intellij:app:HttpConfigurable.use_proxy_pac": true
+      }
+    }
+  }
 }
