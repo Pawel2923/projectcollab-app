@@ -1,0 +1,40 @@
+name: Build and Push Production Compose
+
+on:
+  push:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-stack:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Recreate .env.prod.local file
+      run: |
+        echo "${{ secrets.PROD_ENV_FILE }}" > .env.prod.local
+
+    - name: Build production images
+      env:
+        IMAGES_TAG: ${{ github.sha }}
+
+      run:
+        docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local build --no-cache
+
+    - name: Push images to Docker Hub
+      env:
+        IMAGES_TAG: ${{ github.sha }}
+      run: |
+        docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local push
+
