@@ -37,6 +37,8 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         PREFIX=$(grep '^IMAGES_PREFIX=' .env.prod.local | cut -d'=' -f2)
+        PREFIX="${PREFIX%/}"
+
         docker tag "$PREFIX/projectcollab-frontend:${{ github.sha }}" "$PREFIX/projectcollab-frontend:latest"
         docker tag "$PREFIX/projectcollab-api:${{ github.sha }}" "$PREFIX/projectcollab-api:latest"
 
