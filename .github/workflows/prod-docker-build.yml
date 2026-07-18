@@ -36,13 +36,9 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        for service in $(docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local config --format json | jq -r '.services | to_entries[] | select(.value.build != null) | .key'); do
-          SHA_IMAGE=$(IMAGES_TAG=$IMAGES_TAG docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local config --images --services $service)
-          LATEST_IMAGE=$(IMAGES_TAG=latest docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local config --images --services $service)
-          
-          echo "Mapping $SHA_IMAGE ---> $LATEST_IMAGE"
-          docker tag "$SHA_IMAGE" "$LATEST_IMAGE"
-        done
+        PREFIX=$(grep '^IMAGES_PREFIX=' .env.prod.local | cut -d'=' -f2)
+        docker tag "$PREFIX/projectcollab-frontend:${{ github.sha }}" "$PREFIX/projectcollab-frontend:latest"
+        docker tag "$PREFIX/projectcollab-api:${{ github.sha }}" "$PREFIX/projectcollab-api:latest"
 
     - name: Push images to Docker Hub
       env:
