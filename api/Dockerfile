@@ -117,12 +117,12 @@ COPY --link frankenphp/worker.Caddyfile /etc/caddy/worker.Caddyfile
 USER symfony
 
 # prevent the reinstallation of vendors at every changes in the source code
-COPY --link --chown=symfony:symfony composer.* symfony.* ./
+COPY --link --chown=1000:1000 composer.* symfony.* ./
 RUN set -eux; \
 	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
 
 # copy sources
-COPY --link --chown=symfony:symfony . ./
+COPY --link --chown=1000:1000 . ./
 RUN rm -Rf frankenphp/
 
 RUN set -eux; \

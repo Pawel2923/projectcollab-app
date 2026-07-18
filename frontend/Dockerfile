@@ -84,6 +84,11 @@ ENV NODE_ENV production
 # Delete the following line in case you want to enable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Set up a non-root user
+RUN deluser node && \
+	addgroup -g 1000 -S next && \
+	adduser -u 1000 -S next -G next
+
 COPY --from=builder --link /app/public ./public
 
 # Set the correct permission for prerender cache
@@ -92,8 +97,8 @@ RUN mkdir .next; \
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --link --chown=1234:1234 /app/.next/standalone ./
-COPY --from=builder --link --chown=1234:1234 /app/.next/static ./.next/static
+COPY --from=builder --link --chown=1000:1000 /app/.next/standalone ./
+COPY --from=builder --link --chown=1000:1000 /app/.next/static ./.next/static
 
 USER next
 
