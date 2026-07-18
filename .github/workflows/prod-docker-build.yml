@@ -32,9 +32,16 @@ jobs:
       run:
         docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local build --no-cache
 
+    - name: Tag images as latest
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # This extracts the image names used in your production setup and adds the :latest tag to them
+        docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local images --quiet | xargs -I {} docker tag {}:${{ github.sha }} {}:latest
+
     - name: Push images to Docker Hub
       env:
         IMAGES_TAG: ${{ github.sha }}
       run: |
         docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local push
-
+        IMAGEs_TAG=latest docker compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod.local push
