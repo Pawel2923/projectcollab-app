@@ -205,3 +205,12 @@ Zmiany wprowadzone i zapisane w lokalnym IDE są automatycznie synchronizowane n
 
 - Połącz debugger Node.js z portem `9229` (skonfigurowanym w `.vscode/launch.json` jako `Next.js: Attach to Node Debugger`).
 
+---
+
+## Współtworzenie
+
+Wszelki wkład i rozwój projektu są mile widziane! Zapoznaj się z naszymi [Zasadami Współtworzenia](CONTRIBUTING.pl.md) przed przesłaniem Pull Requesta lub utworzeniem zgłoszenia.
+
+W kwestiach związanych z bezpieczeństwem zapoznaj się z [Polityką Bezpieczeństwa](SECURITY.pl.md).
+
+

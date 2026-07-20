@@ -206,3 +206,12 @@ Code changes saved on your local IDE (synced to the remote server via SSH or Dev
 
 - Connect your IDE's Node.js debugger to port `9229` (pre-configured in `.vscode/launch.json` as `Next.js: Attach to Node Debugger`).
 
+---
+
+## Contributing
+
+Contributions are welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting pull requests or opening issues.
+
+For security concerns, please refer to our [Security Policy](SECURITY.md).
+
+
