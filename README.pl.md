@@ -85,3 +85,118 @@ Dodatkowe informacje
 ```bash
 docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
+
+## Konfiguracja zdalnego środowiska deweloperskiego (Remote Development)
+
+ProjectCollab wspiera pracę na zdalnym serwerze z kontenerami Docker, umożliwiając tworzenie kodu, testowanie oraz debugowanie bezpośrednio z lokalnego IDE (PhpStorm, Visual Studio Code lub dowolnego IDE obsługującego SSH i Dev Containers).
+
+### Wymagania wstępne
+
+- Zdalny serwer z dostępem przez SSH.
+- Zainstalowany Docker i Docker Compose na zdalnym serwerze.
+- Sklonowane repozytorium ProjectCollab na zdalnym serwerze.
+
+### 1. Łączenie przez IDE
+
+#### Opcja A: Visual Studio Code
+
+- **Użycie Dev Containers (Zalecane)**:
+  1. Zainstaluj rozszerzenie **Dev Containers** w VS Code.
+  2. Otwórz VS Code i wybierz opcję **Dev Containers: Open Folder in Container...** z Palety Poleceń (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+  3. Wybierz główny katalog projektu (`.devcontainer/devcontainer.json`) lub podkatalogi (`.devcontainer/api` / `.devcontainer/frontend`).
+  4. VS Code automatycznie przekieruje wymagane porty (`80`, `443`, `3000`, `9003`, `5432`, `1025`, `44949`) do lokalnego komputera.
+
+- **Bezpośrednie połączenie Remote - SSH**:
+  1. Zainstaluj rozszerzenie **Remote - SSH** w VS Code.
+  2. Połącz się ze zdalnym hostem (`ssh user@remote-host`).
+  3. Otwórz katalog projektu (`/path/to/projectcollab-app`).
+  4. Upewnij się, że kontenery Docker są uruchomione: `docker compose up -d`.
+
+#### Opcja B: PhpStorm / JetBrains IDEs
+
+- **Użycie Dev Containers**:
+  1. W JetBrains Gateway / PhpStorm wybierz **Dev Containers**.
+  2. Wybierz połączenie SSH ze zdalnym serwerem i wskaż katalog repozytorium.
+  3. PhpStorm zbuduje i dołączy do pliku `.devcontainer/devcontainer.json`.
+
+- **Bezpośrednie SSH oraz Interpreter PHP w Docker Compose**:
+  1. Otwórz PhpStorm i połącz się ze zdalnym serwerem przy użyciu **Remote Development** (JetBrains Gateway) lub otwórz projekt przez SSH.
+  2. Przejdź do **Settings/Preferences** > **Languages & Frameworks** > **PHP**.
+  3. Dodaj nowy CLI Interpreter bazujący na **Docker Compose**:
+     - Pliki konfiguracyjne: `compose.yaml`, `compose.override.yaml`
+     - Usługa: `api`
+  4. W **Settings** > **PHP** > **Servers** dodaj serwer o nazwie `projectcollab-api`:
+     - Host: `localhost`
+     - Mapowanie ścieżek: zmapuj lokalny katalog `/api` z repozytorium na ścieżkę w kontenerze `/app`.
+
+---
+
+### 2. Testowanie z poziomu lokalnej przeglądarki
+
+Aplikację uruchomioną na zdalnym serwerze można bezpośrednio otwierać w lokalnej przeglądarce.
+
+#### Metoda 1: Przekierowanie portów SSH (Zalecane dla dostępu przez localhost)
+
+Przekieruj porty `80` i `443` ze zdalnego serwera na lokalny komputer:
+
+```bash
+ssh -L 80:localhost:80 -L 443:localhost:443 developer@remote-server-ip
+```
+
+*(Lub skorzystaj z automatycznego przekierowania portów w VS Code / Dev Container)*.
+
+Następnie otwórz przeglądarkę i przejdź pod adres:
+- Frontend / Aplikacja: `http://localhost` (lub `https://localhost`)
+- Interfejs Mailcatcher: `http://localhost:44949`
+
+#### Metoda 2: Bezpośredni adres IP lub domena serwera
+
+Jeśli wolisz uzyskiwać dostęp bezpośrednio przez adres IP lub domenę zdalnego serwera:
+
+1. Na zdalnym serwerze edytuj plik `.env` i ustaw:
+   ```env
+   SERVER_NAME=http://<ADRES_IP_LUB_DOMENA_SERWERA>
+   ```
+2. zrestartuj kontenery:
+   ```bash
+   docker compose down && docker compose up -d
+   ```
+3. Otwórz `http://<ADRES_IP_LUB_DOMENA_SERWERA>` w przeglądarce.
+
+---
+
+### 3. Gorące przeładowywanie kodu (Hot Reloading / HMR)
+
+Zmiany wprowadzone i zapisane w lokalnym IDE są automatycznie synchronizowane na zdalny serwer i wyzwalają natychmiastowe przeładowywanie:
+
+- **Frontend (Next.js)**: Włączone jest Hot Module Replacement (HMR). Ustawienie `WATCHPACK_POLLING: "true"` gwarantuje natychmiastowe wykrywanie zmian w plikach przez zdalne montowania wolumenów.
+- **Backend (Symfony / FrankenPHP)**: FrankenPHP działa w trybie `--watch` w środowisku deweloperskim, automatycznie przeładowując kod PHP po zapisaniu pliku.
+
+---
+
+### 4. Uruchamianie i debugowanie z poziomu IDE
+
+#### Debugowanie PHP (Xdebug)
+
+1. Włącz Xdebug w pliku `.env`, ustawiając:
+   ```env
+   XDEBUG_MODE=debug
+   ```
+   Lub uruchom przy włączonym Xdebug:
+   ```bash
+   XDEBUG_MODE=debug docker compose up -d
+   ```
+
+2. **W VS Code**:
+   - Przejdź do widoku **Run and Debug** (`Ctrl+Shift+D`).
+   - Wybierz **Listen for Xdebug (PHP)** i kliknij **Start Debugging** (`F5`).
+
+3. **W PhpStorm**:
+   - Kliknij ikonę **Start Listening for PHP Debug Connections** w prawym górnym rogu.
+
+4. Wyzwól sesję debugowania przez otwarcie strony w przeglądarce z aktywnym rozszerzeniem Xdebug lub z parametrem `?XDEBUG_SESSION_START=PHPSTORM` w adresie URL.
+
+#### Debugowanie Frontend / Node
+
+- Połącz debugger Node.js z portem `9229` (skonfigurowanym w `.vscode/launch.json` jako `Next.js: Attach to Node Debugger`).
+

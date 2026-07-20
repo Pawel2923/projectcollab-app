@@ -1,5 +1,5 @@
 {
-  "name": "Attach to Frontend Service",
+  "name": "ProjectCollab - Frontend Service",
   "dockerComposeFile": [
     "../../compose.yaml",
     "../../compose.override.yaml"
@@ -13,5 +13,16 @@
     "redis",
     "mailer"
   ],
-  "remoteUser": "next"
+  "remoteUser": "next",
+  "forwardPorts": [3000, 80, 443],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
 }
+

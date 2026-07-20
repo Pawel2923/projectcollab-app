@@ -1,30 +1,30 @@
 {
-  "name": "ProjectCollab - API Service",
+  "name": "ProjectCollab Full Workspace",
   "dockerComposeFile": [
-    "../../compose.yaml",
-    "../../compose.override.yaml"
+    "../compose.yaml",
+    "../compose.override.yaml"
   ],
   "service": "api",
-  "workspaceFolder": "/workspace/api",
+  "workspaceFolder": "/workspace",
   "runServices": [
     "api",
+    "frontend",
     "database",
     "redis",
     "mailer"
   ],
   "remoteUser": "symfony",
-  "forwardPorts": [80, 443, 5432, 9003, 1025, 44949],
+  "forwardPorts": [80, 443, 3000, 5432, 9003, 1025, 44949],
   "customizations": {
     "vscode": {
       "extensions": [
         "bmewburn.vscode-intelephense-client",
         "xdebug.php-debug",
         "felixfbecker.php-pack",
-        "emeraldwalk.RunOnSave"
-      ],
-      "settings": {
-        "php.suggest.basic": false
-      }
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
     },
     "jetbrains": {
       "settings": {
@@ -33,4 +33,3 @@
     }
   }
 }
-
