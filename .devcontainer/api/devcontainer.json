@@ -13,6 +13,7 @@
     "mailer"
   ],
   "remoteUser": "symfony",
+  "overrideCommand": false,
   "forwardPorts": [80, 443, 5432, 9003, 1025, 44949],
   "customizations": {
     "vscode": {

@@ -118,6 +118,11 @@ ProjectCollab wspiera pracę na zdalnym serwerze z kontenerami Docker, umożliwi
   1. W JetBrains Gateway / PhpStorm wybierz **Dev Containers**.
   2. Wybierz połączenie SSH ze zdalnym serwerem i wskaż katalog repozytorium.
   3. PhpStorm zbuduje i dołączy do pliku `.devcontainer/devcontainer.json`.
+  > **Uwaga / Rozwiązywanie problemu (`Failed to receive final build state`)**:
+  > Jeśli JetBrains Gateway zgłasza błąd `Failed to receive final build state` podczas budowania:
+  > - Upewnij się, że wpis `"overrideCommand": false` znajduje się w `devcontainer.json` (został domyślnie dodany).
+  > - Alternatywnie, połącz się z serwerem przez **Remote Development (SSH)** i użyj opcji **Bezpośrednie SSH oraz Interpreter PHP w Docker Compose**, co omija błędy narządziowe `@devcontainers/cli` na serwerach zdalnych.
+  > - W ustawieniach PhpStorm możesz wypróbować zmianę opcji w Rejestrze `open.devcontainer.projects.natively` (`Ctrl+Shift+A` -> `Registry`).
 
 - **Bezpośrednie SSH oraz Interpreter PHP w Docker Compose**:
   1. Otwórz PhpStorm i połącz się ze zdalnym serwerem przy użyciu **Remote Development** (JetBrains Gateway) lub otwórz projekt przez SSH.

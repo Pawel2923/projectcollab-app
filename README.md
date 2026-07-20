@@ -119,6 +119,11 @@ ProjectCollab supports developing on a remote server with Docker while writing c
   1. In JetBrains Gateway / PhpStorm, select **Dev Containers**.
   2. Choose your remote SSH connection and select the repository directory.
   3. PhpStorm will build and attach to the project's `.devcontainer/devcontainer.json`.
+  > **Note / Troubleshooting (`Failed to receive final build state`)**:
+  > If JetBrains Gateway fails with `Failed to receive final build state` during uploading/building:
+  > - Ensure `"overrideCommand": false` is present in `devcontainer.json` (already configured).
+  > - Alternatively, open PhpStorm via **Remote Development (SSH)** and use **Direct SSH & Docker Compose PHP Interpreter** (Option B below), which bypasses JetBrains Gateway `@devcontainers/cli` backend bugs over SSH.
+  > - In PhpStorm settings, try toggling Registry setting `open.devcontainer.projects.natively` (`Ctrl+Shift+A` -> `Registry`).
 
 - **Using Direct SSH & Docker Compose PHP Interpreter**:
   1. Open PhpStorm and connect to the remote host using **Remote Development** (JetBrains Gateway) or open project over SSH.
