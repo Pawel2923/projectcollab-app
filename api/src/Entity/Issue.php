@@ -50,7 +50,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             denormalizationContext: ['groups' => ['issue:create']],
-            security: "is_granted('ROLE_USER')",
+            securityPostDenormalize: "is_granted('ISSUE_CREATE', object)",
             processor: IssueCreateProcessor::class
         ),
         new Patch(

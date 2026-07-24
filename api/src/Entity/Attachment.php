@@ -27,12 +27,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new Post(
             controller: CreateAttachmentController::class,
-            security: "is_granted('ROLE_USER')",
+            securityPostDenormalize: "is_granted('PROJECT_MEMBER', object.getProject())",
             validationContext: ['groups' => ['Default', 'attachment:create']],
             deserialize: false
         ),
         new Delete(
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ISSUE_EDIT', object.getIssue())"
         )
     ],
     normalizationContext: ['groups' => ['attachment:read']],
