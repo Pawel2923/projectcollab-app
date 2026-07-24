@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new Post(
             denormalizationContext: ['groups' => ['comment:create']],
-            security: "is_granted('ROLE_USER')",
+            securityPostDenormalize: "is_granted('COMMENT_CREATE', object)",
             processor: CommentCreateProcessor::class,
         ),
         new Patch(
