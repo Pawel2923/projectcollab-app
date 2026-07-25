@@ -9,11 +9,13 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 readonly class AuthenticationSuccessListener
 {
     public function __construct(
-        private string $mercureSecret
+        private string $mercureSecret,
+        private RequestStack $requestStack
     )
     {
     }
@@ -34,12 +36,14 @@ readonly class AuthenticationSuccessListener
             ->expiresAt($now->modify('+1 hour'))
             ->getToken($config->signer(), $config->signingKey());
 
+        $request = $this->requestStack->getCurrentRequest();
+
         $cookie = new Cookie(
             name: 'mercureAuthorization',
             value: $token->toString(),
             expire: $now->modify('+1 hour'),
             path: '/',
-            secure: false, // set true if https
+            secure: $request?->isSecure() ?? false,
             httpOnly: true,
             sameSite: Cookie::SAMESITE_LAX
         );
