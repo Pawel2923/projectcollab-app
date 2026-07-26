@@ -49,7 +49,7 @@ readonly class IssueUpdateProcessor implements ProcessorInterface
         }
 
         $data->setUpdatedAt(new DateTime());
-        $this->updateTags($data);
+        $this->updateTags($data, $context);
 
         if ($data->isArchived()) {
             $this->issueSoftDeleteService->softDelete($data);
@@ -60,7 +60,7 @@ readonly class IssueUpdateProcessor implements ProcessorInterface
         return $this->processor->process($data, $operation, $uriVariables, $context);
     }
 
-    private function updateTags(Issue $data): void
+    private function updateTags(Issue $data, array $context = []): void
     {
         $request = $context['request'] ?? null;
         $tags = null;
