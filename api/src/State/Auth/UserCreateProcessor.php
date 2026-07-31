@@ -2,19 +2,18 @@
 
 namespace App\State\Auth;
 
-use ApiPlatform\Doctrine\Common\State\PersistProcessor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
 use App\Exception\IncorrectProcessorDataException;
+use App\Service\Auth\UserPasswordHasherService;
 
 readonly class UserCreateProcessor implements ProcessorInterface
 {
     public function __construct(
-        private PersistProcessor      $processor,
-        private UserPasswordProcessor $userPasswordProcessor,
-    )
-    {
+        private ProcessorInterface        $processor,
+        private UserPasswordHasherService $userPasswordHasherService,
+    ) {
     }
 
     /** @var User|object $data */
@@ -24,12 +23,12 @@ readonly class UserCreateProcessor implements ProcessorInterface
             throw new IncorrectProcessorDataException();
         }
 
-        if (empty(trim($data->getUsername()))) {
+        if (empty(trim((string) $data->getUsername()))) {
             $data->setUsername($this->createUsernameFromEmail($data->getEmail()));
         }
 
         // Process user password
-        $data = $this->userPasswordProcessor->process($data, $operation, $uriVariables, $context);
+        $this->userPasswordHasherService->hashPassword($data);
 
         return $this->processor->process($data, $operation, $uriVariables, $context);
     }
