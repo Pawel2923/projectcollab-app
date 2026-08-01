@@ -45,7 +45,7 @@ security:
     - { path: ^/core-api/auth/refresh, roles: PUBLIC_ACCESS }
     - { path: ^/core-api/auth/oauth, roles: PUBLIC_ACCESS }
     - { path: ^/core-api/users, roles: PUBLIC_ACCESS, method: [POST] }
-    - { path: ^/core-api/verify-email, roles: PUBLIC_ACCESS, method: [GET] }
+    - { path: ^/core-api/verify-email, roles: PUBLIC_ACCESS, method: [POST] }
     - { path: ^/core-api/reset-password, roles: PUBLIC_ACCESS, method: [GET, POST] }
     - { path: ^/core-api/, roles: IS_AUTHENTICATED_FULLY }
     # - { path: ^/admin, roles: ROLE_ADMIN }

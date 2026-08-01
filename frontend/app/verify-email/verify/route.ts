@@ -39,7 +39,9 @@ export async function GET(req: NextRequest) {
       throw new Error("API URL not configured");
     }
 
-    const res = await fetch(`${apiUrl}/verify-email?${queryString}`);
+    const res = await fetch(`${apiUrl}/verify-email?${queryString}`, {
+      method: "POST",
+    });
     const data = await res.json();
 
     const { title, description } = mapMessage(
