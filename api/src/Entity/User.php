@@ -9,8 +9,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Controller\GetCurrentUser;
 use App\Repository\UserRepository;
+use App\State\Auth\CurrentUserProvider;
 use App\State\Auth\UserCreateProcessor;
 use App\State\Auth\UserPasswordProcessor;
 use DateTimeImmutable;
@@ -36,8 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(requirements: ['id' => '\\d+']),
         new Get(
             uriTemplate: '/users/me',
-            controller: GetCurrentUser::class,
-            read: false,
+            provider: CurrentUserProvider::class,
         ),
         new Post(
             validationContext: ['groups' => ['Default', 'user:create']],

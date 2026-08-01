@@ -17,6 +17,7 @@ final class CommentVoter extends Voter
     public const string EDIT = 'COMMENT_EDIT';
     public const string DELETE = 'COMMENT_DELETE';
     public const string VIEW = 'COMMENT_VIEW';
+    public const string CREATE = 'COMMENT_CREATE';
 
     public function __construct(
         private readonly ProjectAssociationChecker $projectAssociationChecker,
@@ -29,7 +30,7 @@ final class CommentVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::DELETE, self::VIEW], true)
+        return in_array($attribute, [self::EDIT, self::DELETE, self::VIEW, self::CREATE], true)
             && $subject instanceof Comment;
     }
 
@@ -103,6 +104,7 @@ final class CommentVoter extends Voter
             self::VIEW => $this->canView($userRole),
             self::EDIT => $this->canEdit($userRole, $comment, $user),
             self::DELETE => $this->canDelete($userRole, $comment, $user),
+            self::CREATE => $this->canCreate($userRole),
             default => false,
         };
     }
@@ -133,5 +135,11 @@ final class CommentVoter extends Voter
 
         // ADMIN and above can delete any comment
         return $this->roleHierarchy->hasPermission($userRole, 'ADMIN');
+    }
+
+    private function canCreate(string $userRole): bool
+    {
+        // All project members excluding viewers can add new comments
+        return $this->roleHierarchy->hasPermission($userRole, 'MEMBER');
     }
 }

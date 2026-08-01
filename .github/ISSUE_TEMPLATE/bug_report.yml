@@ -2,7 +2,7 @@ name: Bug Report
 description: Create a report to help us improve ProjectCollab
 title: '[BUG] '
 labels: ['bug']
-assignees: ''
+assignees: []
 
 body:
   - type: markdown
@@ -50,3 +50,9 @@ body:
         - Remote Dev / Dev Container
     validations:
       required: true
+  - type: input
+    id: external-reference
+    attributes:
+      label: External Reference / Link
+      description: Link to an external resource (e.g., Jira ticket, ClickUp task, or documentation).
+      placeholder: https://jira.example.com/browse/PROJ-123

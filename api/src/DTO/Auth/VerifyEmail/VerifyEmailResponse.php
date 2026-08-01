@@ -3,14 +3,14 @@
 namespace App\DTO\Auth\VerifyEmail;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Auth\VerifyEmail\VerifyEmailProvider;
 
 #[ApiResource(
     operations: [
-        new Get(
+        new Post(
             uriTemplate: '/verify-email',
             openapi: new Operation(
                 tags: ['Verify Email'],

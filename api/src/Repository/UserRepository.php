@@ -50,4 +50,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * Search users who share at least one organization with the current user matching the search term.
+     *
+     * @return array<array{id: int, email: string, username: string}>
+     */
+    public function searchByTermForUser(string $searchTerm, User $user, int $limit = 10): array
+    {
+        $dql = "
+            SELECT DISTINCT u.id, u.email, u.username
+            FROM App\Entity\OrganizationMember om
+            JOIN om.member u
+            JOIN om.organization o
+            JOIN o.organizationMembers om2
+            WHERE (LOWER(u.email) LIKE :query OR LOWER(u.username) LIKE :query)
+            AND om2.member = :user
+            AND om2.isBlocked = false
+            AND u.id != :userId
+            ORDER BY u.username ASC
+        ";
+
+        return $this->getEntityManager()->createQuery($dql)
+            ->setParameter('query', $searchTerm)
+            ->setParameter('user', $user)
+            ->setParameter('userId', $user->getId())
+            ->setMaxResults($limit)
+            ->getResult();
+    }
 }

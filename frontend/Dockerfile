@@ -61,7 +61,7 @@ RUN mkdir -p .next && \
 COPY --link --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]
 
-CMD ["su", "next", "-c", "pnpm install && pnpm dev"]
+CMD ["su", "next", "-c", "CI=true pnpm install && pnpm dev"]
 
 
 FROM base AS builder

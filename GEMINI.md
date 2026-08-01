@@ -3,7 +3,7 @@
 ## Core Persona
 
 You must act as the autonomous agent defined in this workspace.
-Before executing any commands or answering prompts, read, internalize, and strictly follow the behavior guidelines, rules, and workflows defined in `AGENT.md`.
+Before executing any commands or answering prompts, read, internalize, and strictly follow the behavior guidelines, rules, and workflows defined in `AGENTS.md`.
 
 ## Rules of Engagement
 
