@@ -1,73 +1,76 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\State\Search;
 
-use App\Controller\SearchController;
+use ApiPlatform\Metadata\Get;
+use App\DTO\SearchResult;
 use App\Entity\User;
+use App\Exception\UserNotAuthenticatedException;
 use App\Repository\ChatRepository;
 use App\Repository\IssueRepository;
 use App\Repository\OrganizationRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\UserRepository;
+use App\State\Search\SearchResultProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-class SearchControllerTest extends TestCase
+class SearchResultProviderTest extends TestCase
 {
-    public function testInvokeReturnsUnauthorizedWhenUserNotLoggedIn(): void
+    public function testProvideThrowsExceptionWhenUserNotLoggedIn(): void
     {
         $securityMock = $this->createMock(Security::class);
         $securityMock->method('getUser')->willReturn(null);
 
-        $controller = new SearchController(
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request(['q' => 'test']));
+
+        $provider = new SearchResultProvider(
             $this->createMock(IssueRepository::class),
             $this->createMock(ProjectRepository::class),
             $this->createMock(OrganizationRepository::class),
             $this->createMock(ChatRepository::class),
             $this->createMock(UserRepository::class),
-            $securityMock
+            $securityMock,
+            $requestStack
         );
 
-        $request = new Request(['q' => 'test']);
-        $response = $controller($request);
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(401, $response->getStatusCode());
+        $this->expectException(UserNotAuthenticatedException::class);
+        $provider->provide(new Get());
     }
 
-    public function testInvokeReturnsEmptyArraysWhenQueryIsEmpty(): void
+    public function testProvideReturnsEmptyArraysWhenQueryIsEmpty(): void
     {
         $user = new User();
         $securityMock = $this->createMock(Security::class);
         $securityMock->method('getUser')->willReturn($user);
 
-        $controller = new SearchController(
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+
+        $provider = new SearchResultProvider(
             $this->createMock(IssueRepository::class),
             $this->createMock(ProjectRepository::class),
             $this->createMock(OrganizationRepository::class),
             $this->createMock(ChatRepository::class),
             $this->createMock(UserRepository::class),
-            $securityMock
+            $securityMock,
+            $requestStack
         );
 
-        $request = new Request();
-        $response = $controller($request);
+        $result = $provider->provide(new Get());
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $data = json_decode($response->getContent(), true);
-
-        $this->assertEquals([
-            'issues' => [],
-            'projects' => [],
-            'organizations' => [],
-            'chats' => [],
-            'users' => [],
-        ], $data);
+        $this->assertInstanceOf(SearchResult::class, $result);
+        $this->assertSame([], $result->issues);
+        $this->assertSame([], $result->projects);
+        $this->assertSame([], $result->organizations);
+        $this->assertSame([], $result->chats);
+        $this->assertSame([], $result->users);
     }
 
-    public function testInvokeDelegatesToRepositoriesWhenQueryProvided(): void
+    public function testProvideDelegatesToRepositoriesWhenQueryProvided(): void
     {
         $user = new User();
         $securityMock = $this->createMock(Security::class);
@@ -83,12 +86,12 @@ class SearchControllerTest extends TestCase
         $issueRepo->expects($this->once())
             ->method('searchByTermForUser')
             ->with($searchTerm, $user)
-            ->willReturn([['id' => 1, 'title' => 'Bug fix', 'key' => 'PROJ-1', 'type' => 'Bug', 'projectName' => 'Alpha', 'projectId' => 10, 'organizationId' => 5]]);
+            ->willReturn([['id' => 1, 'title' => 'Bug fix', 'key' => 'PROJ-1']]);
 
         $projectRepo->expects($this->once())
             ->method('searchByTermForUser')
             ->with($searchTerm, $user)
-            ->willReturn([['id' => 10, 'name' => 'Bug Tracker', 'organizationName' => 'Org A', 'organizationId' => 5]]);
+            ->willReturn([['id' => 10, 'name' => 'Bug Tracker']]);
 
         $orgRepo->expects($this->once())
             ->method('searchByTermForUser')
@@ -105,24 +108,25 @@ class SearchControllerTest extends TestCase
             ->with($searchTerm, $user)
             ->willReturn([]);
 
-        $controller = new SearchController(
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request(['q' => 'Bug']));
+
+        $provider = new SearchResultProvider(
             $issueRepo,
             $projectRepo,
             $orgRepo,
             $chatRepo,
             $userRepo,
-            $securityMock
+            $securityMock,
+            $requestStack
         );
 
-        $request = new Request(['q' => 'Bug']);
-        $response = $controller($request);
+        $result = $provider->provide(new Get());
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $data = json_decode($response->getContent(), true);
-
-        $this->assertCount(1, $data['issues']);
-        $this->assertEquals('Bug fix', $data['issues'][0]['title']);
-        $this->assertCount(1, $data['projects']);
-        $this->assertEquals('Bug Tracker', $data['projects'][0]['name']);
+        $this->assertInstanceOf(SearchResult::class, $result);
+        $this->assertCount(1, $result->issues);
+        $this->assertEquals('Bug fix', $result->issues[0]['title']);
+        $this->assertCount(1, $result->projects);
+        $this->assertEquals('Bug Tracker', $result->projects[0]['name']);
     }
 }
