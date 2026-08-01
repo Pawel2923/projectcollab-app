@@ -7,8 +7,6 @@ use ApiPlatform\OpenApi\OpenApi;
 use App\OpenApi\Entries\LoginCheck;
 use App\OpenApi\Entries\Logout;
 use App\OpenApi\Entries\OAuthAuthentication;
-use App\OpenApi\Entries\ReportGeneration;
-use App\OpenApi\Entries\Search;
 
 readonly class DocsFactory implements OpenApiFactoryInterface
 {
@@ -25,8 +23,6 @@ readonly class DocsFactory implements OpenApiFactoryInterface
         new LoginCheck($openApi)->addDocs();
         new OAuthAuthentication($openApi)->addDocs();
         new Logout($openApi)->addDocs();
-        new ReportGeneration($openApi)->addDocs();
-        new Search($openApi)->addDocs();
 
         return $openApi;
     }

@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\State\Report;
 
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use App\DTO\ReportGenerateInput;
 use App\Entity\Project;
 use App\Entity\Report;
 use App\Repository\IssueRepository;
@@ -11,52 +14,48 @@ use App\Service\ReportExportService;
 use DateMalformedStringException;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-#[AsController]
-#[Route('/core-api')]
-class ReportController extends AbstractController
+readonly class ReportGenerateProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ProjectRepository      $projectRepository,
-        private readonly IssueRepository        $issueRepository,
-        private readonly SprintRepository       $sprintRepository,
-        private readonly ReportExportService    $reportExportService,
+        private EntityManagerInterface $entityManager,
+        private ProjectRepository      $projectRepository,
+        private IssueRepository        $issueRepository,
+        private SprintRepository       $sprintRepository,
+        private ReportExportService    $reportExportService,
         #[Autowire('%kernel.project_dir%/public/reports')]
-        private readonly string                 $reportsDir
-    )
-    {
+        private string                 $reportsDir
+    ) {
     }
 
     /**
+     * @param ReportGenerateInput $data
      * @throws DateMalformedStringException
      */
-    #[Route('/reports/generate', name: 'api_reports_generate', methods: ['POST'])]
-    public function generate(Request $request): Response
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Report
     {
-        $data = json_decode($request->getContent(), true);
-        $projectId = $data['projectId'] ?? null;
-        $type = $data['type'] ?? 'activity';
-        $format = $data['format'] ?? 'pdf';
-        $dateFrom = $data['dateFrom'] ?? null;
-        $dateTo = $data['dateTo'] ?? null;
+        if (!$data instanceof ReportGenerateInput) {
+            throw new BadRequestHttpException('Invalid data type');
+        }
+
+        $projectId = $data->projectId;
+        $type = $data->type ?? 'activity';
+        $format = $data->format ?? 'pdf';
+        $dateFrom = $data->dateFrom ?? null;
+        $dateTo = $data->dateTo ?? null;
 
         if (!$projectId) {
-            return $this->json(['error' => 'Project ID is required'], Response::HTTP_BAD_REQUEST);
+            throw new BadRequestHttpException('Project ID is required');
         }
 
         $project = $this->projectRepository->find($projectId);
         if (!$project) {
-            return $this->json(['error' => 'Project not found'], Response::HTTP_NOT_FOUND);
+            throw new NotFoundHttpException('Project not found');
         }
 
-        // Ensure reports directory exists
         if (!file_exists($this->reportsDir)) {
             mkdir($this->reportsDir, 0777, true);
         }
@@ -92,7 +91,7 @@ class ReportController extends AbstractController
         $this->entityManager->persist($report);
         $this->entityManager->flush();
 
-        return $this->json($report, Response::HTTP_CREATED, [], ['groups' => ['report:read']]);
+        return $report;
     }
 
     /**
@@ -104,7 +103,6 @@ class ReportController extends AbstractController
 
         switch ($type) {
             case 'activity':
-                // Fetch recently updated issues
                 $qb = $this->issueRepository->createQueryBuilder('i')
                     ->where('i.project = :project')
                     ->setParameter('project', $project)
@@ -124,12 +122,10 @@ class ReportController extends AbstractController
                 break;
 
             case 'progress':
-                // Fetch sprints
                 $data = $this->sprintRepository->findBy(['project' => $project], ['startDate' => 'DESC']);
                 break;
 
             case 'time':
-                // Fetch issues with logged time
                 $qb = $this->issueRepository->createQueryBuilder('i')
                     ->where('i.project = :project')
                     ->andWhere('i.loggedTime > 0')
