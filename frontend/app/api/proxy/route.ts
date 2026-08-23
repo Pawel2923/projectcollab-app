@@ -77,6 +77,22 @@ async function refreshToken(apiUrl: string): Promise<string | null> {
           });
         }
 
+        const setCookie = response.headers?.get
+          ? response.headers.get("set-cookie")
+          : null;
+        if (setCookie) {
+          const match = setCookie.match(/mercureAuthorization=([^;]+)/);
+          if (match) {
+            cookieStore.set("mercureAuthorization", match[1], {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: 60 * 60, // 1 hour
+            });
+          }
+        }
+
         return newToken;
       }
     }
@@ -213,7 +229,16 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       return NextResponse.json(error.toJSON(), { status: error.status });
     }
 
-    const data = await response.json();
+    if (response.status === 204) {
+      const nextResponse = new NextResponse(null, { status: 204 });
+      const setCookieHeader = response.headers.get("set-cookie");
+      if (setCookieHeader) {
+        nextResponse.headers.set("set-cookie", setCookieHeader);
+      }
+      return nextResponse;
+    }
+
+    const data = await response.json().catch(() => null);
     const nextResponse = NextResponse.json(data);
 
     const setCookieHeader = response.headers.get("set-cookie");

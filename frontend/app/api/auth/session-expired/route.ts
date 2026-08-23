@@ -9,5 +9,10 @@ export async function GET(request: NextRequest) {
 
   cookieStore.delete("access_token");
   cookieStore.delete("refresh_token");
-  return redirect(redirectUrl);
+
+  const signinUrl = redirectUrl.startsWith("/signin")
+    ? redirectUrl
+    : `/signin?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+
+  return redirect(signinUrl);
 }
