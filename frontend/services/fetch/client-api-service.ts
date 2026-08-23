@@ -27,7 +27,11 @@ export async function clientApiCall<T = unknown>(
       },
     );
 
-    const data = await response.json();
+    if (response.status === 204) {
+      return Ok(null as T);
+    }
+
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
       return toErrorResult(data, `${method} ${endpoint}`);
@@ -47,4 +51,35 @@ export async function clientApiGet<T = unknown>(
   }
 
   return clientApiCall<T>(endpoint, { method: "GET" });
+}
+
+export async function clientApiPost<T = unknown>(
+  endpoint: string,
+  body?: object,
+  headers?: Record<string, string>,
+): Promise<Result<T, AppError>> {
+  return clientApiCall<T>(endpoint, { method: "POST", body, headers });
+}
+
+export async function clientApiPut<T = unknown>(
+  endpoint: string,
+  body?: object,
+  headers?: Record<string, string>,
+): Promise<Result<T, AppError>> {
+  return clientApiCall<T>(endpoint, { method: "PUT", body, headers });
+}
+
+export async function clientApiPatch<T = unknown>(
+  endpoint: string,
+  body?: object,
+  headers?: Record<string, string>,
+): Promise<Result<T, AppError>> {
+  return clientApiCall<T>(endpoint, { method: "PATCH", body, headers });
+}
+
+export async function clientApiDelete<T = unknown>(
+  endpoint: string,
+  headers?: Record<string, string>,
+): Promise<Result<T, AppError>> {
+  return clientApiCall<T>(endpoint, { method: "DELETE", headers });
 }

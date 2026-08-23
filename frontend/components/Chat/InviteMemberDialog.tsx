@@ -6,9 +6,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import inviteChatMember from "@/actions/chat/inviteChatMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { ChatMember } from "@/types/api/chat";
 import type { OrganizationMember } from "@/types/api/organization";
+import { isOk } from "@/utils/result";
 
 import { Avatar } from "../Avatar";
 import { Button } from "../ui/button";
@@ -55,10 +56,14 @@ export function InviteMemberDialog({
     const fetchOrgMembers = async () => {
       setIsLoading(true);
       try {
-        const response = await apiGet<{ member: OrganizationMember[] }>(
+        const result = await clientApiGet<{ member: OrganizationMember[] }>(
           `/organization_members?organizationId=${organizationId}&pagination=false`,
         );
-        setOrgMembers(response.data?.member || []);
+        if (isOk(result)) {
+          setOrgMembers(result.value.member || []);
+        } else {
+          showError(result.error);
+        }
       } catch (error) {
         showError(error);
       } finally {

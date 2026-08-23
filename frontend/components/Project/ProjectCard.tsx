@@ -5,8 +5,9 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { ProjectMember } from "@/types/api/project";
+import { isOk } from "@/utils/result";
 
 import {
   Card,
@@ -39,12 +40,16 @@ export function ProjectCard({
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await apiGet<{
+        const result = await clientApiGet<{
           totalItems: number;
           member: ProjectMember[];
         }>(`/project_members?projectId=${id}&pagination=false`);
-        setMemberCount(response.data?.totalItems || 0);
-        setMembers(response.data?.member || []);
+        if (isOk(result)) {
+          setMemberCount(result.value.totalItems || 0);
+          setMembers(result.value.member || []);
+        } else {
+          showError(result.error);
+        }
       } catch (error) {
         showError(error);
       } finally {

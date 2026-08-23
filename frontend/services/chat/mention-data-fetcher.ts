@@ -1,5 +1,5 @@
 import { getDirectChatDisplayName } from "@/services/chat/chat-service";
-import { apiGet, type ApiResponse } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { Chat, ChatMember } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
 import type { Issue } from "@/types/api/issue";
@@ -7,6 +7,7 @@ import type { Project } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
 import type { UserWithOnlyEmailAndName } from "@/types/api/user";
 import { extractIdFromIri } from "@/utils/iri-util";
+import { isOk, Ok, type Result } from "@/utils/result";
 
 export interface MentionIssue extends Issue {
   projectSummary?: {
@@ -44,15 +45,15 @@ export async function fetchMentionData(
   const [issuesRes, sprintsRes] = await getIssuesAndSprints(targetProjectId);
   const uniqueUsers = await getUniqueUsers(chatRes);
 
-  const projects = projectsRes.data?.member || [];
-  const issues = issuesRes.data?.member || [];
-  const chats = chatsRes.data?.member || [];
+  const projects = (isOk(projectsRes) && projectsRes.value?.member) || [];
+  const issues = (isOk(issuesRes) && issuesRes.value?.member) || [];
+  const chats = (isOk(chatsRes) && chatsRes.value?.member) || [];
 
   return {
     users: uniqueUsers,
     projects,
     issues: enrichIssuesWithProjectData(issues, projects),
-    sprints: sprintsRes.data?.member || [],
+    sprints: (isOk(sprintsRes) && sprintsRes.value?.member) || [],
     chats: enrichChatsWithDisplayData(chats, organizationId, currentUserId),
   };
 }
@@ -114,32 +115,32 @@ async function getProjectsAndChat(
   chatId?: string,
   currentUserId?: number,
 ) {
-  const projectsPromise = apiGet<Collection<Project>>(
+  const projectsPromise = clientApiGet<Collection<Project>>(
     `/projects?organizationId=${organizationId}`,
   );
 
   const chatPromise = chatId
-    ? apiGet<Chat>(`/chats/${chatId}`)
-    : Promise.resolve({
-        data: { chatMembers: [] } as Partial<Chat>,
-        error: null,
-        status: 200,
-      });
+    ? clientApiGet<Chat>(`/chats/${chatId}`)
+    : Promise.resolve(
+        Ok({ chatMembers: [] } as Partial<Chat> as unknown as Chat),
+      );
 
   const chatsPromise = currentUserId
-    ? apiGet<Collection<Chat>>(
+    ? clientApiGet<Collection<Chat>>(
         `/chats?organizationId=${organizationId}&chatMembers.member=${currentUserId}`,
       )
-    : Promise.resolve({
-        data: { member: [] },
-        error: null,
-        status: 200,
-      } as unknown as ApiResponse<Collection<Chat>>);
+    : Promise.resolve(
+        Ok(
+          { member: [] } as Partial<
+            Collection<Chat>
+          > as unknown as Collection<Chat>,
+        ),
+      );
 
   return await Promise.all([projectsPromise, chatPromise, chatsPromise]);
 }
 
-function getProjectId(chatRes: ProjectChat, projectId?: string) {
+function getProjectId(chatRes: Result<Chat, unknown>, projectId?: string) {
   let targetProjectId = projectId;
 
   const extractId = (
@@ -152,8 +153,8 @@ function getProjectId(chatRes: ProjectChat, projectId?: string) {
     return undefined;
   };
 
-  if (!targetProjectId && chatRes.data) {
-    const chatData = chatRes.data as ExpandedChat;
+  if (!targetProjectId && isOk(chatRes) && chatRes.value) {
+    const chatData = chatRes.value as ExpandedChat;
     if (chatData.project) {
       targetProjectId = extractId(chatData.project);
     } else if (
@@ -175,35 +176,34 @@ function getProjectId(chatRes: ProjectChat, projectId?: string) {
 }
 
 async function getIssuesAndSprints(targetProjectId?: string) {
-  let issuesPromise: Promise<ApiResponse<Collection<Issue>>>;
-  let sprintsPromise: Promise<ApiResponse<Collection<Sprint>>>;
-
   if (targetProjectId) {
-    issuesPromise = apiGet<Collection<Issue>>(
+    const issuesPromise = clientApiGet<Collection<Issue>>(
       `/issues?projectId=${targetProjectId}`,
     );
-    sprintsPromise = apiGet<Collection<Sprint>>(
+    const sprintsPromise = clientApiGet<Collection<Sprint>>(
       `/sprints?project=${targetProjectId}`,
     );
-  } else {
-    issuesPromise = Promise.resolve({
-      data: { member: [] },
-      error: null,
-      status: 200,
-    } as unknown as ApiResponse<Collection<Issue>>);
-    sprintsPromise = Promise.resolve({
-      data: { member: [] },
-      error: null,
-      status: 200,
-    } as unknown as ApiResponse<Collection<Sprint>>);
+    return await Promise.all([issuesPromise, sprintsPromise]);
   }
 
-  return await Promise.all([issuesPromise, sprintsPromise]);
+  return [
+    Ok(
+      { member: [] } as Partial<
+        Collection<Issue>
+      > as unknown as Collection<Issue>,
+    ),
+    Ok(
+      { member: [] } as Partial<
+        Collection<Sprint>
+      > as unknown as Collection<Sprint>,
+    ),
+  ];
 }
 
-async function getUniqueUsers(chatRes: ProjectChat) {
+async function getUniqueUsers(chatRes: Result<Chat, unknown>) {
+  const chatData = isOk(chatRes) ? chatRes.value : undefined;
   const users =
-    chatRes.data?.chatMembers?.map((cm: ChatMember) => cm.member) || [];
+    chatData?.chatMembers?.map((cm: ChatMember) => cm.member) || [];
 
   return Array.from(
     new Map(users.map((u: UserWithOnlyEmailAndName) => [u.id, u])).values(),
@@ -240,11 +240,3 @@ type ExpandedChat = Omit<Chat, "project" | "issue" | "sprint"> & {
   issue?: string | ResourceWithProject;
   sprint?: string | ResourceWithProject;
 };
-
-type ProjectChat =
-  | ApiResponse<Chat>
-  | {
-      data: Partial<Chat>;
-      error: null;
-      status: number;
-    };
