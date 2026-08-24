@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { apiGet } from "@/services/fetch/api-service";
 import type { Collection } from "@/types/api/collection";

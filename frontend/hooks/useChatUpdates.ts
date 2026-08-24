@@ -8,10 +8,11 @@ import {
   handleSessionExpired,
   refreshSession,
 } from "@/services/auth/client-token-refresh";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
+import { isOk } from "@/utils/result";
 
 interface UseChatUpdatesOptions {
   organizationId: string;
@@ -65,10 +66,10 @@ export function useChatUpdates({
       setIsLoading(true);
 
       const query = `/chats?organizationId=${organizationId}&chatMembers.member=${currentUserId}`;
-      let chatsResponse = await apiGet<Collection<Chat>>(query);
+      let chatsResponse = await clientApiGet<Collection<Chat>>(query);
 
       // Silent refresh retry logic for the API call
-      if (chatsResponse.status === 401) {
+      if (!isOk(chatsResponse) && chatsResponse.error.status === 401) {
         fetchApiLog({
           level: "debug",
           message:
@@ -90,7 +91,7 @@ export function useChatUpdates({
               currentUserId,
             },
           });
-          chatsResponse = await apiGet<Collection<Chat>>(query);
+          chatsResponse = await clientApiGet<Collection<Chat>>(query);
         } else {
           fetchApiLog({
             level: "error",
@@ -106,8 +107,8 @@ export function useChatUpdates({
         }
       }
 
-      if (chatsResponse.data) {
-        const updatedChats = chatsResponse.data.member || [];
+      if (isOk(chatsResponse) && chatsResponse.value) {
+        const updatedChats = chatsResponse.value.member || [];
         fetchApiLog({
           level: "debug",
           message: "Updated chats fetched",

@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { cookies } from "next/headers";
 
@@ -62,23 +62,45 @@ export async function refreshAccessToken(
       const newToken = data?.token;
 
       if (newToken) {
-        cookieStore.set("access_token", newToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 5, // 5 minutes
-        });
-
-        const newRefreshToken = data?.refresh_token;
-        if (newRefreshToken) {
-          cookieStore.set("refresh_token", newRefreshToken, {
+        try {
+          cookieStore.set("access_token", newToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
+            maxAge: 60 * 5, // 5 minutes
           });
+
+          const newRefreshToken = data?.refresh_token;
+          if (newRefreshToken) {
+            cookieStore.set("refresh_token", newRefreshToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
+          }
+
+          const setCookie = res.headers?.get
+            ? res.headers.get("set-cookie")
+            : null;
+          if (setCookie) {
+            const match = setCookie.match(/mercureAuthorization=([^;]+)/);
+            if (match) {
+              cookieStore.set("mercureAuthorization", match[1], {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/",
+                maxAge: 60 * 60, // 1 hour
+              });
+            }
+          }
+        } catch {
+          // Setting cookies is only allowed in Server Actions / Route Handlers.
+          // In Server Component renders, cookieStore.set throws, but we still
+          // return the newToken so the in-flight server request can proceed.
         }
       }
 

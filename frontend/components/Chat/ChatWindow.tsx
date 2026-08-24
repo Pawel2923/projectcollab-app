@@ -6,10 +6,11 @@ import { deleteMessage } from "@/actions/chat/deleteMessage";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMentionData } from "@/hooks/useMentionData";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { ChatMember, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
+import { isOk } from "@/utils/result";
 
 import { ChatWindowMenu } from "./ChatWindowMenu";
 import { MessageInput } from "./MessageInput";
@@ -163,15 +164,15 @@ export function ChatWindow({
 
       try {
         const fetchPromises = parentsToFetch.map((parentIri) =>
-          apiGet<Message>(parentIri),
+          clientApiGet<Message>(parentIri),
         );
         const results = await Promise.all(fetchPromises);
 
         setParentMessages((prevParents) => {
           const newParents = new Map(prevParents);
           results.forEach((result) => {
-            if (result?.data) {
-              newParents.set(result.data["@id"], result.data);
+            if (isOk(result) && result.value) {
+              newParents.set(result.value["@id"], result.value);
             }
           });
           return newParents;
@@ -206,11 +207,11 @@ export function ChatWindow({
       const endOfDay = new Date(targetDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const response = await apiGet<Collection<Message>>(
+      const response = await clientApiGet<Collection<Message>>(
         `/messages?chat=${chatId}&order[createdAt]=desc&createdAt[after]=${startOfDay.toISOString()}&createdAt[before]=${endOfDay.toISOString()}&pagination=false`,
       );
 
-      const newMessages = response.data?.member || [];
+      const newMessages = isOk(response) ? (response.value.member || []) : [];
 
       if (newMessages.length > 0) {
         const reversedNewMessages = [...newMessages].reverse();

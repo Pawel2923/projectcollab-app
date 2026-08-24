@@ -24,7 +24,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { useServerValidation } from "@/hooks/useServerValidation";
 import { AppError } from "@/services/error/app-error";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import {
   formatEstimatedTime,
   isValidTimeString,
@@ -38,6 +38,7 @@ import type { ProjectMember } from "@/types/api/project";
 import type { Sprint } from "@/types/api/sprint";
 import type { User } from "@/types/api/user";
 import { buildResourceIri, extractIdFromIri } from "@/utils/iri-util";
+import { isOk } from "@/utils/result";
 
 import { IssuePriority } from "../Issue/IssuePriority";
 import { ComboBox } from "../ui/combobox";
@@ -164,7 +165,8 @@ export function IssueDetails({
   );
 
   async function handleAssigneesChange(iri: string) {
-    const user = await apiGet<User>(iri);
+    const userResult = await clientApiGet<User>(iri);
+    const userData = isOk(userResult) ? userResult.value : null;
 
     setAssignedUsers((prev) => {
       const existingUser = prev.find((user) => user.iri === iri);
@@ -176,8 +178,8 @@ export function IssueDetails({
         ...prev,
         {
           value: iri,
-          label: user.data?.username || user.data?.email || "",
-          id: user.data?.id?.toString() || "",
+          label: userData?.username || userData?.email || "",
+          id: userData?.id?.toString() || "",
           iri,
         },
       ];

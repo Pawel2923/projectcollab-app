@@ -95,6 +95,22 @@ export async function POST() {
       });
     }
 
+    const setCookie = res.headers?.get
+      ? res.headers.get("set-cookie")
+      : null;
+    if (setCookie) {
+      const match = setCookie.match(/mercureAuthorization=([^;]+)/);
+      if (match) {
+        cookieStore.set("mercureAuthorization", match[1], {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: 60 * 60, // 1 hour
+        });
+      }
+    }
+
     return NextResponse.json({ token: newToken });
   } catch (error) {
     await logToServer({

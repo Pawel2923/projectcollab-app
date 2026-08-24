@@ -85,7 +85,20 @@ export const proxy = auth(async (request) => {
         },
       });
 
-      const response = NextResponse.next();
+      request.cookies.set("access_token", session.accessToken);
+      if (session.refreshToken && !refreshToken) {
+        request.cookies.set("refresh_token", session.refreshToken);
+      }
+
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("cookie", request.cookies.toString());
+
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
+
       response.cookies.set("access_token", session.accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -125,7 +138,16 @@ export const proxy = auth(async (request) => {
         },
       });
 
-      const response = NextResponse.next();
+      request.cookies.set("refresh_token", session.refreshToken);
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("cookie", request.cookies.toString());
+
+      const response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
+
       response.cookies.set("refresh_token", session.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -206,9 +228,31 @@ export const proxy = auth(async (request) => {
         });
 
         if (newToken) {
-          const response = NextResponse.next();
+          request.cookies.set("access_token", newToken);
+          if (newRefreshToken) {
+            request.cookies.set("refresh_token", newRefreshToken);
+          }
 
-          // Propagate new token to request cookies for downstream components
+          const setCookie = refreshResponse.headers.get("set-cookie");
+          let mercureToken: string | undefined;
+          if (setCookie) {
+            const match = setCookie.match(/mercureAuthorization=([^;]+)/);
+            if (match) {
+              mercureToken = match[1];
+              request.cookies.set("mercureAuthorization", mercureToken);
+            }
+          }
+
+          const requestHeaders = new Headers(request.headers);
+          requestHeaders.set("cookie", request.cookies.toString());
+
+          const response = NextResponse.next({
+            request: {
+              headers: requestHeaders,
+            },
+          });
+
+          // Propagate new token to response cookies for client browser
           response.cookies.set("access_token", newToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -227,19 +271,14 @@ export const proxy = auth(async (request) => {
             });
           }
 
-          // Capture Mercure cookie if present
-          const setCookie = refreshResponse.headers.get("set-cookie");
-          if (setCookie) {
-            const match = setCookie.match(/mercureAuthorization=([^;]+)/);
-            if (match) {
-              response.cookies.set("mercureAuthorization", match[1], {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                path: "/",
-                maxAge: 60 * 60, // 1 hour
-              });
-            }
+          if (mercureToken) {
+            response.cookies.set("mercureAuthorization", mercureToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: 60 * 60, // 1 hour
+            });
           }
 
           return response;

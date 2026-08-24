@@ -93,7 +93,9 @@ export default async function login(
       };
     }
 
-    (await cookies()).set("access_token", token, {
+    const cookieStore = await cookies();
+
+    cookieStore.set("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -103,13 +105,29 @@ export default async function login(
 
     const refreshToken: string | undefined = data?.refresh_token;
     if (refreshToken) {
-      (await cookies()).set("refresh_token", refreshToken, {
+      cookieStore.set("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 30, // 30 days
       });
+    }
+
+    const setCookie = res.headers?.get
+      ? res.headers.get("set-cookie")
+      : null;
+    if (setCookie) {
+      const match = setCookie.match(/mercureAuthorization=([^;]+)/);
+      if (match) {
+        cookieStore.set("mercureAuthorization", match[1], {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: 60 * 60, // 1 hour
+        });
+      }
     }
 
     if (
