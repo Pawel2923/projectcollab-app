@@ -40,8 +40,19 @@ export function buildResourceIri(
   return `${getApiRoutePrefix()}/${normalizedResource}/${normalizedId}`;
 }
 
-function stripApiRoutePrefixAndNormalize(resourceIri: string): string {
-  return normalizeSegment(resourceIri).replace(/^core-api\/?/, "");
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function stripApiRoutePrefixAndNormalize(resourceIri: string): string {
+  const normalizedResource = normalizeSegment(resourceIri);
+  const prefix = normalizeSegment(getApiRoutePrefix());
+  if (!prefix) {
+    return normalizedResource;
+  }
+
+  const escapedPrefix = escapeRegExp(prefix);
+  return normalizedResource.replace(new RegExp(`^${escapedPrefix}/?`), "");
 }
 
 export function buildEndpointUriFromIri(
