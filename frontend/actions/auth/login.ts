@@ -1,14 +1,12 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { AuthError } from "next-auth";
 import { z } from "zod";
 
 import type { ActionResult } from "@/actions/types/ActionResult";
+import { signIn } from "@/auth";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
-import { getApiUrl } from "@/utils/get-api-url";
-import { isRedirectError } from "@/utils/redirect-error";
 
 const INVALID_REDIRECT_URLS = [
   "/",
@@ -25,7 +23,7 @@ const INVALID_REDIRECT_URLS = [
 
 const schema = z.object({
   email: z.email(),
-  password: z.string(),
+  password: z.string().min(1),
   redirectUrl: z.string().optional(),
 });
 
@@ -61,88 +59,47 @@ export default async function login(
       };
     }
 
-    const nextApiUrl = getApiUrl();
-    if (!nextApiUrl) {
-      return {
-        ok: false,
-        code: "SERVER_CONFIG_ERROR",
-        status: 500,
-      };
-    }
+    const redirectUrl = validated.data.redirectUrl;
+    const targetUrl =
+      redirectUrl &&
+      redirectUrl.startsWith("/") &&
+      !redirectUrl.startsWith("//") &&
+      !INVALID_REDIRECT_URLS.includes(redirectUrl)
+        ? redirectUrl
+        : "/organizations";
 
-    const res = await fetch(`${nextApiUrl}/auth/login`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(validated.data),
+    await signIn("credentials", {
+      email: validated.data.email,
+      password: validated.data.password,
+      redirectTo: targetUrl,
     });
 
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      return handleApiError({ ...data, status: res.status }, "Login");
+    return {
+      ok: true,
+      content: {} as User,
+    };
+  } catch (error) {
+    if (
+      (error instanceof Error && error.message === "NEXT_REDIRECT") ||
+      (typeof error === "object" &&
+        error !== null &&
+        "digest" in error &&
+        String((error as { digest: string }).digest).startsWith(
+          "NEXT_REDIRECT",
+        ))
+    ) {
+      throw error;
     }
 
-    const token: string | undefined = data?.token;
-    if (!token) {
+    if (error instanceof AuthError) {
       return {
         ok: false,
         code: "UNAUTHORIZED",
         status: 401,
+        message: "Nieprawidłowy e-mail lub hasło.",
       };
     }
 
-    const cookieStore = await cookies();
-
-    cookieStore.set("access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 5, // 5 minutes
-    });
-
-    const refreshToken: string | undefined = data?.refresh_token;
-    if (refreshToken) {
-      cookieStore.set("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-      });
-    }
-
-    const setCookie = res.headers?.get ? res.headers.get("set-cookie") : null;
-    if (setCookie) {
-      const match = setCookie.match(/mercureAuthorization=([^;]+)/);
-      if (match) {
-        cookieStore.set("mercureAuthorization", match[1], {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 60, // 1 hour
-        });
-      }
-    }
-
-    if (
-      validated.data.redirectUrl &&
-      validated.data.redirectUrl.startsWith("/") &&
-      !validated.data.redirectUrl.startsWith("//") &&
-      !INVALID_REDIRECT_URLS.includes(validated.data.redirectUrl)
-    ) {
-      redirect(validated.data.redirectUrl);
-    } else {
-      redirect("/organizations");
-    }
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
     return handleApiError(error, "Login");
   }
 }

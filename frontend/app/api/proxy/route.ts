@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { auth } from "@/auth";
 import { AppError } from "@/services/error/app-error";
 import { createErrorFromResponse } from "@/services/error/response-to-error";
 import { logToServer } from "@/services/log/server-logger";
@@ -32,83 +32,6 @@ export async function DELETE(request: NextRequest) {
   return handleProxyRequest(request, "DELETE");
 }
 
-async function refreshToken(apiUrl: string): Promise<string | null> {
-  const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refresh_token")?.value;
-
-  if (!refreshToken) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(`${apiUrl}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: refreshToken,
-      }),
-      cache: "no-store",
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const newToken = data?.token;
-      const newRefreshToken = data?.refresh_token;
-
-      if (newToken) {
-        cookieStore.set("access_token", newToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 5, // 5 minutes
-        });
-
-        if (newRefreshToken) {
-          cookieStore.set("refresh_token", newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-          });
-        }
-
-        const setCookie = response.headers?.get
-          ? response.headers.get("set-cookie")
-          : null;
-        if (setCookie) {
-          const match = setCookie.match(/mercureAuthorization=([^;]+)/);
-          if (match) {
-            cookieStore.set("mercureAuthorization", match[1], {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
-              sameSite: "lax",
-              path: "/",
-              maxAge: 60 * 60, // 1 hour
-            });
-          }
-        }
-
-        return newToken;
-      }
-    }
-  } catch (error) {
-    await logToServer({
-      level: "error",
-      message: "Token refresh failed",
-      serviceName: "route.api.proxy.refreshToken",
-      context: { error: String(error) },
-      errorStack: (error as Error)?.stack,
-    });
-  }
-
-  return null;
-}
-
 async function handleProxyRequest(request: NextRequest, method: string) {
   try {
     const apiUrl = getApiUrl();
@@ -133,21 +56,17 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       return NextResponse.json(error.toJSON(), { status: 400 });
     }
 
-    const cookieStore = await cookies();
-    let token = cookieStore.get("access_token")?.value;
+    const session = await auth();
+    const token = session?.accessToken;
 
-    if (!token) {
-      const refreshedToken = await refreshToken(apiUrl);
-      if (!refreshedToken) {
-        const error = new AppError({
-          message: "Sesja wygasła. Proszę zalogować się ponownie.",
-          code: "UNAUTHORIZED",
-          status: 401,
-          context: "API Proxy",
-        });
-        return NextResponse.json(error.toJSON(), { status: 401 });
-      }
-      token = refreshedToken;
+    if (!token || session.error) {
+      const error = new AppError({
+        message: "Sesja wygasła. Proszę zalogować się ponownie.",
+        code: "UNAUTHORIZED",
+        status: 401,
+        context: "API Proxy",
+      });
+      return NextResponse.json(error.toJSON(), { status: 401 });
     }
 
     let body: Record<string, unknown> | undefined;
@@ -185,40 +104,22 @@ async function handleProxyRequest(request: NextRequest, method: string) {
       });
     };
 
-    let response = await makeApiRequest(token);
+    const response = await makeApiRequest(token);
 
     if (response.status === 401) {
       await logToServer({
-        level: "debug",
-        message: "Got 401, attempting token refresh",
+        level: "warn",
+        message: "API request returned 401 Unauthorized",
         serviceName: "route.api.proxy",
         context: { endpoint },
       });
-      const newToken = await refreshToken(apiUrl);
-
-      if (newToken) {
-        await logToServer({
-          level: "debug",
-          message: "Token refreshed, retrying request",
-          serviceName: "route.api.proxy",
-          context: { endpoint },
-        });
-        response = await makeApiRequest(newToken);
-      } else {
-        await logToServer({
-          level: "warn",
-          message: "Token refresh failed",
-          serviceName: "route.api.proxy",
-          context: { endpoint },
-        });
-        const error = new AppError({
-          message: "Sesja wygasła. Proszę zalogować się ponownie.",
-          code: "UNAUTHORIZED",
-          status: 401,
-          context: "API Proxy",
-        });
-        return NextResponse.json(error.toJSON(), { status: 401 });
-      }
+      const error = new AppError({
+        message: "Sesja wygasła. Proszę zalogować się ponownie.",
+        code: "UNAUTHORIZED",
+        status: 401,
+        context: "API Proxy",
+      });
+      return NextResponse.json(error.toJSON(), { status: 401 });
     }
 
     if (!response.ok) {
