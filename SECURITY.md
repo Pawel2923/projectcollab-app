@@ -25,7 +25,8 @@ If you discover a security vulnerability in ProjectCollab, you can report it in 
 1. **Publicly:** Create a public issue in this GitHub repository.
 2. **Privately (Optional):** If you prefer not to disclose the vulnerability publicly, you can send an email to `projectcollab@nis-lab.com`.
 
-*Note: Since this project is not actively maintained, updates and security patches may be released infrequently and on a best-effort basis.*
+> [!NOTE]
+> Since this project is not actively maintained, updates and security patches may be released infrequently and on a best-effort basis.
 
 ---
 
@@ -37,7 +38,7 @@ While public bug reporting via GitHub Issues is accepted, we appreciate coordina
 
 ## Deployment Security Best Practices
 
-When deploying ProjectCollab in a production environment, ensure that the following security guidelines are followed:
+When deploying ProjectCollab in a production environment (see [Production Running Instructions in README.md](README.md#production)), ensure that the following security guidelines are followed:
 
 ### 1. Secret Management
 * **Change default values:** Never deploy the application with default credentials. Make sure the following variables in the production `.env` file have been generated using a secure random generator (e.g., `openssl rand -hex 32`):
@@ -57,5 +58,5 @@ When deploying ProjectCollab in a production environment, ensure that the follow
 * **Secure Cookies:** In production, ensure that cookies used for session management (NextAuth / JWT) have security attributes enabled (`Secure`, `HttpOnly`, `SameSite=Lax` or `Strict`).
 
 ### 4. JWT Key Security
-* Ensure that the private key (`config/jwt/private.pem`) generated using the `lexik:jwt:generate-keypair` command has restricted read permissions on the host system, preventing access by unauthorized users.
+* Ensure that the private key (`config/jwt/private.pem`) generated using the `docker compose exec api php bin/console lexik:jwt:generate-keypair` command has restricted read permissions on the host system, preventing access by unauthorized users.
 * Never add the private JWT key to the Git repository.

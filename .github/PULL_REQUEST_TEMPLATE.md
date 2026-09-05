@@ -16,8 +16,8 @@ Fixes # (issue)
 
 ## Architectural & Coding Compliance
 
-- [ ] All package/cli commands were run exclusively inside Docker containers (`docker compose exec`).
-- [ ] Frontend changes follow React 19 / Server Actions rules (no `react-hook-form`, native `<form>`, Zod validation).
+- [ ] Routine dev commands run in Docker containers; services restarted if dependencies changed.
+- [ ] Frontend forms validate on client first (e.g. `react-hook-form` + Zod); Server Actions used appropriately for backend mutations.
 - [ ] Strict TypeScript typing used throughout (no `any`).
 - [ ] API merge-patch headers used for API Platform `PATCH` requests where applicable.
 
