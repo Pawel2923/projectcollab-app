@@ -1,4 +1,5 @@
 import { getDirectChatDisplayName } from "@/services/chat/chat-service";
+import type { AppError } from "@/services/error/app-error";
 import { clientApiGet } from "@/services/fetch/client-api-service";
 import type { Chat, ChatMember } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
@@ -130,11 +131,9 @@ async function getProjectsAndChat(
         `/chats?organizationId=${organizationId}&chatMembers.member=${currentUserId}`,
       )
     : Promise.resolve(
-        Ok(
-          { member: [] } as Partial<
-            Collection<Chat>
-          > as unknown as Collection<Chat>,
-        ),
+        Ok({ member: [] } as Partial<
+          Collection<Chat>
+        > as unknown as Collection<Chat>),
       );
 
   return await Promise.all([projectsPromise, chatPromise, chatsPromise]);
@@ -175,7 +174,11 @@ function getProjectId(chatRes: Result<Chat, unknown>, projectId?: string) {
   return targetProjectId;
 }
 
-async function getIssuesAndSprints(targetProjectId?: string) {
+async function getIssuesAndSprints(
+  targetProjectId?: string,
+): Promise<
+  [Result<Collection<Issue>, AppError>, Result<Collection<Sprint>, AppError>]
+> {
   if (targetProjectId) {
     const issuesPromise = clientApiGet<Collection<Issue>>(
       `/issues?projectId=${targetProjectId}`,
@@ -187,23 +190,18 @@ async function getIssuesAndSprints(targetProjectId?: string) {
   }
 
   return [
-    Ok(
-      { member: [] } as Partial<
-        Collection<Issue>
-      > as unknown as Collection<Issue>,
-    ),
-    Ok(
-      { member: [] } as Partial<
-        Collection<Sprint>
-      > as unknown as Collection<Sprint>,
-    ),
+    Ok({ member: [] } as Partial<
+      Collection<Issue>
+    > as unknown as Collection<Issue>),
+    Ok({ member: [] } as Partial<
+      Collection<Sprint>
+    > as unknown as Collection<Sprint>),
   ];
 }
 
 async function getUniqueUsers(chatRes: Result<Chat, unknown>) {
   const chatData = isOk(chatRes) ? chatRes.value : undefined;
-  const users =
-    chatData?.chatMembers?.map((cm: ChatMember) => cm.member) || [];
+  const users = chatData?.chatMembers?.map((cm: ChatMember) => cm.member) || [];
 
   return Array.from(
     new Map(users.map((u: UserWithOnlyEmailAndName) => [u.id, u])).values(),

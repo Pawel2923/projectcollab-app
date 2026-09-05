@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { getOrRefreshAccessToken } from "@/services/auth/token-service";
 import { getApiUrl } from "@/utils/get-api-url";
+import { isRedirectError, rethrowIfRedirect } from "@/utils/redirect-error";
 
 interface ApiCallOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -98,12 +99,7 @@ export async function apiCall<T = unknown>(
       status: response.status,
     };
   } catch (error) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "digest" in error &&
-      (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-    ) {
+    if (isRedirectError(error)) {
       throw error;
     }
 
@@ -157,13 +153,4 @@ export async function apiDelete<T = unknown>(
   });
 }
 
-export async function rethrowIfRedirect(error: unknown): Promise<void> {
-  if (
-    error &&
-    typeof error === "object" &&
-    "digest" in error &&
-    (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-  ) {
-    throw error;
-  }
-}
+export { rethrowIfRedirect };
