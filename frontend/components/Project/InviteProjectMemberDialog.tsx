@@ -87,7 +87,7 @@ export function InviteProjectMemberDialog({
         const result = await clientApiGet<{ member: ProjectRole[] }>(
           "/project_roles?pagination=false",
         );
-        const fetchedRoles = isOk(result) ? (result.value.member || []) : [];
+        const fetchedRoles = isOk(result) ? result.value.member || [] : [];
         const filteredRoles = fetchedRoles.filter((r) => r.value !== "CREATOR");
         setRoles(filteredRoles);
 

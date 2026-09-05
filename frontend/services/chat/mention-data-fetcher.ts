@@ -186,7 +186,10 @@ async function getIssuesAndSprints(
     const sprintsPromise = clientApiGet<Collection<Sprint>>(
       `/sprints?project=${targetProjectId}`,
     );
-    return await Promise.all([issuesPromise, sprintsPromise]);
+    return (await Promise.all([issuesPromise, sprintsPromise])) as [
+      Result<Collection<Issue>, AppError>,
+      Result<Collection<Sprint>, AppError>,
+    ];
   }
 
   return [

@@ -243,7 +243,8 @@ export default function ProjectSettingsContent({
               <CardHeader>
                 <CardTitle className="text-xl">Zmień nazwę projektu</CardTitle>
                 <CardDescription>
-                  Zaktualizuj nazwę projektu, aby zmienić jej wyświetlanie w systemie
+                  Zaktualizuj nazwę projektu, aby zmienić jej wyświetlanie w
+                  systemie
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -266,13 +267,21 @@ export default function ProjectSettingsContent({
                     />
 
                     {serverErrors.form?.isInvalid && (
-                      <TypographyInvalid>{serverErrors.form.message}</TypographyInvalid>
+                      <TypographyInvalid>
+                        {serverErrors.form.message}
+                      </TypographyInvalid>
                     )}
 
                     <Form.Submit asChild>
-                      <Button type="submit" disabled={isPending} className="w-fit">
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="w-fit"
+                      >
                         Zapisz zmiany
-                        {isPending && <Loader2Icon className="animate-spin ml-2 h-4 w-4" />}
+                        {isPending && (
+                          <Loader2Icon className="animate-spin ml-2 h-4 w-4" />
+                        )}
                       </Button>
                     </Form.Submit>
                   </div>

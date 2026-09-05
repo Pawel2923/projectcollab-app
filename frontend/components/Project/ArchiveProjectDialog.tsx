@@ -40,8 +40,8 @@ export function ArchiveProjectDialog({
       <AlertDialogContent>
         <AlertDialogTitle>Zarchiwizuj projekt</AlertDialogTitle>
         <AlertDialogDescription>
-          Czy na pewno chcesz zarchiwizować ten projekt? Zarchiwizowany projekt nie
-          będzie dostępny dla użytkowników.
+          Czy na pewno chcesz zarchiwizować ten projekt? Zarchiwizowany projekt
+          nie będzie dostępny dla użytkowników.
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel>Anuluj</AlertDialogCancel>

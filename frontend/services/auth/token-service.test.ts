@@ -6,6 +6,13 @@ import { isOk, match } from "@/utils/result";
 import * as tokenService from "./token-service";
 
 let cookieStore: any;
+const mockAuth = vi.fn();
+const mockUnstableUpdate = vi.fn();
+
+vi.mock("@/auth", () => ({
+  auth: () => mockAuth(),
+  unstable_update: (data: any) => mockUnstableUpdate(data),
+}));
 
 vi.mock("next/headers", () => {
   return {
@@ -20,12 +27,16 @@ vi.mock("@/utils/get-api-url", () => ({
 vi.mock("../log/server-logger", () => ({
   logToServer: vi.fn(),
 }));
+
 beforeEach(() => {
   cookieStore = {
     get: vi.fn(),
     set: vi.fn(),
+    delete: vi.fn(),
   };
 
+  mockAuth.mockReset();
+  mockUnstableUpdate.mockReset();
   vi.stubGlobal("fetch", vi.fn());
 });
 
@@ -34,68 +45,59 @@ afterEach(() => {
 });
 
 describe("getOrRefreshAccessToken", () => {
-  test("should return existing access_token when present", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "access_token" ? { value: "existing" } : undefined,
-    );
+  test("should return access token from active session", async () => {
+    mockAuth.mockResolvedValue({ accessToken: "session-token" });
 
     const token = await tokenService.getOrRefreshAccessToken("http://api");
 
-    expect(token).toBe("existing");
-    expect(global.fetch).not.toHaveBeenCalled();
+    expect(token).toBe("session-token");
   });
 
-  test("should call refreshAccessToken when access token missing", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "access_token"
-        ? undefined
-        : name === "refresh_token"
-          ? { value: "r" }
-          : undefined,
-    );
+  test("should return undefined when session is null", async () => {
+    mockAuth.mockResolvedValue(null);
 
-    (global.fetch as any).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ token: "new-token", refresh_token: "new-refresh" }),
+    const token = await tokenService.getOrRefreshAccessToken("http://api");
+
+    expect(token).toBeUndefined();
+  });
+
+  test("should return undefined when session has error", async () => {
+    mockAuth.mockResolvedValue({
+      accessToken: "session-token",
+      error: "RefreshAccessTokenError",
     });
 
     const token = await tokenService.getOrRefreshAccessToken("http://api");
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://api/auth/refresh",
-      expect.objectContaining({ method: "POST" }),
-    );
-
-    expect(token).toBe("new-token");
+    expect(token).toBeUndefined();
   });
 
-  test("should return undefined when cookies throw", async () => {
-    cookieStore = {
-      get: () => {
-        throw new Error("boom");
-      },
-    };
+  test("should return undefined when session has no accessToken", async () => {
+    mockAuth.mockResolvedValue({});
 
     const token = await tokenService.getOrRefreshAccessToken("http://api");
 
     expect(token).toBeUndefined();
   });
 
-  test("should return undefined when access_token is undefined and refreshOnUndefined is false", async () => {
-    cookieStore.get.mockReturnValue(undefined);
+  test("should return undefined when auth throws", async () => {
+    mockAuth.mockRejectedValue(new Error("Auth failure"));
 
-    const token = await tokenService.getOrRefreshAccessToken(
-      "http://api",
-      false,
-    );
+    const token = await tokenService.getOrRefreshAccessToken("http://api");
 
     expect(token).toBeUndefined();
-    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
 
 describe("hasAuthCookies", () => {
-  test("should return true when access_token exists", async () => {
+  test("should return true when session has access token", async () => {
+    mockAuth.mockResolvedValue({ accessToken: "token-123" });
+
+    expect(await tokenService.hasAuthCookies()).toBe(true);
+  });
+
+  test("should fall back to cookieStore when session is absent and cookie exists", async () => {
+    mockAuth.mockResolvedValue(null);
     cookieStore.get.mockImplementation((name: string) =>
       name === "access_token" ? { value: "a" } : undefined,
     );
@@ -103,125 +105,70 @@ describe("hasAuthCookies", () => {
     expect(await tokenService.hasAuthCookies()).toBe(true);
   });
 
-  test("should return true when refresh_token exists", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
-
-    expect(await tokenService.hasAuthCookies()).toBe(true);
-  });
-
-  test("should return false when neither cookie exists", async () => {
+  test("should return false when neither session nor cookies exist", async () => {
+    mockAuth.mockResolvedValue(null);
     cookieStore.get.mockReturnValue(undefined);
+
     expect(await tokenService.hasAuthCookies()).toBe(false);
   });
 
-  test("should return false when cookies throw", async () => {
-    cookieStore = {
-      get: () => {
-        throw new Error("err");
-      },
-    };
+  test("should return false when an error occurs", async () => {
+    mockAuth.mockRejectedValue(new Error("boom"));
+
     expect(await tokenService.hasAuthCookies()).toBe(false);
   });
 });
 
 describe("refreshAccessToken", () => {
-  test("should return undefined when no refresh token", async () => {
-    cookieStore.get.mockReturnValue(undefined);
-    const token = await tokenService.refreshAccessToken("http://api");
-    expect(token).toBeUndefined();
+  test("should call unstable_update and return new access token", async () => {
+    mockUnstableUpdate.mockResolvedValue({ accessToken: "refreshed-token" });
+
+    const token = await tokenService.refreshAccessToken();
+
+    expect(mockUnstableUpdate).toHaveBeenCalledWith({});
+    expect(token).toBe("refreshed-token");
   });
 
-  test("should call fetch and set cookie on success", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
-
-    (global.fetch as any).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ token: "new-token", refresh_token: "new-refresh" }),
+  test("should return undefined when unstable_update returns session error", async () => {
+    mockUnstableUpdate.mockResolvedValue({
+      accessToken: "token",
+      error: "RefreshAccessTokenError",
     });
 
-    vi.stubEnv("NODE_ENV", "production");
-
-    const token = await tokenService.refreshAccessToken("http://api");
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://api/auth/refresh",
-      expect.objectContaining({ method: "POST" }),
-    );
-
-    expect(cookieStore.set).toHaveBeenCalledWith(
-      "access_token",
-      "new-token",
-      expect.objectContaining({
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 5,
-      }),
-    );
-
-    expect(cookieStore.set).toHaveBeenCalledWith(
-      "refresh_token",
-      "new-refresh",
-      expect.objectContaining({
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 30,
-      }),
-    );
-
-    expect(token).toBe("new-token");
-  });
-
-  test("should return undefined when fetch not ok", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
-
-    (global.fetch as any).mockResolvedValue({ ok: false });
-
-    const token = await tokenService.refreshAccessToken("http://api");
+    const token = await tokenService.refreshAccessToken();
 
     expect(token).toBeUndefined();
-    expect(cookieStore.set).not.toHaveBeenCalled();
   });
 
-  test("should not set cookie when response has no token", async () => {
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
+  test("should return undefined when unstable_update returns null", async () => {
+    mockUnstableUpdate.mockResolvedValue(null);
 
-    (global.fetch as any).mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    });
-
-    const token = await tokenService.refreshAccessToken("http://api");
+    const token = await tokenService.refreshAccessToken();
 
     expect(token).toBeUndefined();
-    expect(cookieStore.set).not.toHaveBeenCalled();
+  });
+
+  test("should return undefined when unstable_update throws", async () => {
+    mockUnstableUpdate.mockRejectedValue(new Error("update error"));
+
+    const token = await tokenService.refreshAccessToken();
+
+    expect(token).toBeUndefined();
   });
 });
 
-describe("clearAuthCookies", async () => {
-  test("should delete both cookies and return Ok", async () => {
-    cookieStore.delete = vi.fn();
-
+describe("clearAuthCookies", () => {
+  test("should delete cookies and return Ok", async () => {
     const result = await tokenService.clearAuthCookies();
 
     expect(cookieStore.delete).toHaveBeenCalledWith("access_token");
     expect(cookieStore.delete).toHaveBeenCalledWith("refresh_token");
+    expect(cookieStore.delete).toHaveBeenCalledWith("mercureAuthorization");
     expect(isOk(result)).toBe(true);
   });
 
   test("should return Err when delete throws", async () => {
-    cookieStore.delete = vi.fn(() => {
+    cookieStore.delete.mockImplementation(() => {
       throw new Error("delete failed");
     });
 
@@ -242,20 +189,40 @@ describe("clearAuthCookies", async () => {
 });
 
 describe("revokeRefreshToken", () => {
-  test("should call API to revoke token and return true", async () => {
+  test("should call API to revoke token from session and return Ok", async () => {
     (globalThis as any).__API_URL = "http://api";
-
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
-
+    mockAuth.mockResolvedValue({ refreshToken: "session-refresh-token" });
     (global.fetch as any).mockResolvedValueOnce({});
 
     const result = await tokenService.revokeRefreshToken();
 
     expect(global.fetch).toHaveBeenCalledWith(
       "http://api/auth/logout",
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ refresh_token: "session-refresh-token" }),
+      }),
+    );
+
+    expect(isOk(result)).toBe(true);
+  });
+
+  test("should fallback to cookie if session has no refreshToken", async () => {
+    (globalThis as any).__API_URL = "http://api";
+    mockAuth.mockResolvedValue(null);
+    cookieStore.get.mockImplementation((name: string) =>
+      name === "refresh_token" ? { value: "cookie-refresh-token" } : undefined,
+    );
+    (global.fetch as any).mockResolvedValueOnce({});
+
+    const result = await tokenService.revokeRefreshToken();
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "http://api/auth/logout",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ refresh_token: "cookie-refresh-token" }),
+      }),
     );
 
     expect(isOk(result)).toBe(true);
@@ -263,9 +230,7 @@ describe("revokeRefreshToken", () => {
 
   test("should return Err when API URL is not defined", async () => {
     (globalThis as any).__API_URL = undefined;
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
+    mockAuth.mockResolvedValue({ refreshToken: "r" });
 
     const result = await tokenService.revokeRefreshToken();
 
@@ -282,7 +247,7 @@ describe("revokeRefreshToken", () => {
 
   test("should return Err when refresh token is not found", async () => {
     (globalThis as any).__API_URL = "http://api";
-
+    mockAuth.mockResolvedValue(null);
     cookieStore.get.mockReturnValue(undefined);
 
     const result = await tokenService.revokeRefreshToken();
@@ -301,11 +266,7 @@ describe("revokeRefreshToken", () => {
 
   test("should return Err when fetch throws", async () => {
     (globalThis as any).__API_URL = "http://api";
-
-    cookieStore.get.mockImplementation((name: string) =>
-      name === "refresh_token" ? { value: "r" } : undefined,
-    );
-
+    mockAuth.mockResolvedValue({ refreshToken: "r" });
     (global.fetch as any).mockRejectedValueOnce(new Error("boom"));
 
     const result = await tokenService.revokeRefreshToken();

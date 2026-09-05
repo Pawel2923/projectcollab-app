@@ -211,7 +211,7 @@ export function ChatWindow({
         `/messages?chat=${chatId}&order[createdAt]=desc&createdAt[after]=${startOfDay.toISOString()}&createdAt[before]=${endOfDay.toISOString()}&pagination=false`,
       );
 
-      const newMessages = isOk(response) ? (response.value.member || []) : [];
+      const newMessages = isOk(response) ? response.value.member || [] : [];
 
       if (newMessages.length > 0) {
         const reversedNewMessages = [...newMessages].reverse();
