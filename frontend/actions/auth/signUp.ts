@@ -7,6 +7,7 @@ import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
 import { getApiUrl } from "@/utils/get-api-url";
+import { isRedirectError } from "@/utils/redirect-error";
 
 const schema = z.object({
   email: z.email(),
@@ -63,7 +64,7 @@ export default async function signUp(
       password,
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+    if (isRedirectError(error)) {
       throw error;
     }
 

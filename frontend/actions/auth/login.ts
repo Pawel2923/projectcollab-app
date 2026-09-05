@@ -8,6 +8,7 @@ import type { ActionResult } from "@/actions/types/ActionResult";
 import { handleApiError } from "@/services/error/api-error-handler";
 import type { User } from "@/types/api/user";
 import { getApiUrl } from "@/utils/get-api-url";
+import { isRedirectError } from "@/utils/redirect-error";
 
 const INVALID_REDIRECT_URLS = [
   "/",
@@ -114,9 +115,7 @@ export default async function login(
       });
     }
 
-    const setCookie = res.headers?.get
-      ? res.headers.get("set-cookie")
-      : null;
+    const setCookie = res.headers?.get ? res.headers.get("set-cookie") : null;
     if (setCookie) {
       const match = setCookie.match(/mercureAuthorization=([^;]+)/);
       if (match) {
@@ -141,7 +140,7 @@ export default async function login(
       redirect("/organizations");
     }
   } catch (error) {
-    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+    if (isRedirectError(error)) {
       throw error;
     }
     return handleApiError(error, "Login");

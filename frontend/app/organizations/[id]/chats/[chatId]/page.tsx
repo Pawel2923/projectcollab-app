@@ -8,6 +8,7 @@ import { apiGet } from "@/services/fetch/api-service";
 import { logToServer } from "@/services/log/server-logger";
 import type { Chat, Message } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
+import { isRedirectError } from "@/utils/redirect-error";
 
 export default async function ChatPage({
   params,
@@ -86,14 +87,7 @@ export default async function ChatPage({
       </ErrorBoundary>
     );
   } catch (e) {
-    if (
-      (typeof e === "object" &&
-        e !== null &&
-        "digest" in e &&
-        typeof (e as { digest: unknown }).digest === "string" &&
-        (e as { digest: string }).digest.includes("NEXT_REDIRECT")) ||
-      (e instanceof Error && e.message === "NEXT_REDIRECT")
-    ) {
+    if (isRedirectError(e)) {
       throw e;
     }
 

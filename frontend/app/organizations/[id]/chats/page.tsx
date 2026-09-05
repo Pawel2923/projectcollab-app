@@ -6,6 +6,7 @@ import { apiGet } from "@/services/fetch/api-service";
 import { logToServer } from "@/services/log/server-logger";
 import type { Chat } from "@/types/api/chat";
 import type { Collection } from "@/types/api/collection";
+import { isRedirectError } from "@/utils/redirect-error";
 
 export default async function ChatsPage({
   params,
@@ -49,13 +50,7 @@ export default async function ChatsPage({
       redirectUrl = `/organizations/${organizationId}/chats/${chats[0].id}`;
     }
   } catch (e) {
-    // Re-throw Next.js redirects
-    if (
-      e &&
-      typeof e === "object" &&
-      "digest" in e &&
-      (e as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-    ) {
+    if (isRedirectError(e)) {
       throw e;
     }
 
