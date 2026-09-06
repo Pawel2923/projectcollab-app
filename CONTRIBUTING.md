@@ -14,27 +14,50 @@ We expect all contributors to maintain a respectful, inclusive, and professional
 
 ---
 
-## Critical Rules of Engagement
+## Running Commands & Docker Workflow
 
-> [!IMPORTANT]
-> **Containerized Execution Requirement**
+The development environment is orchestrated with Docker Compose to provide consistent dependencies across the stack.
+
+> [!NOTE]
+> **Container Execution & Service Restarts**
 > 
-> **NEVER** run `pnpm`, `npm`, `composer`, or Symfony console commands directly on your host machine.
-> All dependencies and runtime tools are strictly managed within Docker containers. Always run commands through Docker Compose:
+> - **Routine development commands** (e.g. tests, linters, Doctrine schema validation) are typically executed inside running containers using `docker compose exec`:
+>   ```bash
+>   # Frontend checks
+>   docker compose exec frontend pnpm dev-check
 >
-> ```bash
-> # Frontend example
-> docker compose exec frontend pnpm install
-> docker compose exec frontend pnpm dev-check
+>   # Backend checks
+>   docker compose exec api php bin/console doctrine:schema:validate
+>   docker compose exec api bin/phpunit
+>   ```
+> - **Dependency & package management:** Because the development services (`pnpm dev`, FrankenPHP server) run continuously, simply executing package installation commands inside a running container is often not enough. If new packages are added or dependencies change (e.g., `pnpm add`, `composer require`), the affected container needs to be restarted or rebuilt to properly reflect changes in the running server:
+>   ```bash
+>   # Restart service to apply dependency changes
+>   docker compose restart frontend
 >
-> # Backend example
-> docker compose exec api php bin/console doctrine:schema:validate
-> docker compose exec api composer install
-> ```
+>   # Or rebuild if Docker configuration or base dependencies changed
+>   docker compose up --build -d
+>   ```
 
 ---
 
 ## Local Development Setup
+
+### Prerequisites
+
+**Tools**
+
+- [Docker](https://www.docker.com/)
+- [Node.js (version 22 or newer)](https://nodejs.org/en/download)
+- [Git](https://git-scm.com/)
+
+**Environment Setup**
+
+Configure the required environment variables in the `.env` file in the main project directory. The variables are documented in the `.env.example` file.
+
+---
+
+### Setup Instructions
 
 1. **Clone the repository:**
    ```bash
@@ -42,33 +65,49 @@ We expect all contributors to maintain a respectful, inclusive, and professional
    cd projectcollab-app
    ```
 
-2. **Configure Environment Variables:**
-   Copy `.env.example` to `.env` and fill in necessary configuration parameters:
+2. **Copy environment variables:**
    ```bash
    cp .env.example .env
    ```
 
-3. **Start Docker Containers:**
+3. **Build and run the application:**
    ```bash
    docker compose up --build --wait
    ```
 
-4. **Generate JWT Keys for Authentication:**
+4. **Generate JWT keys:**
    ```bash
    docker compose exec api php bin/console lexik:jwt:generate-keypair
    ```
 
-5. **(Optional) Load Sample Data:**
+5. **Stop the application:**
    ```bash
-   docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
+   docker compose stop
    ```
+
+> [!NOTE]
+> - App uses ports `80`, `443`, and `5432`. Make sure these ports are not occupied.
+> - Data is persisted in a Docker volume used by PostgreSQL service.
+> - Make sure to have JWT keys generated for authentication to work.
+
+#### Loading sample data into the application (do not use in production):
+
+```bash
+docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
+```
+
+---
+
+### Remote Development Support
+
+ProjectCollab supports developing on a remote server with Docker while writing code, testing, and debugging directly from your local IDE (PhpStorm, Visual Studio Code, or any SSH/Dev Container compatible IDE). See the [README](README.md#remote-development-support) for prerequisites.
 
 ---
 
 ## Branching & Commit Conventions
 
 ### Branch Naming
-Create descriptive branch names using the following prefixes:
+Branch naming conventions are flexible and not strictly enforced, but we recommend using clear, descriptive names prefixed by topic, for example:
 * `feat/` – New feature (e.g., `feat/kanban-filter`)
 * `fix/` – Bug fix (e.g., `fix/jwt-refresh-token`)
 * `docs/` – Documentation updates (e.g., `docs/contributing-guide`)
@@ -77,14 +116,20 @@ Create descriptive branch names using the following prefixes:
 * `chore/` – Tooling or dependency maintenance (e.g., `chore/bump-next`)
 
 ### Commit Messages
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) standard. Structure your commits as follows:
+The [Conventional Commits](https://www.conventionalcommits.org/) standard is **strictly required**. Structure your commits as follows:
 ```text
-<type>(<scope>): <short description>
+<type>[optional scope]: <description>
 
 [optional body]
 ```
+
+> [!NOTE]
+> The `scope` is optional. Both scoped (e.g., `feat(frontend): add filter drawer to kanban board`) and unscoped (e.g., `feat: add filter drawer to kanban board`) commits are valid.
+
 * **Examples:**
+  * `feat: add filter drawer to kanban board`
   * `feat(frontend): add filter drawer to kanban board`
+  * `fix: correct user authorization check on sprint creation`
   * `fix(api): correct user authorization check on sprint creation`
   * `docs: update setup instructions in README`
 
@@ -92,19 +137,19 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) stand
 
 ## Frontend Architecture & Coding Standards (`/frontend`)
 
-The frontend application is built with **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS**, **`shadcn/ui`**, and **Zod**.
+The frontend application is built with **Next.js 16 (App Router)**, **React 19**, **Tailwind CSS**, **`shadcn/ui`**, **`react-hook-form`**, and **Zod**.
 
 ### Architectural Rules
 
-1. **Form Management & State:**
-   * **Do NOT use `react-hook-form` or Formik.**
-   * Use native HTML `<form action={formAction}>` elements paired with Next.js Server Actions.
-   * Manage server action state, loading states, and errors using React's native `useActionState` hook.
-   * Honor the `isPending` state returned by `useActionState`: disable submit buttons and input fields while submission is pending.
+1. **Form Management & Validation:**
+   * **Client-First Validation:** Validate form inputs on the client side first using Zod schemas with `react-hook-form` (via `@hookform/resolvers/zod`). This ensures instantaneous user feedback without unnecessary network roundtrips.
+   * **Selective Server Action Usage:** Not all form changes or interactions need to call the backend. Handle client-only UI states and local updates directly on the client. Use Server Actions only when mutating data or interacting with the Symfony backend API.
+   * **Server Action Integration:** When a form communicates with the backend, invoke the Server Action after client-side validation passes. Server Actions perform secondary server-side validation and securely proxy requests to Symfony API Platform.
+   * **UI Feedback & Pending States:** Honor loading and pending states during submission (`isSubmitting` from `react-hook-form` or `isPending` from `useActionState` / transitions). Disable input fields and show loading indicators on buttons during submission.
 
 2. **Server Action Pattern:**
-   Every Server Action must follow the project's standard blueprint:
-   * Accept `(prevState: unknown, formData: FormData)`.
+   When a Server Action is required, it must follow the project's standard blueprint:
+   * Accept `(_prevState: unknown, formData: FormData | { ... })` and return `Promise<ActionResult<T>>`.
    * Validate parameters with Zod schemas. On validation failure, return:
      ```typescript
      { ok: false, code: "VALIDATION_ERROR", status: 400, errors: z.treeifyError(validated.error) }
@@ -115,7 +160,7 @@ The frontend application is built with **Next.js 16 (App Router)**, **React 19**
 
 3. **Type Safety & Component Structure:**
    * Use strict TypeScript. Never use `any`.
-   * Use `<input type="hidden" name="id" value={...} />` for entity-scoped IDs.
+   * When an ID or entity-scoped parameter is required (e.g., `organizationId`), include it in the form registration or submission payload.
    * Prefer `shadcn/ui` layout primitives (`Card`, `CardHeader`, `CardTitle`, `CardContent`, `CardFooter`).
 
 ### Quality & Testing Commands (Run inside Container)
@@ -192,7 +237,7 @@ Before submitting a Pull Request, ensure that:
 - [ ] Frontend code passes all checks: `docker compose exec frontend pnpm dev-check`.
 - [ ] Backend Doctrine schema is valid: `docker compose exec api php bin/console doctrine:schema:validate`.
 - [ ] Backend tests pass: `docker compose exec api bin/phpunit`.
-- [ ] Code adheres to the architectural rules in [`AGENT.md`](file:///home/pawel/projectcollab-app/AGENT.md).
+- [ ] Code adheres to the architectural rules in [`AGENTS.md`](AGENTS.md).
 - [ ] Commits follow Conventional Commits formatting.
 - [ ] PR title and description clearly explain the problem solved, changes made, and testing steps.
 
@@ -200,4 +245,4 @@ Before submitting a Pull Request, ensure that:
 
 ## Security Guidelines
 
-If you discover a security vulnerability, please refer to our [Security Policy](file:///home/pawel/projectcollab-app/SECURITY.md) for disclosure details. Do not create public issues for sensitive security exploits.
+If you discover a security vulnerability, please refer to our [Security Policy](SECURITY.md) for disclosure details.

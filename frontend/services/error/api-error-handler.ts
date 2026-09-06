@@ -3,6 +3,7 @@ import { AppError } from "@/services/error/app-error";
 import { logError } from "@/services/error/error-logger";
 import { isApiPlatformError } from "@/types/error/api-platform-error";
 import type { ErrorCode } from "@/types/error/error-code";
+import { isRedirectError } from "@/utils/redirect-error";
 
 export function handleApiError(
   error: unknown,
@@ -14,6 +15,10 @@ export function handleApiError(
   message?: string;
   violations?: Array<{ propertyPath: string; message: string }>;
 } {
+  if (isRedirectError(error)) {
+    throw error;
+  }
+
   if (error instanceof AppError) {
     logError(error);
     return {

@@ -1,22 +1,14 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
-import { handleApiError } from "@/services/error/api-error-handler";
+import { auth, unstable_update } from "@/auth";
 import { AppError } from "@/services/error/app-error";
 import { logToServer } from "@/services/log/server-logger";
-import { getApiUrl } from "@/utils/get-api-url";
 
 export async function POST() {
   try {
-    let refreshToken = (await cookies()).get("refresh_token")?.value;
+    const session = await auth();
 
-    if (!refreshToken) {
-      const session = await auth();
-      refreshToken = session?.refreshToken;
-    }
-
-    if (!refreshToken) {
+    if (!session || !session.refreshToken) {
       const error = new AppError({
         message: "No refresh token available. Please log in.",
         code: "UNAUTHORIZED",
@@ -26,76 +18,23 @@ export async function POST() {
       return NextResponse.json(error.toJSON(), { status: 401 });
     }
 
-    const nextApiUrl = getApiUrl();
-    if (!nextApiUrl) {
+    const updatedSession = await unstable_update({});
+
+    if (
+      !updatedSession ||
+      !updatedSession.accessToken ||
+      updatedSession.error
+    ) {
       const error = new AppError({
-        message: "API URL not configured",
-        code: "SERVER_CONFIG_ERROR",
-        status: 500,
+        message: "Session token refresh failed.",
+        code: "UNAUTHORIZED",
+        status: 401,
         context: "Token Refresh",
       });
-      return NextResponse.json(error.toJSON(), { status: 500 });
+      return NextResponse.json(error.toJSON(), { status: 401 });
     }
 
-    const res = await fetch(`${nextApiUrl}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: refreshToken,
-      }),
-      cache: "no-store",
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      const errorResult = handleApiError(data, "Token Refresh");
-      return NextResponse.json(
-        {
-          code: errorResult.code,
-          message: errorResult.message,
-          violations: errorResult.violations,
-        },
-        { status: errorResult.status },
-      );
-    }
-
-    const newToken = data?.token;
-    const newRefreshToken = data?.refresh_token;
-
-    if (!newToken) {
-      const error = new AppError({
-        message: "No token received from server",
-        code: "SERVER_ERROR",
-        status: 500,
-        context: "Token Refresh",
-      });
-      return NextResponse.json(error.toJSON(), { status: 500 });
-    }
-
-    const cookieStore = await cookies();
-    cookieStore.set("access_token", newToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 5, // 5 minutes
-    });
-
-    if (newRefreshToken) {
-      cookieStore.set("refresh_token", newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-      });
-    }
-
-    return NextResponse.json({ token: newToken });
+    return NextResponse.json({ token: updatedSession.accessToken });
   } catch (error) {
     await logToServer({
       level: "error",
@@ -104,14 +43,15 @@ export async function POST() {
       context: { error: String(error) },
       errorStack: (error as Error)?.stack,
     });
-    const errorResult = handleApiError(error, "Token Refresh");
-    return NextResponse.json(
-      {
-        code: errorResult.code,
-        message: errorResult.message,
-        violations: errorResult.violations,
-      },
-      { status: errorResult.status },
-    );
+
+    const appError = new AppError({
+      message: "Failed to refresh token",
+      code: "SERVER_ERROR",
+      status: 500,
+      context: "Token Refresh",
+      originalError: error,
+    });
+
+    return NextResponse.json(appError.toJSON(), { status: 500 });
   }
 }

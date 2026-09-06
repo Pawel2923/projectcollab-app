@@ -47,7 +47,6 @@ export function useMercureObserver<T = unknown>({
           retryCount,
         },
       });
-      handleSessionExpired();
       return;
     }
 

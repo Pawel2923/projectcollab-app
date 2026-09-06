@@ -1,7 +1,8 @@
-"use server";
+import "server-only";
 
 import { cookies } from "next/headers";
 
+import { auth, unstable_update } from "@/auth";
 import { getApiUrl } from "@/utils/get-api-url";
 import type { Result } from "@/utils/result";
 import { Err, Ok } from "@/utils/result";
@@ -9,24 +10,29 @@ import { Err, Ok } from "@/utils/result";
 import { AppError } from "../error/app-error";
 
 export async function getOrRefreshAccessToken(
-  nextApiUrl: string,
-  refreshOnUndefined: boolean = true,
+  _nextApiUrl?: string,
+  _refreshOnUndefined: boolean = true,
 ): Promise<string | undefined> {
   try {
-    let token = (await cookies()).get("access_token")?.value;
-    if (!token && refreshOnUndefined) {
-      token = await refreshAccessToken(nextApiUrl);
+    const session = await auth();
+    if (!session || session.error || !session.accessToken) {
+      return undefined;
     }
 
-    return token;
+    return session.accessToken;
   } catch (e) {
-    console.error(e);
-    return;
+    console.error("Error getting access token from session:", e);
+    return undefined;
   }
 }
 
 export async function hasAuthCookies(): Promise<boolean> {
   try {
+    const session = await auth();
+    if (session?.accessToken) {
+      return true;
+    }
+
     const cookieStore = await cookies();
     return (
       !!cookieStore.get("access_token")?.value ||
@@ -39,51 +45,18 @@ export async function hasAuthCookies(): Promise<boolean> {
 }
 
 export async function refreshAccessToken(
-  nextApiUrl: string,
+  _nextApiUrl?: string,
 ): Promise<string | undefined> {
-  const cookieStore = await cookies();
-
-  const refreshToken = cookieStore.get("refresh_token")?.value;
-  if (refreshToken) {
-    const res = await fetch(`${nextApiUrl}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: refreshToken,
-      }),
-      cache: "no-store",
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const newToken = data?.token;
-
-      if (newToken) {
-        cookieStore.set("access_token", newToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 5, // 5 minutes
-        });
-
-        const newRefreshToken = data?.refresh_token;
-        if (newRefreshToken) {
-          cookieStore.set("refresh_token", newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-          });
-        }
-      }
-
-      return newToken;
+  try {
+    const session = await unstable_update({});
+    if (!session || session.error || !session.accessToken) {
+      return undefined;
     }
+
+    return session.accessToken;
+  } catch (e) {
+    console.error("Error refreshing token via NextAuth session:", e);
+    return undefined;
   }
 }
 
@@ -93,6 +66,7 @@ export async function clearAuthCookies(): Promise<Result<null, AppError>> {
 
     cookieStore.delete("access_token");
     cookieStore.delete("refresh_token");
+    cookieStore.delete("mercureAuthorization");
 
     return Ok(null);
   } catch (error) {
@@ -109,7 +83,11 @@ export async function clearAuthCookies(): Promise<Result<null, AppError>> {
 
 export async function revokeRefreshToken(): Promise<Result<null, AppError>> {
   try {
-    const refreshToken = (await cookies()).get("refresh_token")?.value;
+    const session = await auth();
+    const cookieStore = await cookies();
+    const refreshToken =
+      session?.refreshToken || cookieStore.get("refresh_token")?.value;
+
     if (!refreshToken) {
       return Err(
         new AppError({

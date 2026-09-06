@@ -1,5 +1,6 @@
 import { toErrorResult } from "@/services/error/app-error-to-result";
 import type { User } from "@/types/api/user";
+import { isRedirectError } from "@/utils/redirect-error";
 import { Ok, type Result } from "@/utils/result";
 
 import type { AppError } from "../error/app-error";
@@ -19,12 +20,7 @@ export async function getCurrentUser(): Promise<Result<User, AppError>> {
 
     return Ok(response.data);
   } catch (error) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "digest" in error &&
-      (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-    ) {
+    if (isRedirectError(error)) {
       throw error;
     }
 

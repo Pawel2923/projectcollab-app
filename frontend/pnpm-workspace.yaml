@@ -1,6 +1,10 @@
+ignoredBuiltDependencies:
+  - unrs-resolver
+
 overrides:
   '@auth/core@<=0.41.2': '>=0.41.3'
   '@auth/core@>=0.1.0 <0.41.3': '>=0.41.3'
+  '@humanfs/node@<0.16.8': '>=0.16.8'
   brace-expansion@<5.0.5: '>=5.0.5'
   brace-expansion@>=3.0.0 <5.0.7: '>=5.0.7'
   brace-expansion@>=4.0.0 <5.0.8: '>=5.0.8'
@@ -23,6 +27,7 @@ overrides:
   postcss@<=8.5.11: '>=8.5.12'
   postcss@<=8.5.17: '>=8.5.18'
   sharp@<0.35.0: '>=0.35.0'
-  undici@>=7.0.0 <7.28.0: '>=7.28.0'
-  undici@>=7.23.0 <7.28.0: '>=7.28.0'
+  undici: ^7.28.0
+  undici@>=7.0.0 <7.28.0: '>=7.28.0 <8.0.0'
+  undici@>=7.23.0 <7.28.0: '>=7.28.0 <8.0.0'
   vite@>=8.0.0 <=8.0.15: '>=8.0.16'

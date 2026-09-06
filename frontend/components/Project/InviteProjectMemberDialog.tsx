@@ -6,10 +6,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import inviteProjectMember from "@/actions/project/inviteProjectMember";
 import { useAlert } from "@/hooks/useAlert";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { apiGet } from "@/services/fetch/api-service";
+import { clientApiGet } from "@/services/fetch/client-api-service";
 import { fetchApiLog } from "@/services/log/fetch-api-log";
 import type { OrganizationMember } from "@/types/api/organization";
 import type { ProjectMember, ProjectRole } from "@/types/api/project";
+import { isOk } from "@/utils/result";
 
 import { Avatar } from "../Avatar";
 import { Button } from "../ui/button";
@@ -64,10 +65,14 @@ export function InviteProjectMemberDialog({
     const fetchOrgMembers = async () => {
       setIsLoading(true);
       try {
-        const response = await apiGet<{ member: OrganizationMember[] }>(
+        const result = await clientApiGet<{ member: OrganizationMember[] }>(
           `/organization_members?organizationId=${organizationId}&pagination=false`,
         );
-        setOrgMembers(response.data?.member || []);
+        if (isOk(result)) {
+          setOrgMembers(result.value.member || []);
+        } else {
+          showError(result.error);
+        }
       } catch (error) {
         showError(error);
       } finally {
@@ -79,10 +84,10 @@ export function InviteProjectMemberDialog({
 
     const fetchRoles = async () => {
       try {
-        const response = await apiGet<{ member: ProjectRole[] }>(
+        const result = await clientApiGet<{ member: ProjectRole[] }>(
           "/project_roles?pagination=false",
         );
-        const fetchedRoles = response.data?.member || [];
+        const fetchedRoles = isOk(result) ? result.value.member || [] : [];
         const filteredRoles = fetchedRoles.filter((r) => r.value !== "CREATOR");
         setRoles(filteredRoles);
 

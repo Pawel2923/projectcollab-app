@@ -1,6 +1,9 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
-import { buildEndpointUriFromIri } from "./iri-util";
+import {
+  buildEndpointUriFromIri,
+  stripApiRoutePrefixAndNormalize,
+} from "./iri-util";
 
 describe("buildEndpointUriFromIri", () => {
   const cases = [
@@ -164,5 +167,42 @@ describe("buildEndpointUriFromIri", () => {
   test.each(cases)("$description", ({ baseUrl, resourceIri, expected }) => {
     const result = buildEndpointUriFromIri(baseUrl, resourceIri);
     expect(result).toBe(expected);
+  });
+});
+
+describe("buildEndpointUriFromIri with custom API route prefix", () => {
+  const originalPrefix = process.env.NEXT_PUBLIC_API_ROUTE_PREFIX;
+
+  afterEach(() => {
+    if (originalPrefix !== undefined) {
+      process.env.NEXT_PUBLIC_API_ROUTE_PREFIX = originalPrefix;
+    } else {
+      delete process.env.NEXT_PUBLIC_API_ROUTE_PREFIX;
+    }
+  });
+
+  test("strips custom prefix when NEXT_PUBLIC_API_ROUTE_PREFIX is configured", () => {
+    process.env.NEXT_PUBLIC_API_ROUTE_PREFIX = "/api/v1";
+    const result = buildEndpointUriFromIri(
+      "http://app/api/v1",
+      "/api/v1/users/1",
+    );
+    expect(result).toBe("http://app/api/v1/users/1");
+  });
+
+  test("strips custom prefix without leading slash in env", () => {
+    process.env.NEXT_PUBLIC_API_ROUTE_PREFIX = "custom-api";
+    const result = buildEndpointUriFromIri(
+      "http://app/custom-api",
+      "/custom-api/users/1",
+    );
+    expect(result).toBe("http://app/custom-api/users/1");
+  });
+
+  test("stripApiRoutePrefixAndNormalize dynamically strips configured prefix", () => {
+    process.env.NEXT_PUBLIC_API_ROUTE_PREFIX = "/api";
+    expect(stripApiRoutePrefixAndNormalize("/api/users/1")).toBe("users/1");
+    expect(stripApiRoutePrefixAndNormalize("api/users/1")).toBe("users/1");
+    expect(stripApiRoutePrefixAndNormalize("/api")).toBe("");
   });
 });

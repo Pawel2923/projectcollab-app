@@ -7,6 +7,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 
+import { requestTokenRefresh } from "@/services/auth/refresh-token-manager";
 import { logToServer } from "@/services/log/server-logger";
 import { getApiUrl } from "@/utils/get-api-url";
 import type { Result } from "@/utils/result";
@@ -122,75 +123,6 @@ async function exchangeToken(
   }
 }
 
-async function requestTokenRefresh(
-  token: string,
-): Promise<Result<{ token: string; refresh_token: string }, string>> {
-  try {
-    await logToServer({
-      level: "debug",
-      message: "Starting access token refresh",
-      serviceName: AUTH_SERVICE_NAME,
-      context: {
-        hasRefreshToken: Boolean(token),
-      },
-    });
-
-    const res = await fetch(`${API_URL}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: token,
-      }),
-    });
-
-    if (res.ok) {
-      await captureMercureCookie(res);
-      const data = await res.json();
-
-      await logToServer({
-        level: "info",
-        message: "Access token refresh succeeded",
-        serviceName: AUTH_SERVICE_NAME,
-        context: {
-          hasToken: Boolean(data?.token),
-          hasRefreshToken: Boolean(data?.refresh_token),
-        },
-      });
-
-      return Ok({ token: data.token, refresh_token: data.refresh_token });
-    }
-
-    const errorText = await res.text();
-    await logToServer({
-      level: "warn",
-      message: "Access token refresh failed",
-      serviceName: AUTH_SERVICE_NAME,
-      context: {
-        status: res.status,
-        response: errorText,
-      },
-    });
-
-    return Err(errorText);
-  } catch (error) {
-    await logToServer({
-      level: "error",
-      message: "Access token refresh request errored",
-      serviceName: AUTH_SERVICE_NAME,
-      context: {
-        error: error instanceof Error ? error.message : String(error),
-        errorStack: error instanceof Error ? error.stack : undefined,
-      },
-    });
-
-    return Err(
-      error instanceof Error ? error.message : "Unknown token refresh error",
-    );
-  }
-}
-
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   await logToServer({
     level: "debug",
@@ -202,7 +134,11 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     },
   });
 
-  const refreshResult = await requestTokenRefresh(token.refreshToken ?? "");
+  const refreshResult = await requestTokenRefresh(
+    token.refreshToken ?? "",
+    API_URL,
+    captureMercureCookie,
+  );
 
   if (!refreshResult.ok) {
     await logToServer({
@@ -239,10 +175,11 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     accessToken: newToken,
     expiresAt: decoded.exp,
     refreshToken: newRefreshToken ?? token.refreshToken,
+    error: undefined,
   };
 }
 
-export const { handlers, auth, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   basePath: "/api/auth",
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === "production",
@@ -384,7 +321,7 @@ export const { handlers, auth, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, trigger }) {
       await logToServer({
         level: "debug",
         message: "JWT callback invoked",
@@ -476,6 +413,18 @@ export const { handlers, auth, signOut } = NextAuth({
             provider: account.provider,
           },
         });
+      }
+
+      if (trigger === "update") {
+        await logToServer({
+          level: "debug",
+          message: "Triggering manual token refresh via update",
+          serviceName: AUTH_SERVICE_NAME,
+          context: {
+            expiresAt: token.expiresAt,
+          },
+        });
+        return refreshAccessToken(token);
       }
 
       const expiresAt =

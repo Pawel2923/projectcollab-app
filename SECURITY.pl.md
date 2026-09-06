@@ -25,7 +25,8 @@ W przypadku wykrycia luki bezpieczeństwa w ProjectCollab można ją zgłosić n
 1. **Publicznie:** Utwórz publiczne zgłoszenie (Issue) w tym repozytorium GitHub.
 2. **Prywatnie (Opcjonalnie):** Jeśli wolisz nie ujawniać podatności publicznie, możesz wysłać e-mail na adres `projectcollab@nis-lab.com`.
 
-*Uwaga: Ponieważ ten projekt nie jest aktywnie utrzymywany, aktualizacje i poprawki bezpieczeństwa mogą być wydawane rzadko i w miarę możliwości.*
+> [!NOTE]
+> Ponieważ ten projekt nie jest aktywnie utrzymywany, aktualizacje i poprawki bezpieczeństwa mogą być wydawane rzadko i w miarę możliwości.
 
 ---
 
@@ -37,7 +38,7 @@ Chociaż publiczne zgłaszanie błędów przez GitHub Issues jest akceptowane, d
 
 ## Dobre Praktyki Bezpieczeństwa Wdrożenia
 
-Po wdrożeniu ProjectCollab w środowisku produkcyjnym należy upewnić się, że przestrzegane są następujące zasady bezpieczeństwa:
+Podczas wdrażania ProjectCollab w środowisku produkcyjnym (zobacz [Instrukcja instalacji / uruchomienia wersji produkcyjnej w README.pl.md](README.pl.md#production)) należy upewnić się, że przestrzegane są następujące zasady bezpieczeństwa:
 
 ### 1. Zarządzanie Sekretami
 * **Zmień wartości domyślne:** Nigdy nie wdrażaj aplikacji z domyślnymi poświadczeniami. Upewnij się, że poniższe zmienne w produkcyjnym pliku `.env` zostały wygenerowane za pomocą bezpiecznego generatora losowego (np. `openssl rand -hex 32`):
@@ -50,12 +51,12 @@ Po wdrożeniu ProjectCollab w środowisku produkcyjnym należy upewnić się, ż
 
 ### 2. Kontrola Sieci i CORS
 * **Zaufane hosty (Trusted Hosts):** Skonfiguruj zmienne `TRUSTED_HOSTS` i `CORS_ALLOW_ORIGIN` w pliku `.env` tak, aby pasowały wyłącznie do Twoich rzeczywistych domen. Nie używaj znaków wieloznacznych (`*`) ani ustawień deweloperskich na produkcji.
-* **Ograniczenie dostępu do bazy i pamięci podatnej:** Upewnij się, że porty bazy danych Postgres (`5432`) oraz Redis (`6379`) nie są publicznie dostępne w sieci Internet. Używaj wewnętrznych sieci Dockera lub ogranicz bindowanie portów do localhosta.
+* **Ograniczenie dostępu do bazy i pamięci podręcznej:** Upewnij się, że porty bazy danych Postgres (`5432`) oraz Redis (`6379`) nie są publicznie dostępne w sieci Internet. Używaj wewnętrznych sieci Dockera lub ogranicz bindowanie portów do localhosta.
 
 ### 3. Konfiguracja HTTPS / TLS
 * **Wymuś TLS:** Zawsze konfiguruj `SERVER_NAME` z prefiksem `https://` w środowisku produkcyjnym, aby Caddy mógł automatycznie wygenerować i wymusić certyfikaty TLS.
 * **Bezpieczne pliki cookie (Secure Cookies):** Na produkcji upewnij się, że pliki cookie używane do zarządzania sesją (NextAuth / JWT) mają włączone atrybuty bezpieczeństwa (`Secure`, `HttpOnly`, `SameSite=Lax` lub `Strict`).
 
 ### 4. Bezpieczeństwo Kluczy JWT
-* Upewnij się, że klucz prywatny (`config/jwt/private.pem`) wygenerowany za pomocą polecenia `lexik:jwt:generate-keypair` ma ograniczone uprawnienia odczytu w systemie hosta, uniemożliwiające dostęp niepowołanym użytkownikom.
+* Upewnij się, że klucz prywatny (`config/jwt/private.pem`) wygenerowany za pomocą polecenia `docker compose exec api php bin/console lexik:jwt:generate-keypair` ma ograniczone uprawnienia odczytu w systemie hosta, uniemożliwiające dostęp niepowołanym użytkownikom.
 * Nigdy nie dodawaj klucza prywatnego JWT do repozytorium Git.
