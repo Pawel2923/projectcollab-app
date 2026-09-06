@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 "use client";
 
 import { type DialogProps } from "@radix-ui/react-dialog";

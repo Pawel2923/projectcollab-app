@@ -1,12 +1,9 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import nextPlugin from "@next/eslint-plugin-next";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import boundaries from "eslint-plugin-boundaries";
-import importPlugin from "eslint-plugin-import";
-import reactPlugin from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import { dirname } from "path";
@@ -20,10 +17,8 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = defineConfig([
+  ...nextCoreWebVitals,
   ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
   ),
@@ -50,16 +45,11 @@ const eslintConfig = defineConfig([
     },
     settings: {
       react: {
-        version: "detect",
+        version: "19.1",
       },
     },
     plugins: {
-      "@next/next": nextPlugin,
-      "@typescript-eslint": tsPlugin,
       "unused-imports": unusedImports,
-      import: importPlugin,
-      react: reactPlugin,
-      "react-hooks": reactHooks,
       "simple-import-sort": simpleImportSort,
       boundaries,
     },
@@ -76,6 +66,9 @@ const eslintConfig = defineConfig([
       "unused-imports/no-unused-imports": "warn",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/purity": "warn",
+      "react-hooks/error-boundaries": "warn",
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
       "import/no-unresolved": "off",
