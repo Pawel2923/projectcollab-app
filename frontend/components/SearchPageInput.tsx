@@ -13,7 +13,7 @@ export function SearchPageInput({
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query)}`);

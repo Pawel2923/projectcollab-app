@@ -1,11 +1,6 @@
 import { Loader2Icon } from "lucide-react";
 import { Form } from "radix-ui";
-import React, {
-  useActionState,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import React, { useActionState, useEffect, useState } from "react";
 
 import updateSprintStatus from "@/actions/sprint/updateSprintStatus";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
@@ -86,18 +81,6 @@ export function AddActiveSprintDialog({
     fetchSprints();
   }, [projectId, showError]);
 
-  // Add loading state to combobox items
-  useLayoutEffect(() => {
-    if (isPending) {
-      setComboboxItems([
-        {
-          label: "Ładowanie...",
-          value: "",
-        },
-      ]);
-    }
-  }, [isPending]);
-
   // log state changes
   useEffect(() => {
     fetchApiLog({
@@ -110,7 +93,6 @@ export function AddActiveSprintDialog({
     });
 
     if (state?.ok) {
-      setOpen(false);
       window.location.reload();
     }
   }, [state, showError]);
@@ -156,7 +138,11 @@ export function AddActiveSprintDialog({
             <ComboBox
               placeholder="Wyszukaj sprint"
               title="Wybierz sprint"
-              items={comboboxItems}
+              items={
+                isPending
+                  ? [{ label: "Ładowanie...", value: "" }]
+                  : comboboxItems
+              }
               onSelect={(value) => setSelectedSprintId(value)}
             />
             <input

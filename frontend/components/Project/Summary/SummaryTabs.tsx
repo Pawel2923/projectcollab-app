@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { GanttTab } from "@/components/Project/Summary/GanttTab";
 import { OverviewTab } from "@/components/Project/Summary/OverviewTab";
@@ -32,18 +32,9 @@ export function SummaryTabs({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState(
-    searchParams.get("tab") || "overview",
-  );
-
-  useEffect(() => {
-    const tab = searchParams.get("tab") || "overview";
-    setActiveTab(tab);
-  }, [searchParams]);
+  const activeTab = searchParams.get("tab") || "overview";
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
-
     const params = new URLSearchParams(searchParams);
     if (value === "overview") {
       params.delete("tab");

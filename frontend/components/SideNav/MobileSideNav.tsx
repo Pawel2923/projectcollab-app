@@ -3,7 +3,7 @@
 import { Menu, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -42,9 +42,11 @@ export function MobileSideNav({
     [groupedChats],
   );
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsDrawerOpen(false);
-  }, [pathname]);
+  }
 
   if (groupedChats) {
     if (chatNavigationItems.length === 0) {

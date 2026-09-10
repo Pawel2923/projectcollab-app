@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { Issue, IssueStatus } from "@/types/api/issue";
 import { extractIdFromIri } from "@/utils/iri-util";
@@ -14,6 +14,8 @@ export function useProjectOverview({
   statuses,
   now,
 }: UseProjectOverviewProps) {
+  const [mountTime] = useState(() => Date.now());
+
   const statusMap = useMemo(
     () =>
       statuses.reduce(
@@ -45,7 +47,7 @@ export function useProjectOverview({
     const highPriority: Issue[] = [];
     const withDeadlines: Issue[] = [];
 
-    const nowTime = now || Date.now();
+    const nowTime = now || mountTime;
 
     for (const i of issues) {
       const statusName = getStatusName(i.status);
@@ -111,7 +113,7 @@ export function useProjectOverview({
       totalLogged: tLogged,
       totalEstimated: tEstimated,
     };
-  }, [issues, getStatusName, totalTasks, now]);
+  }, [issues, getStatusName, totalTasks, now, mountTime]);
 
   return { ...stats, totalTasks };
 }

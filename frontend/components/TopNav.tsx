@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
 
 import { ProjectCollabLogotype } from "@/assets/img/ProjectCollabLogotype";
 import { AddIssueModal } from "@/components/Issue/AddIssueModal";
@@ -40,11 +40,11 @@ export function TopNav({
       pathname.startsWith(`/organizations/${organizationId}/chats/`)
     : false;
 
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const userMenu = (
     <DropdownMenuItem onClick={logoutBtnClickHandler}>

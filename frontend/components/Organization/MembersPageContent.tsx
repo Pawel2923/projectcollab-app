@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import deleteOrganizationMember from "@/actions/organization/deleteOrganizationMember";
 import updateOrganizationMemberRole from "@/actions/organization/updateOrganizationMemberRole";
@@ -41,6 +41,14 @@ export default function MembersPageContent({
   organizationId,
 }: MembersPageContentProps) {
   const [members, setMembers] = useState<OrganizationMember[]>(initialMembers);
+  const [prevInitialMembers, setPrevInitialMembers] =
+    useState<OrganizationMember[]>(initialMembers);
+
+  if (prevInitialMembers !== initialMembers) {
+    setPrevInitialMembers(initialMembers);
+    setMembers(initialMembers);
+  }
+
   const [memberToDelete, setMemberToDelete] =
     useState<OrganizationMember | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -157,10 +165,6 @@ export default function MembersPageContent({
       setIsDeleting(false);
     }
   };
-
-  useEffect(() => {
-    setMembers(initialMembers);
-  }, [initialMembers]);
 
   useMercureObserver({
     topics: [`/organization_members?organizationId=${organizationId}`],

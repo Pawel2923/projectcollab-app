@@ -1,3 +1,4 @@
+import * as Form from "@radix-ui/react-form";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import React, { useState } from "react";
 
@@ -26,15 +27,17 @@ export function PasswordToggle({
 
   return (
     <div className="relative">
-      <Input
-        name={name}
-        id={name}
-        type={isVisible ? "text" : "password"}
-        placeholder={placeholder}
-        required={required}
-        className={classNamesMerger("pr-10", className)}
-        {...rest}
-      />
+      <Form.Control asChild>
+        <Input
+          name={name}
+          id={name}
+          type={isVisible ? "text" : "password"}
+          placeholder={placeholder}
+          required={required}
+          className={classNamesMerger("pr-10", className)}
+          {...rest}
+        />
+      </Form.Control>
       <Button
         type="button"
         variant="ghost"

@@ -4,7 +4,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Loader2, XCircle } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { updateIssueStatus } from "@/actions/issue/updateIssueStatus";
 import { useAlert } from "@/hooks/useAlert";
@@ -33,8 +33,14 @@ export function KanbanIssues({ projectId, issueStatuses }: KanbanIssuesProps) {
   const issuesOptions = useIssuesOptions();
   const queryClient = useQueryClient();
   const { notify } = useAlert();
-  const sortOptions = issuesOptions?.sortOptions || [];
-  const filterOptions = issuesOptions?.filterOptions || [];
+  const sortOptions = useMemo(
+    () => issuesOptions?.sortOptions || [],
+    [issuesOptions?.sortOptions],
+  );
+  const filterOptions = useMemo(
+    () => issuesOptions?.filterOptions || [],
+    [issuesOptions?.filterOptions],
+  );
 
   useMercureObserver<Issue>({
     topics: [`/projects/${projectId}/issues`],

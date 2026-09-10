@@ -1,5 +1,4 @@
-import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type {
   ActionResult,
@@ -10,7 +9,6 @@ import { fetchApiLog } from "@/services/log/fetch-api-log";
 import { getMessageText } from "@/services/message-mapper/message-mapper";
 import { translateSymfonyValidation } from "@/services/message-mapper/translate-symfony-validation";
 import {
-  isOtherClientError,
   isUnprocessableEntityErrorWithConstraint,
   isUnprocessableEntityErrorWithViolations,
 } from "@/services/validator/stateChecker";
@@ -39,81 +37,40 @@ export function useServerValidation(
   serverFieldsMap?: Record<string, string>,
 ) {
   const initialErrors = useMemo(() => getInitialErrors(fields), [fields]);
-  const [serverErrors, setServerErrors] = useState<ServerErrors>(initialErrors);
-
-  useEffect(() => {
-    if (!actionState || actionState.ok) {
-      return;
-    }
-
-    // Type assertion for failed action state
-    const failedState = actionState as FailedActionResult;
-
-    if (isUnprocessableEntityErrorWithConstraint(actionState)) {
-      const violations =
-        extractViolations(failedState.errors as Constraint) ?? [];
-      addErrorsFromViolations(
-        violations,
-        setServerErrors,
-        fields,
-        serverFieldsMap,
-      );
-    } else if (
-      failedState.code === "VALIDATION_ERROR" &&
-      failedState.errors !== undefined &&
-      failedState.errors !== null
-    ) {
-      const zodTree = failedState.errors as unknown;
-      const zodViolations = zodTreeToViolations(zodTree);
-
-      if (zodViolations.length > 0) {
-        addErrorsFromViolations(
-          zodViolations,
-          setServerErrors,
+  const [serverErrors, setServerErrors] = useState<ServerErrors>(() =>
+    actionState && !actionState.ok
+      ? calculateServerErrors(
+          actionState,
+          initialErrors,
           fields,
           serverFieldsMap,
-        );
-      }
-    } else if (isUnprocessableEntityErrorWithViolations(actionState)) {
-      // Handle violations directly from ActionResult (from API Platform)
-      const violations: FormViolation[] =
-        failedState.violations?.map((v) => ({
-          field: v.propertyPath,
-          message: v.message,
-          code: v.code || "",
-        })) ?? [];
-      addErrorsFromViolations(
-        violations,
-        setServerErrors,
-        fields,
-        serverFieldsMap,
-      );
-    } else if (isOtherClientError(actionState)) {
-      // Try to get translated message from messagesMap first
-      const mapped = messagesMap[failedState.code];
-      const translatedMessage = mapped
-        ? mapped.description || mapped.title
-        : null;
-
-      // Use translated message if available, otherwise use server message or fallback
-      const message =
-        translatedMessage ||
-        failedState.message ||
-        getMessageText(failedState.code);
-
-      setServerErrors((prev) => ({
-        ...prev,
-        form: {
-          isInvalid: true,
-          message,
-        },
-      }));
-    }
-  }, [actionState, fields, serverFieldsMap]);
+        )
+      : initialErrors,
+  );
+  const [prevActionState, setPrevActionState] = useState(actionState);
 
   const clearServerErrors = useCallback(() => {
     setServerErrors(initialErrors);
   }, [initialErrors]);
+
+  if (prevActionState !== actionState) {
+    setPrevActionState(actionState);
+    const nextErrors =
+      !actionState || actionState.ok
+        ? initialErrors
+        : calculateServerErrors(
+            actionState,
+            initialErrors,
+            fields,
+            serverFieldsMap,
+          );
+    setServerErrors(nextErrors);
+    return {
+      serverErrors: nextErrors,
+      setServerErrors,
+      clearServerErrors,
+    };
+  }
 
   return {
     serverErrors,
@@ -174,13 +131,82 @@ function getInitialErrors(fields: ReadonlyArray<string>): ServerErrors {
   };
 }
 
-function addErrorsFromViolations(
+function calculateServerErrors(
+  actionState: ActionResult,
+  baseErrors: ServerErrors,
+  fields: ReadonlyArray<string>,
+  serverFieldsMap?: Record<string, string>,
+): ServerErrors {
+  if (actionState.ok) {
+    return baseErrors;
+  }
+
+  const failedState = actionState as FailedActionResult;
+  const newErrors: ServerErrors = { ...baseErrors };
+
+  if (isUnprocessableEntityErrorWithConstraint(actionState)) {
+    const violations =
+      extractViolations(failedState.errors as Constraint) ?? [];
+    applyViolations(violations, newErrors, fields, serverFieldsMap);
+  } else if (
+    failedState.code === "VALIDATION_ERROR" &&
+    failedState.errors !== undefined &&
+    failedState.errors !== null
+  ) {
+    const zodTree = failedState.errors as unknown;
+    const zodViolations = zodTreeToViolations(zodTree);
+
+    if (zodViolations.length > 0) {
+      applyViolations(zodViolations, newErrors, fields, serverFieldsMap);
+    } else if (failedState.message) {
+      newErrors.form = {
+        isInvalid: true,
+        message: failedState.message,
+      };
+    }
+  } else if (isUnprocessableEntityErrorWithViolations(actionState)) {
+    const violations: FormViolation[] =
+      failedState.violations?.map((v) => ({
+        field: v.propertyPath,
+        message: v.message,
+        code: v.code || "",
+      })) ?? [];
+    applyViolations(violations, newErrors, fields, serverFieldsMap);
+  } else {
+    const mapped = messagesMap[failedState.code];
+    const translatedMessage = mapped
+      ? mapped.description || mapped.title
+      : null;
+
+    const message =
+      failedState.message ||
+      translatedMessage ||
+      getMessageText(failedState.code);
+
+    newErrors.form = {
+      isInvalid: true,
+      message,
+    };
+  }
+
+  return newErrors;
+}
+
+function applyViolations(
   violations: FormViolation[],
-  setServerErrors: React.Dispatch<React.SetStateAction<ServerErrors>>,
+  errors: ServerErrors,
   fields: ReadonlyArray<string>,
   serverFieldsMap?: Record<string, string>,
 ) {
   violations.forEach((violation) => {
+    if (violation.field === "form") {
+      errors.form = {
+        isInvalid: true,
+        message: violation.message,
+      };
+      return;
+    }
+
     const mappedField = serverFieldsMap?.[violation.field];
     if (mappedField && !fields.includes(mappedField)) {
       fetchApiLog({
@@ -204,13 +230,15 @@ function addErrorsFromViolations(
         violation.field,
       );
 
-      setServerErrors((prev) => ({
-        ...prev,
-        [fieldName]: {
-          isInvalid: true,
-          message: translatedMessage,
-        },
-      }));
+      errors[fieldName] = {
+        isInvalid: true,
+        message: translatedMessage,
+      };
+    } else {
+      errors.form = {
+        isInvalid: true,
+        message: violation.message,
+      };
     }
   });
 }

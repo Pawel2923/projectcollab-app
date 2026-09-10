@@ -88,16 +88,13 @@ describe("GlobalError", () => {
 
   test("should navigate to home when home button is clicked", async () => {
     mockFetch.mockResolvedValueOnce({ ok: true });
-    const user = userEvent.setup();
 
     render(<GlobalError error={mockError} reset={mockReset} />);
 
-    const homeButton = screen.getByRole("button", {
+    const homeLink = screen.getByRole("link", {
       name: /Wróć do strony głównej/,
     });
-    await user.click(homeButton);
-
-    expect(window.location.href).toBe("/");
+    expect(homeLink).toHaveAttribute("href", "/");
   });
 
   test("should display error details in development mode", () => {
@@ -130,7 +127,7 @@ describe("GlobalError", () => {
       screen.getByRole("button", { name: /Spróbuj ponownie/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Wróć do strony głównej/ }),
+      screen.getByRole("link", { name: /Wróć do strony głównej/ }),
     ).toBeInTheDocument();
   });
 

@@ -71,6 +71,14 @@ export default function ProjectSettingsContent({
   projectId,
 }: ProjectSettingsContentProps) {
   const [members, setMembers] = useState<ProjectMember[]>(initialMembers);
+  const [prevInitialMembers, setPrevInitialMembers] =
+    useState<ProjectMember[]>(initialMembers);
+
+  if (prevInitialMembers !== initialMembers) {
+    setPrevInitialMembers(initialMembers);
+    setMembers(initialMembers);
+  }
+
   const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(
     null,
   );
@@ -217,10 +225,6 @@ export default function ProjectSettingsContent({
       setIsDeleting(false);
     }
   };
-
-  useEffect(() => {
-    setMembers(initialMembers);
-  }, [initialMembers]);
 
   useMercureObserver({
     topics: [`/project_members?projectId=${projectId}`],

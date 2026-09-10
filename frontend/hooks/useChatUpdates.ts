@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import {
@@ -35,12 +35,16 @@ export function useChatUpdates({
   initialChats,
 }: UseChatUpdatesOptions): UseChatUpdatesReturn {
   const [chats, setChats] = useState<Chat[]>(initialChats);
+  const [prevInitialChats, setPrevInitialChats] =
+    useState<Chat[]>(initialChats);
+
+  if (prevInitialChats !== initialChats) {
+    setPrevInitialChats(initialChats);
+    setChats(initialChats);
+  }
+
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    setChats(initialChats);
-  }, [initialChats]);
 
   const handleUpdate = async (data: Chat) => {
     fetchApiLog({

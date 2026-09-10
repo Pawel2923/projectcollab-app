@@ -32,17 +32,27 @@ export function SearchCommandDialog({ open, onOpenChange }: DialogProps) {
   const [results, setResults] = useState<SearchResults | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const [prevQuery, setPrevQuery] = useState(debouncedQuery);
+  if (prevQuery !== debouncedQuery) {
+    setPrevQuery(debouncedQuery);
     if (!debouncedQuery) {
       setResults(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!debouncedQuery) {
       return;
     }
 
+    let isMounted = true;
     const fetchResults = async () => {
       setLoading(true);
       try {
         const data = await searchGlobal(debouncedQuery);
-        setResults(data);
+        if (isMounted) {
+          setResults(data);
+        }
       } catch (error) {
         fetchApiLog({
           level: "error",
@@ -52,11 +62,17 @@ export function SearchCommandDialog({ open, onOpenChange }: DialogProps) {
           },
         });
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchResults();
+
+    return () => {
+      isMounted = false;
+    };
   }, [debouncedQuery]);
 
   const handleSelect = (url: string) => {

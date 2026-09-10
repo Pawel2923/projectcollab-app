@@ -1,5 +1,5 @@
 import { PlusCircleIcon } from "lucide-react";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,14 +24,16 @@ export function AddIssueTagPopover({
   const [title, setTitle] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#E0E0E0");
   const [textColor, setTextColor] = useState("#000000");
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useLayoutEffect(() => {
+  if (prevOpen !== open) {
+    setPrevOpen(open);
     if (!open) {
       setTitle("");
       setBackgroundColor("#E0E0E0");
       setTextColor("#000000");
     }
-  }, [open]);
+  }
 
   const handleAdd = () => {
     if (!title.trim()) {

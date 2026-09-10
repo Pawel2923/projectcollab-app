@@ -208,7 +208,11 @@ export function AddChatForm({
     [allMemberEmails, selectedMembers],
   );
 
-  useEffect(() => {
+  const [prevAllMemberEmails, setPrevAllMemberEmails] =
+    useState(allMemberEmails);
+
+  if (prevAllMemberEmails !== allMemberEmails) {
+    setPrevAllMemberEmails(allMemberEmails);
     setSelectedMembers((prev) =>
       prev
         .map((member) => {
@@ -224,7 +228,7 @@ export function AddChatForm({
         })
         .filter((member): member is SelectedMember => Boolean(member)),
     );
-  }, [allMemberEmails]);
+  }
 
   const allMembersSelected =
     allMemberEmails.length > 0 &&
@@ -353,27 +357,18 @@ export function AddChatForm({
     setSelectedProjectId(normalizedValue);
     setSelectedSprintId(undefined);
     setSelectedIssueId(undefined);
-  };
 
-  const handleSprintChange = (value: string) => {
-    setSelectedSprintId(value === EMPTY_SELECT_VALUE ? undefined : value);
-  };
-
-  const handleIssueChange = (value: string) => {
-    setSelectedIssueId(value === EMPTY_SELECT_VALUE ? undefined : value);
-  };
-
-  useEffect(() => {
     setSelectedMembers((prev) => {
-      const withoutProjectMembers = stripSourcesByKind(prev, "project");
+      let without = stripSourcesByKind(prev, "project");
+      without = stripSourcesByKind(without, "issue");
 
-      if (!isGroupChat || !selectedProjectId) {
-        return withoutProjectMembers;
+      if (!isGroupChat || !normalizedValue) {
+        return without;
       }
 
-      const projectResource = projectResourceById.get(selectedProjectId);
+      const projectResource = projectResourceById.get(normalizedValue);
       if (!projectResource) {
-        return withoutProjectMembers;
+        return without;
       }
 
       const emails = projectResource.members
@@ -386,26 +381,33 @@ export function AddChatForm({
         .filter((email): email is string => Boolean(email));
 
       if (emails.length === 0) {
-        return withoutProjectMembers;
+        return without;
       }
 
-      return addMembersFromEmails(withoutProjectMembers, emails, {
+      return addMembersFromEmails(without, emails, {
         kind: "project",
-        refId: selectedProjectId,
+        refId: normalizedValue,
       });
     });
-  }, [isGroupChat, selectedProjectId, projectResourceById, currentUserId]);
+  };
 
-  useEffect(() => {
+  const handleSprintChange = (value: string) => {
+    setSelectedSprintId(value === EMPTY_SELECT_VALUE ? undefined : value);
+  };
+
+  const handleIssueChange = (value: string) => {
+    const normalizedValue = value === EMPTY_SELECT_VALUE ? undefined : value;
+    setSelectedIssueId(normalizedValue);
+
     setSelectedMembers((prev) => {
       const withoutIssueMembers = stripSourcesByKind(prev, "issue");
 
-      if (!isGroupChat || !selectedIssueId || !currentProjectResource) {
+      if (!isGroupChat || !normalizedValue || !currentProjectResource) {
         return withoutIssueMembers;
       }
 
       const issue = currentProjectResource.issues.find(
-        (item) => String(item.id) === selectedIssueId,
+        (item) => String(item.id) === normalizedValue,
       );
 
       if (!issue) {
@@ -433,11 +435,11 @@ export function AddChatForm({
         Array.from(participantEmails),
         {
           kind: "issue",
-          refId: selectedIssueId,
+          refId: normalizedValue,
         },
       );
     });
-  }, [isGroupChat, selectedIssueId, currentProjectResource, currentUserId]);
+  };
 
   return (
     <Form.Root

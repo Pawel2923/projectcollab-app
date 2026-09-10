@@ -42,7 +42,7 @@ import { isOk } from "@/utils/result";
 
 import { IssuePriority } from "../Issue/IssuePriority";
 import { ComboBox } from "../ui/combobox";
-import { FormField, FormFieldLabel } from "../ui/Form/FormField";
+import { FormField } from "../ui/Form/FormField";
 import { FormInput } from "../ui/Form/FormInput";
 import { FormSelect } from "../ui/Form/FormSelect";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -194,7 +194,7 @@ export function IssueDetails({
     setClientErrors((prev) => ({ ...prev, [field]: msg || undefined }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     const form = e.currentTarget as HTMLFormElement;
     const fd = new FormData(form);
     const est =
@@ -454,15 +454,16 @@ export function IssueDetails({
                   <div className="grid gap-4 sm:grid-cols-2">
                     <FormField
                       name="estimated"
-                      label="Szacowany czas"
-                      serverInvalid={serverErrors.estimated.isInvalid}
-                      asChild
+                      label="Szacowany czas (w, d, h, m)"
+                      serverInvalid={Boolean(
+                        serverErrors.estimated.isInvalid ||
+                          clientErrors.estimated,
+                      )}
+                      serverMessage={
+                        clientErrors.estimated || serverErrors.estimated.message
+                      }
+                      tooltipContent="Użyj formatu: 1w 2d 3h 4m (tydzień, dzień, godzina, minuta)"
                     >
-                      <FormFieldLabel
-                        name="estimated"
-                        label="Szacowany czas (w, d, h, m)"
-                        tooltipContent="Użyj formatu: 1w 2d 3h 4m (tydzień, dzień, godzina, minuta)"
-                      />
                       <Input
                         id="estimated"
                         name="estimated"
@@ -472,26 +473,21 @@ export function IssueDetails({
                           handleFieldBlur("estimated", e.currentTarget.value)
                         }
                       />
-                      {clientErrors.estimated && (
-                        <Form.Message asChild>
-                          <TypographyInvalid>
-                            {clientErrors.estimated}
-                          </TypographyInvalid>
-                        </Form.Message>
-                      )}
                     </FormField>
 
                     <FormField
                       name="loggedTime"
-                      label="Zarejestrowany czas"
-                      serverInvalid={serverErrors.loggedTime.isInvalid}
-                      asChild
+                      label="Zarejestrowany czas (w, d, h, m)"
+                      serverInvalid={Boolean(
+                        serverErrors.loggedTime.isInvalid ||
+                          clientErrors.loggedTime,
+                      )}
+                      serverMessage={
+                        clientErrors.loggedTime ||
+                        serverErrors.loggedTime.message
+                      }
+                      tooltipContent="Użyj formatu: 1w 2d 3h 4m (tydzień, dzień, godzina, minuta)"
                     >
-                      <FormFieldLabel
-                        name="loggedTime"
-                        label="Zarejestrowany czas (w, d, h, m)"
-                        tooltipContent="Użyj formatu: 1w 2d 3h 4m (tydzień, dzień, godzina, minuta)"
-                      />
                       <Input
                         id="loggedTime"
                         name="loggedTime"
@@ -503,13 +499,6 @@ export function IssueDetails({
                           handleFieldBlur("loggedTime", e.currentTarget.value)
                         }
                       />
-                      {clientErrors.loggedTime && (
-                        <Form.Message asChild>
-                          <TypographyInvalid>
-                            {clientErrors.loggedTime}
-                          </TypographyInvalid>
-                        </Form.Message>
-                      )}
                     </FormField>
                   </div>
                 </div>

@@ -72,10 +72,30 @@ export function ReportsTab() {
   }, [projectId, notify]);
 
   useEffect(() => {
-    if (projectId) {
-      loadReports();
-    }
-  }, [projectId, loadReports]);
+    if (!projectId) return;
+
+    let isMounted = true;
+    const fetchReports = async () => {
+      const result = await getReports(projectId);
+      if (!isMounted) return;
+      if (result.ok) {
+        setReports(result.value.member);
+      } else {
+        notify({
+          type: "destructive",
+          title: "Błąd",
+          description: "Nie udało się pobrać raportów.",
+        });
+      }
+      setLoading(false);
+    };
+
+    fetchReports();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [projectId, notify]);
 
   const handleGenerateReport = async () => {
     setGenerating(true);
