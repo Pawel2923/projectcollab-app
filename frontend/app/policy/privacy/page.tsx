@@ -13,7 +13,7 @@ export default async function PrivacyPolicyPage({
     <>
       <BackButton href={referer || "/"} label="Powróć" position="fixed" />
 
-      <main className="max-w-3xl mx-auto px-4 py-12 text-gray-900 dark:text-gray-100">
+      <main className="max-w-3xl mx-auto px-4 py-12 text-foreground">
         <h1 className="text-3xl font-bold mb-6">Polityka prywatności</h1>
 
         <section className="mb-8">
@@ -36,12 +36,12 @@ export default async function PrivacyPolicyPage({
           </p>
           <div className="mb-2">
             <span className="font-semibold">Administrator danych:</span>{" "}
-            <span className="italic text-gray-500">Paweł Poremba</span>
+            <span className="italic text-muted-foreground">Paweł Poremba</span>
             <br />
             <span className="font-semibold">
               Adres e-mail do kontaktu:
             </span>{" "}
-            <span className="italic text-gray-500">
+            <span className="italic text-muted-foreground">
               projectcollab@nis-lab.com
             </span>
           </div>
@@ -227,7 +227,7 @@ export default async function PrivacyPolicyPage({
         </section>
       </main>
 
-      <footer className="max-w-3xl mx-auto px-4 pb-8 text-gray-500 text-sm text-center">
+      <footer className="max-w-3xl mx-auto px-4 pb-8 text-muted-foreground text-sm text-center">
         Polityka prywatności ProjectCollab – wersja z dnia 14.12.2025 r.
       </footer>
     </>

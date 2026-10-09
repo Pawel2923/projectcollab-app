@@ -24,7 +24,7 @@ export function ReplyIndicator({
 
   return (
     <div
-      className={`flex items-start gap-2 mb-2 px-3 py-2 rounded-lg bg-gray-50 border-l-4 border-primary/50 cursor-pointer hover:bg-gray-100 transition-colors ${
+      className={`flex items-start gap-2 mb-2 px-3 py-2 rounded-lg bg-muted border-l-4 border-primary/50 cursor-pointer hover:bg-secondary transition-colors ${
         onClickParent ? "cursor-pointer" : "cursor-default"
       }`}
       onClick={onClickParent}

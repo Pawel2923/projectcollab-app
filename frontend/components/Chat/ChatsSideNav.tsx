@@ -52,11 +52,9 @@ export function ChatsSideNav({
 
   if (isLoading && chats.length === 0) {
     return (
-      <nav className="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-gray-900 min-h-screen">
+      <nav className="flex flex-col items-center justify-center gap-2 p-4 bg-background min-h-screen">
         <LoadingSpinner size="lg" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Ładowanie czatów...
-        </p>
+        <p className="text-sm text-muted-foreground">Ładowanie czatów...</p>
       </nav>
     );
   }

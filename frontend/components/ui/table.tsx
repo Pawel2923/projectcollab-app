@@ -6,7 +6,7 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto bg-white border border-border rounded-lg">
+  <div className="relative w-full overflow-auto bg-muted border border-border rounded-lg">
     <table
       ref={ref}
       className={classNamesMerger("w-full caption-bottom text-sm", className)}
@@ -62,7 +62,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={classNamesMerger(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "border-b transition-colors data-[state=selected]:bg-muted",
       className,
     )}
     {...props}

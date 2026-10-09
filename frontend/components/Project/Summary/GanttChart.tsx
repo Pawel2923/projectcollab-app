@@ -64,7 +64,7 @@ export function GanttChart({
         <div className="flex h-[600px]">
           {/* Left Column: Tasks List */}
           <div className="w-64 border-r bg-background flex-shrink-0 flex flex-col">
-            <div className="h-12 border-b flex items-center px-4 font-medium bg-gray-200 flex-shrink-0">
+            <div className="h-12 border-b flex items-center px-4 font-medium bg-muted flex-shrink-0">
               Zadania
             </div>
             <div className="overflow-y-auto flex-1">
@@ -145,7 +145,7 @@ export function GanttChart({
           <div className="flex-1 overflow-x-auto">
             <div className="min-w-[800px] h-full flex flex-col">
               {/* Timeline Header */}
-              <div className="h-12 border-b flex bg-gray-200 flex-shrink-0">
+              <div className="h-12 border-b flex bg-muted flex-shrink-0">
                 {columns.map((col, i) => (
                   <div
                     key={i}

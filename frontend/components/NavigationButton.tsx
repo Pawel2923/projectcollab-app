@@ -29,7 +29,7 @@ export function NavigationButton({
         "w-full justify-start relative min-h-[40px] transition-all duration-300",
         isCollapsed ? "justify-center px-0" : "px-4 gap-1.5",
         isActive
-          ? "text-foreground border-l-[3px] border-primary bg-light"
+          ? "text-foreground border-l-[3px] border-primary bg-background"
           : "text-muted-foreground hover:text-foreground",
         className,
       )}

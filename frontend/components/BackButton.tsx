@@ -23,6 +23,7 @@ export function BackButton({
       <TooltipTrigger asChild>
         <Button
           variant="outline"
+          size="icon"
           className={`border shadow-sm ${position} top-4 left-4`}
           aria-label={ariaLabel ?? label}
           asChild

@@ -133,7 +133,7 @@ export default async function ChatsLayout({
           isSideNavExpanded={isSideNavExpanded}
         />
       </ErrorBoundary>
-      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-2 overflow-y-auto bg-light lg:col-start-2 lg:row-start-2">
+      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-2 overflow-y-auto bg-secondary lg:col-start-2 lg:row-start-2">
         {children}
       </main>
     </div>

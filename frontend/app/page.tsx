@@ -72,7 +72,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <footer className="flex flex-col py-3 gap-4 items-center justify-center text-muted-foreground bg-white border-t border-border relative w-full">
+      <footer className="flex flex-col py-3 gap-4 items-center justify-center text-muted-foreground bg-background border-t border-border relative w-full">
         <p className="text-sm">ProjectCollab &copy; {currentYear}</p>
         <div className="flex gap-2.5 text-xs underline underline-offset-4 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
           <Link href="/policy/privacy">Polityka prywatności</Link>

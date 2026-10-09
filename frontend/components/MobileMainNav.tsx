@@ -44,7 +44,7 @@ function MobileNavItem({ href, label, icon, isActive }: MobileNavItemProps) {
           "flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200",
           isActive
             ? "bg-primary/10 text-primary"
-            : "bg-transparent text-foreground/80 hover:bg-light-hover dark:hover:bg-dark-hover",
+            : "bg-transparent text-foreground/80 hover:bg-hover ",
         )}
       >
         {icon}
@@ -75,7 +75,7 @@ const MobileAddTrigger = React.forwardRef<
     aria-label={label}
     aria-disabled={disabled || undefined}
     className={classNamesMerger(
-      "relative flex h-16 w-16 items-center justify-center rounded-full bg-white text-foreground transition-transform duration-200 dark:bg-black",
+      "relative flex h-16 w-16 items-center justify-center rounded-full bg-background text-foreground transition-transform duration-200",
       disabled
         ? "cursor-not-allowed opacity-60"
         : "active:scale-95 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2",
@@ -85,7 +85,7 @@ const MobileAddTrigger = React.forwardRef<
   >
     <span
       className={classNamesMerger(
-        "flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white",
+        "flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground",
         disabled && "bg-primary/60",
       )}
     >
@@ -178,7 +178,7 @@ export function MobileMainNav({
   return (
     <div className="lg:hidden">
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-white dark:bg-black"
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background"
         aria-label="Główna nawigacja mobilna"
       >
         <div className="mx-auto max-w-screen-md px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-2">

@@ -55,7 +55,7 @@ export function OrganizationCard({ id, iri, name }: OrganizationCardProps) {
   }, [id, showError]);
 
   return (
-    <Card className="relative hover:bg-light-hover transition-colors">
+    <Card className="relative hover:bg-hover transition-colors">
       <Link
         aria-label={`Otwórz organizację ${name}`}
         className="absolute inset-0 z-10 rounded-xl"

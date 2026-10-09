@@ -66,7 +66,7 @@ export function MobileSideNav({
 
     return (
       <>
-        <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
+        <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-background/95 px-3 py-2 backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -109,7 +109,7 @@ export function MobileSideNav({
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
                 aria-label="Zamknij listę czatów"
-                className="shrink-0 gap-2 rounded-full border border-border bg-white/90 px-3 py-1.5 text-sm font-semibold hover:bg-light-hover dark:bg-black/70 dark:hover:bg-dark-hover"
+                className="shrink-0 gap-2 rounded-full border border-border bg-background/90 px-3 py-1.5 text-sm font-semibold hover:bg-hover"
               >
                 <X className="size-4" aria-hidden="true" />
                 Zamknij
@@ -140,7 +140,7 @@ export function MobileSideNav({
                                   "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
                                   isActive
                                     ? "border-primary/60 bg-primary/10 text-primary"
-                                    : "border-border bg-card hover:bg-light-hover dark:hover:bg-dark-hover",
+                                    : "border-border bg-card hover:bg-hover ",
                                 )}
                                 aria-current={isActive ? "page" : undefined}
                               >
@@ -176,7 +176,7 @@ export function MobileSideNav({
   }
 
   return (
-    <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-white/95 px-3 py-2 backdrop-blur dark:bg-black/80">
+    <div className="lg:hidden sticky top-0 z-30 w-full border-b border-border bg-background/95 px-3 py-2 backdrop-blur">
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {resolvedNavigationItems.map(({ href, icon, label }) => {
           const isActive = pathname === href || pathname.startsWith(`${href}/`);
@@ -191,7 +191,7 @@ export function MobileSideNav({
                 "flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors duration-200",
                 isActive
                   ? "border-primary bg-primary/10 text-primary"
-                  : "border-border bg-white text-foreground hover:bg-light-hover dark:bg-black dark:hover:bg-dark-hover",
+                  : "border-border bg-background text-foreground hover:bg-hover",
               )}
               aria-current={isActive ? "page" : undefined}
             >

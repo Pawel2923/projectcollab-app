@@ -38,7 +38,7 @@ export function KanbanIssue({ data }: KanbanIssueProps) {
   return (
     <Link
       href={`issues/${data.id}`}
-      className="flex flex-col gap-4 bg-light hover:bg-light-hover transition-colors border-l-4 border-primary p-2 rounded-xl w-full"
+      className="flex flex-col gap-4 bg-card hover:bg-hover transition-colors border-l-4 border-primary p-2 rounded-xl w-full"
       style={style}
       ref={setNodeRef}
       {...listeners}
