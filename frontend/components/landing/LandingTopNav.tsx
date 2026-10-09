@@ -27,7 +27,7 @@ export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <>
       <nav
-        className="h-21 w-full flex-wrap items-center justify-between gap-4 border-b border-border bg-white px-4 py-2 dark:bg-black flex col-span-2 sticky top-0 z-20"
+        className="h-21 w-full flex-wrap items-center justify-between gap-4 border-b border-border bg-background px-4 py-2 flex col-span-2 sticky top-0 z-20"
         suppressHydrationWarning
       >
         <div className="flex items-center gap-6">

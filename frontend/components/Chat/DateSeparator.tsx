@@ -10,7 +10,7 @@ export function DateSeparator({ date }: DateSeparatorProps) {
   return (
     <div className="flex justify-center my-4">
       <span
-        className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
+        className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full"
         suppressHydrationWarning
       >
         {date.toLocaleDateString("pl-PL", {

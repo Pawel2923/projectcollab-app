@@ -98,29 +98,29 @@ export function MainNav({
         <NavigationMenuItem>
           <NavigationMenuTrigger
             className={classNamesMerger(
-              "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
-              isOrganizationsActive && "bg-light dark:bg-dark",
+              "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-hover active:scale-95 transition-all duration-300",
+              isOrganizationsActive && "bg-secondary text-secondary-foreground",
             )}
           >
             Organizacje
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-max max-w-[400px] gap-1 p-2 bg-white dark:bg-black border border-border shadow-lg rounded-lg">
+            <ul className="grid w-max max-w-[400px] gap-1 p-2 bg-popover text-popover-foreground border border-border shadow-lg rounded-lg">
               <NavigationMenuLink asChild>
                 <Link
                   href={`/organizations`}
-                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                 >
                   Wszystkie organizacje
                 </Link>
               </NavigationMenuLink>
-              <li className="px-2 pt-1 pb-1 text-xs font-semibold text-gray-500 dark:text-gray-400 select-none cursor-default">
+              <li className="px-2 pt-1 pb-1 text-xs font-semibold text-muted-foreground select-none cursor-default">
                 Obecna organizacja
               </li>
               <NavigationMenuLink asChild>
                 <Link
                   href={`/organizations/${organizationId}/overview`}
-                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                 >
                   Przegląd
                 </Link>
@@ -128,7 +128,7 @@ export function MainNav({
               <NavigationMenuLink asChild>
                 <Link
                   href={`/organizations/${organizationId}/members`}
-                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                 >
                   Członkowie
                 </Link>
@@ -136,7 +136,7 @@ export function MainNav({
               <NavigationMenuLink asChild>
                 <Link
                   href={`/organizations/${organizationId}/settings`}
-                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                  className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                 >
                   Ustawienia
                 </Link>
@@ -149,23 +149,23 @@ export function MainNav({
             <>
               <NavigationMenuTrigger
                 className={classNamesMerger(
-                  "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
-                  isProjectsActive && "bg-light dark:bg-dark",
+                  "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-hover active:scale-95 transition-all duration-300",
+                  isProjectsActive && "bg-secondary text-secondary-foreground",
                 )}
               >
                 Projekty
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-max max-w-[400px] gap-1 p-2 bg-white dark:bg-black border border-border shadow-lg rounded-lg">
+                <ul className="grid w-max max-w-[400px] gap-1 p-2 bg-popover text-popover-foreground border border-border shadow-lg rounded-lg">
                   <NavigationMenuLink asChild>
                     <Link
                       href={`/organizations/${organizationId}/projects`}
-                      className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                      className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                     >
                       Wszystkie projekty
                     </Link>
                   </NavigationMenuLink>
-                  <li className="px-2 pt-1 pb-1 text-xs font-semibold text-gray-500 dark:text-gray-400 select-none cursor-default">
+                  <li className="px-2 pt-1 pb-1 text-xs font-semibold text-muted-foreground select-none cursor-default">
                     Ostatnie projekty
                   </li>
                   {projects.map((project) => (
@@ -174,7 +174,7 @@ export function MainNav({
                         <Link
                           href={`/organizations/${organizationId}/projects/${project.id}`}
                           onClick={() => addRecentProject(project.id)}
-                          className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-light-hover dark:hover:bg-dark-hover focus:bg-light-hover dark:focus:bg-dark-hover break-words"
+                          className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-hover  focus:bg-hover  break-words"
                         >
                           {project.name}
                         </Link>
@@ -188,8 +188,8 @@ export function MainNav({
             <NavigationMenuLink
               className={classNamesMerger(
                 navigationMenuTriggerStyle(),
-                "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
-                isProjectsActive && "bg-light dark:bg-dark",
+                "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-hover active:scale-95 transition-all duration-300",
+                isProjectsActive && "bg-secondary text-secondary-foreground",
               )}
               asChild
             >
@@ -203,8 +203,8 @@ export function MainNav({
           <NavigationMenuLink
             className={classNamesMerger(
               navigationMenuTriggerStyle(),
-              "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-light-hover dark:hover:!bg-dark-hover active:scale-95 active:text-gray-400 transition-all duration-300",
-              isChatsActive && "bg-light dark:bg-dark",
+              "flex justify-center items-center p-2 gap-2 rounded-lg bg-transparent hover:!bg-hover active:scale-95 transition-all duration-300",
+              isChatsActive && "bg-secondary text-secondary-foreground",
             )}
             asChild
           >

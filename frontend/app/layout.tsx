@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import React from "react";
 
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getAlerts } from "@/services/alert/alert-service";
 import { AlertProvider } from "@/store/AlertProvider";
@@ -34,15 +35,17 @@ export default async function RootLayout({
   const alerts = await getAlerts();
 
   return (
-    <html lang="pl">
+    <html lang="pl" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased min-h-screen`}>
-        <ErrorBoundary>
-          <QueryProvider>
-            <AlertProvider initial={alerts}>
-              <TooltipProvider>{children}</TooltipProvider>
-            </AlertProvider>
-          </QueryProvider>
-        </ErrorBoundary>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ErrorBoundary>
+            <QueryProvider>
+              <AlertProvider initial={alerts}>
+                <TooltipProvider>{children}</TooltipProvider>
+              </AlertProvider>
+            </QueryProvider>
+          </ErrorBoundary>
+        </ThemeProvider>
       </body>
     </html>
   );

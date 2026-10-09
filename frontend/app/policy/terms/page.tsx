@@ -13,7 +13,7 @@ export default async function TermsOfServicePage({
     <>
       <BackButton href={referer || "/"} label="Powróć" position="fixed" />
 
-      <main className="max-w-3xl mx-auto px-4 py-12 text-gray-900 dark:text-gray-100">
+      <main className="max-w-3xl mx-auto px-4 py-12 text-foreground">
         <h1 className="text-3xl font-bold mb-6">
           Warunki korzystania z ProjectCollab
         </h1>
@@ -133,7 +133,7 @@ export default async function TermsOfServicePage({
         </section>
       </main>
 
-      <footer className="max-w-3xl mx-auto px-4 pb-8 text-gray-500 text-sm text-center">
+      <footer className="max-w-3xl mx-auto px-4 pb-8 text-muted-foreground text-sm text-center">
         Warunki korzystania z ProjectCollab – wersja z dnia 14.12.2025 r.
       </footer>
     </>

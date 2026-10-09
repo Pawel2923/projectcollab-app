@@ -94,7 +94,7 @@ export function IssuesTable({ issues, projectId }: IssuesTableProps) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="bg-gray-200 hover:bg-gray-200">
+        <TableRow className="bg-muted hover:bg-muted">
           <TableHead className="w-30 px-4">Zadanie</TableHead>
           <TableHead className="px-4">Tytuł</TableHead>
           <TableHead className="w-30 px-4">Status</TableHead>

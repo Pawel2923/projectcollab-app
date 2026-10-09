@@ -20,13 +20,13 @@ export function ReplyPreview({ message, sender, onCancel }: ReplyPreviewProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-l-4 border-primary rounded-t-lg">
+    <div className="flex items-center gap-2 px-4 py-3 bg-muted border-l-4 border-primary rounded-t-lg">
       <div className="flex-1 min-w-0">
-        <div className="text-xs font-medium text-gray-700 mb-1">
+        <div className="text-xs font-medium text-foreground mb-1">
           Odpowiedz na wiadomość użytkownika{" "}
           {sender?.username || sender?.email || "Nieznany użytkownik"}
         </div>
-        <div className="text-sm text-gray-600 truncate">
+        <div className="text-sm text-muted-foreground truncate">
           {message.isDeleted
             ? "Wiadomość usunięta"
             : truncateContent(message.content)}

@@ -72,7 +72,7 @@ export function SprintContainer({
     <>
       <AccordionItem
         value={sprint.id.toString()}
-        className="w-full bg-light rounded-lg border-l-3 border-b-0 border-primary px-4 pt-2"
+        className="w-full bg-secondary rounded-lg border-l-3 border-b-0 border-primary px-4 pt-2"
       >
         <AccordionTrigger className="py-2 pt-0">
           <h3 className="text-lg font-semibold">{sprint.name}</h3>
@@ -81,7 +81,7 @@ export function SprintContainer({
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <div className="text-base">{sprint.goal}</div>
-              <div className="flex gap-2 text-gray-600 dark:text-gray-50 text-sm">
+              <div className="flex gap-2 text-muted-foreground text-sm">
                 {sprint.startDate && (
                   <>
                     <span suppressHydrationWarning>
@@ -96,7 +96,7 @@ export function SprintContainer({
                   </span>
                 )}
               </div>
-              <div className="flex gap-2 text-gray-600 dark:text-gray-50 text-sm">
+              <div className="flex gap-2 text-muted-foreground text-sm">
                 {sprint.createdAt && (
                   <>
                     <span suppressHydrationWarning>

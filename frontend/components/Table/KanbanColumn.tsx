@@ -26,7 +26,7 @@ export function KanbanColumn({ title, issues, statusIri }: KanbanColumnProps) {
       )}
       ref={setNodeRef}
     >
-      <div className="min-h-14 flex items-center justify-between bg-gray-200 p-2 border-b border-border rounded-t-lg">
+      <div className="min-h-14 flex items-center justify-between bg-muted p-2 border-b border-border rounded-t-lg">
         <span className="font-semibold">{title}</span>
         {issues?.totalItems !== undefined && issues.totalItems > 0 && (
           <IssueNumberBadge number={issues.totalItems} />
@@ -52,7 +52,7 @@ function IssueNumberBadge({ number }: { number: number }) {
     <Tooltip>
       <TooltipTrigger asChild>
         <div
-          className="bg-gray-300 rounded-lg p-2 w-7 h-7 flex items-center justify-center text-sm"
+          className="bg-secondary text-secondary-foreground rounded-lg p-2 w-7 h-7 flex items-center justify-center text-sm"
           aria-label={`Liczba zadań: ${number}`}
         >
           {number}

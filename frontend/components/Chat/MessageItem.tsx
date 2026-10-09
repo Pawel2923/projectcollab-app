@@ -105,14 +105,14 @@ export function MessageItem({
         <div className="flex items-center gap-1">
           {isMe && !message.isDeleted && menu}
           <div
-            className={`px-4 py-2 rounded-2xl text-sm text-black group relative ${
-              isMe
-                ? "bg-primary rounded-br-none"
-                : "bg-gray-100 rounded-bl-none"
+            className={`px-4 py-2 rounded-2xl text-sm text-foreground group relative ${
+              isMe ? "bg-primary rounded-br-none" : "bg-muted rounded-bl-none"
             }`}
           >
             {message.isDeleted ? (
-              <span className="italic text-gray-500">Wiadomość usunięta</span>
+              <span className="italic text-muted-foreground">
+                Wiadomość usunięta
+              </span>
             ) : (
               <MessageContent
                 content={message.content}

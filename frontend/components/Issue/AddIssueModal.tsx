@@ -106,7 +106,7 @@ export function AddIssueModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button className="text-foreground active:text-opacity-70">
+          <Button>
             <PlusIcon /> Dodaj zadanie
           </Button>
         )}

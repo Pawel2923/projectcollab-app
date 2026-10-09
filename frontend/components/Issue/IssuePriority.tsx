@@ -22,27 +22,44 @@ function getPriorityData(
     case "low":
       return {
         message: "Niski",
-        icon: <ChevronDown className="text-priority-low" size={iconSize} />,
-        priorityClasses: "bg-priority-low-background text-priority-low",
+        icon: (
+          <ChevronDown
+            className="text-priority-low-foreground"
+            size={iconSize}
+          />
+        ),
+        priorityClasses: "bg-priority-low text-priority-low-foreground",
       };
     case "medium":
       return {
         message: "Średni",
-        icon: <Equal className="text-priority-medium" size={iconSize} />,
-        priorityClasses: "bg-priority-medium-background text-priority-medium",
+        icon: (
+          <Equal className="text-priority-medium-foreground" size={iconSize} />
+        ),
+        priorityClasses: "bg-priority-medium text-priority-medium-foreground",
       };
     case "high":
       return {
         message: "Wysoki",
-        icon: <ChevronUp className="text-priority-high" size={iconSize} />,
-        priorityClasses: "bg-priority-high-background text-priority-high",
+        icon: (
+          <ChevronUp
+            className="text-priority-high-foreground"
+            size={iconSize}
+          />
+        ),
+        priorityClasses: "bg-priority-high text-priority-high-foreground",
       };
     case "critical":
       return {
         message: "Krytyczny",
-        icon: <ChevronsUp className="text-priority-critical" size={iconSize} />,
+        icon: (
+          <ChevronsUp
+            className="text-priority-critical-foreground"
+            size={iconSize}
+          />
+        ),
         priorityClasses:
-          "bg-priority-critical-background text-priority-critical",
+          "bg-priority-critical text-priority-critical-foreground",
       };
     default:
       return {

@@ -60,7 +60,7 @@ export default async function ProjectsLayout({
         headerTitle={headerTitle}
         headerAcronym={headerAcronym}
       />
-      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-6 overflow-y-auto bg-light lg:col-start-2 lg:row-start-2">
+      <main className="flex flex-col col-start-1 row-start-3 p-4 gap-6 overflow-y-auto bg-background lg:col-start-2 lg:row-start-2">
         <IssuesOptionsProvider>{children}</IssuesOptionsProvider>
       </main>
     </div>

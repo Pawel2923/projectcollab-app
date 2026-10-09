@@ -1,14 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  ChevronDown as ChevronDownPriority,
-  ChevronRight,
-  ChevronsUp,
-  ChevronUp,
-  Equal,
-} from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -25,6 +18,7 @@ import type { User } from "@/types/api/user";
 import { isOk } from "@/utils/result";
 
 import { AssigneeAvatar } from "../AssigneeAvatar";
+import { IssuePriority } from "../Issue/IssuePriority";
 
 interface IssueRowProps {
   issue: Issue;
@@ -268,38 +262,11 @@ export function IssueRow({
 }
 
 function renderPriority(priority: string | undefined): React.ReactNode {
-  switch (priority) {
-    case "low":
-      return (
-        <>
-          <ChevronDownPriority className="text-[#0D4D89]" size={16} />
-          <span>Niski</span>
-        </>
-      );
-    case "medium":
-      return (
-        <>
-          <Equal className="text-[#0B6B58]" size={16} />
-          <span>Średni</span>
-        </>
-      );
-    case "high":
-      return (
-        <>
-          <ChevronUp className="text-orange-600" size={16} />
-          <span>Wysoki</span>
-        </>
-      );
-    case "critical":
-      return (
-        <>
-          <ChevronsUp className="text-destructive" size={16} />
-          <span>Krytyczny</span>
-        </>
-      );
-    default:
-      return <span>—</span>;
-  }
+  return priority ? (
+    <IssuePriority priority={priority} iconSize={16} />
+  ) : (
+    <span>—</span>
+  );
 }
 
 function getPriorityLabel(priority: string | undefined): string {

@@ -48,8 +48,8 @@ export function SideNavSection({
       <AccordionItem value="section" className="border-b-0">
         <AccordionTrigger
           className={classNamesMerger(
-            "py-2 px-3 hover:no-underline hover:bg-gray-100 dark:hover:bg-gray-800",
-            "text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider",
+            "py-2 px-3 hover:no-underline hover:bg-hover",
+            "text-xs font-semibold text-muted-foreground uppercase tracking-wider",
             "[&>svg]:h-3 [&>svg]:w-3",
           )}
         >
@@ -57,7 +57,7 @@ export function SideNavSection({
         </AccordionTrigger>
         <AccordionContent className="pb-0 pt-0">
           {items.length === 0 ? (
-            <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 italic">
+            <div className="px-3 py-2 text-xs text-muted-foreground italic">
               {emptyStateMessage}
             </div>
           ) : (

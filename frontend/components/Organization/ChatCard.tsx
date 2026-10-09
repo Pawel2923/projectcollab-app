@@ -22,7 +22,7 @@ export function ChatCard({
   lastMessageAt,
 }: ChatCardProps) {
   return (
-    <Card className="relative bg-background hover:bg-light-hover transition-colors">
+    <Card className="relative bg-background hover:bg-hover transition-colors">
       <Link
         aria-label={`Otwórz czat ${name}`}
         className="absolute inset-0 z-10 rounded-xl"
