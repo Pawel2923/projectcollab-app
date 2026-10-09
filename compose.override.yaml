@@ -10,7 +10,6 @@ services:
       - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
       - ./api/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
     environment:
-      MERCURE_EXTRA_DIRECTIVES: demo
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
       MAILER_DSN: smtp://localhost:1025
     extra_hosts:

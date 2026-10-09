@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -57,11 +58,8 @@ export default function GlobalError({
           <Button onClick={() => reset()} variant="default">
             Spróbuj ponownie
           </Button>
-          <Button
-            onClick={() => (window.location.href = "/")}
-            variant="outline"
-          >
-            Wróć do strony głównej
+          <Button asChild variant="outline">
+            <Link href="/">Wróć do strony głównej</Link>
           </Button>
         </div>
       </div>

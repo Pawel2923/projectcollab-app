@@ -17,75 +17,71 @@ export default async function ChatPage({
 }) {
   const { chatId, id: organizationId } = await params;
 
+  let user: { id: number } | null = null;
+  let notLoggedIn = false;
+  let hasError = false;
+  let chat: Chat | null = null;
+  let messages: Message[] = [];
+  let totalMessagesCount = 0;
+  let todayIso = "";
+
   try {
     const userResult = await getCurrentUser();
 
     if (!userResult.ok) {
-      return <div>Zaloguj się.</div>;
+      notLoggedIn = true;
+    } else {
+      const currentUser = userResult.value;
+      user = currentUser;
+
+      const chatResponse = await apiGet<Chat>(`/chats/${chatId}`);
+      const fetchedChat = chatResponse.data;
+
+      if (!fetchedChat) {
+        notFound();
+      }
+
+      chat = fetchedChat;
+
+      const currentUserChatMember = chat.chatMembers?.find(
+        (cm) => cm.member.id === currentUser.id,
+      );
+
+      if (!currentUserChatMember) {
+        redirect(`/organizations/${organizationId}/chats`);
+      }
+
+      const currentUserRole = currentUserChatMember.role?.value;
+
+      await logToServer({
+        level: "debug",
+        message: "CurrentUserChatMember",
+        serviceName: "page.organizations.chat",
+        context: { currentUserChatMember },
+      });
+      await logToServer({
+        level: "debug",
+        message: "CurrentUserRole",
+        serviceName: "page.organizations.chat",
+        context: { currentUserRole },
+      });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      todayIso = today.toISOString();
+
+      const [messagesResponse, totalCountResponse] = await Promise.all([
+        apiGet<Collection<Message>>(
+          `/messages?chat=${chat.id}&order[createdAt]=desc&createdAt[after]=${todayIso}&pagination=false`,
+        ),
+        apiGet<Collection<Message>>(
+          `/messages?chat=${chat.id}&itemsPerPage=1&pagination=true`,
+        ),
+      ]);
+
+      messages = messagesResponse.data?.member || [];
+      totalMessagesCount = totalCountResponse.data?.totalItems || 0;
     }
-
-    const user = userResult.value;
-
-    const chatResponse = await apiGet<Chat>(`/chats/${chatId}`);
-    const chat = chatResponse.data;
-
-    if (!chat) {
-      notFound();
-    }
-
-    const currentUserChatMember = chat.chatMembers?.find(
-      (cm) => cm.member.id === user.id,
-    );
-
-    if (!currentUserChatMember) {
-      redirect(`/organizations/${organizationId}/chats`);
-    }
-
-    const currentUserRole = currentUserChatMember.role?.value;
-
-    await logToServer({
-      level: "debug",
-      message: "CurrentUserChatMember",
-      serviceName: "page.organizations.chat",
-      context: { currentUserChatMember },
-    });
-    await logToServer({
-      level: "debug",
-      message: "CurrentUserRole",
-      serviceName: "page.organizations.chat",
-      context: { currentUserRole },
-    });
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayIso = today.toISOString();
-
-    const [messagesResponse, totalCountResponse] = await Promise.all([
-      apiGet<Collection<Message>>(
-        `/messages?chat=${chat.id}&order[createdAt]=desc&createdAt[after]=${todayIso}&pagination=false`,
-      ),
-      apiGet<Collection<Message>>(
-        `/messages?chat=${chat.id}&itemsPerPage=1&pagination=true`,
-      ),
-    ]);
-
-    const messages = messagesResponse.data?.member || [];
-    const totalMessagesCount = totalCountResponse.data?.totalItems || 0;
-
-    return (
-      <ErrorBoundary>
-        <ChatWindow
-          chatIri={chat["@id"]}
-          chatId={chat.id.toString()}
-          initialMessages={messages}
-          currentUserId={user.id.toString()}
-          initialDate={todayIso}
-          totalChatMessages={totalMessagesCount}
-          organizationId={organizationId}
-          chatMembers={chat.chatMembers || []}
-        />
-      </ErrorBoundary>
-    );
   } catch (e) {
     if (isRedirectError(e)) {
       throw e;
@@ -98,10 +94,33 @@ export default async function ChatPage({
       context: { error: String(e) },
       errorStack: (e as Error)?.stack,
     });
+    hasError = true;
+  }
+
+  if (hasError) {
     return (
       <div className="flex items-center justify-center h-full text-red-500">
         Nie udało się załadować czatów.
       </div>
     );
   }
+
+  if (notLoggedIn || !user || !chat) {
+    return <div>Zaloguj się.</div>;
+  }
+
+  return (
+    <ErrorBoundary>
+      <ChatWindow
+        chatIri={chat["@id"]}
+        chatId={chat.id.toString()}
+        initialMessages={messages}
+        currentUserId={user.id.toString()}
+        initialDate={todayIso}
+        totalChatMessages={totalMessagesCount}
+        organizationId={organizationId}
+        chatMembers={chat.chatMembers || []}
+      />
+    </ErrorBoundary>
+  );
 }

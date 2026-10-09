@@ -20,6 +20,7 @@ export function handleSessionExpired() {
   if (typeof window !== "undefined") {
     // Current path as redirect target
     const currentPath = window.location.pathname + window.location.search;
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`;
   }
 }

@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useMercureObserver } from "@/hooks/useMercureObserver";
 import { clientApiGet } from "@/services/fetch/client-api-service";
@@ -21,8 +21,14 @@ interface ListIssuesProps {
 
 export function ListIssues({ projectId }: ListIssuesProps) {
   const issuesOptions = useIssuesOptions();
-  const sortOptions = issuesOptions?.sortOptions || [];
-  const filterOptions = issuesOptions?.filterOptions || [];
+  const sortOptions = useMemo(
+    () => issuesOptions?.sortOptions || [],
+    [issuesOptions?.sortOptions],
+  );
+  const filterOptions = useMemo(
+    () => issuesOptions?.filterOptions || [],
+    [issuesOptions?.filterOptions],
+  );
   const queryClient = useQueryClient();
 
   useMercureObserver<Issue>({

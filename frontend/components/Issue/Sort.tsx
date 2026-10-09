@@ -1,7 +1,7 @@
 "use client";
 
 import { XIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { SortIcon } from "@/assets/icons/SortIcon";
 import { Button } from "@/components/ui/button";
@@ -27,13 +27,17 @@ export function Sort() {
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "">("");
 
-  // Automatically add/update sort when both values are selected
-  useEffect(() => {
-    if (!issuesOptions || !sortBy || !sortOrder) return;
+  const applySort = (newSortBy: string, newSortOrder: "asc" | "desc" | "") => {
+    if (!issuesOptions || !newSortBy || !newSortOrder) return;
 
     const { sortOptions, setSortOptions } = issuesOptions;
-    const newSortOption = { sortBy, sortOrder: sortOrder as "asc" | "desc" };
-    const existingIndex = sortOptions.findIndex((opt) => opt.sortBy === sortBy);
+    const newSortOption = {
+      sortBy: newSortBy,
+      sortOrder: newSortOrder as "asc" | "desc",
+    };
+    const existingIndex = sortOptions.findIndex(
+      (opt) => opt.sortBy === newSortBy,
+    );
 
     if (existingIndex >= 0) {
       // Update existing sort option
@@ -48,8 +52,21 @@ export function Sort() {
     // Reset local state after adding
     setSortBy("");
     setSortOrder("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortBy, sortOrder]);
+  };
+
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+    if (sortOrder) {
+      applySort(value, sortOrder);
+    }
+  };
+
+  const handleSortOrderChange = (value: "asc" | "desc") => {
+    setSortOrder(value);
+    if (sortBy) {
+      applySort(sortBy, value);
+    }
+  };
 
   if (!issuesOptions) {
     return null;
@@ -125,7 +142,7 @@ export function Sort() {
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <Select value={sortBy} onValueChange={setSortBy}>
+            <Select value={sortBy} onValueChange={handleSortByChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Sortuj według" />
               </SelectTrigger>
@@ -141,7 +158,9 @@ export function Sort() {
           <div className="flex-1">
             <Select
               value={sortOrder}
-              onValueChange={(value) => setSortOrder(value as "asc" | "desc")}
+              onValueChange={(value) =>
+                handleSortOrderChange(value as "asc" | "desc")
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Kierunek" />

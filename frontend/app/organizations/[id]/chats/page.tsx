@@ -15,7 +15,9 @@ export default async function ChatsPage({
 }) {
   const { id: organizationId } = await params;
 
-  let redirectUrl = null;
+  let redirectUrl: string | null = null;
+  let isEmpty = false;
+  let hasError = false;
 
   try {
     const userResult = await getCurrentUser();
@@ -32,22 +34,16 @@ export default async function ChatsPage({
     const chats = chatsResponse.data?.member || [];
 
     if (chats.length === 0) {
-      return (
-        <ChatsPageLayout>
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Nie znaleziono czatów.
-          </div>
-        </ChatsPageLayout>
-      );
-    }
-
-    // Redirect to general chat if available
-    const generalChat = chats.find((c) => c.type === "general");
-    if (generalChat) {
-      redirectUrl = `/organizations/${organizationId}/chats/${generalChat.id}`;
+      isEmpty = true;
     } else {
-      // Fallback to first chat if no general chat exists
-      redirectUrl = `/organizations/${organizationId}/chats/${chats[0].id}`;
+      // Redirect to general chat if available
+      const generalChat = chats.find((c) => c.type === "general");
+      if (generalChat) {
+        redirectUrl = `/organizations/${organizationId}/chats/${generalChat.id}`;
+      } else {
+        // Fallback to first chat if no general chat exists
+        redirectUrl = `/organizations/${organizationId}/chats/${chats[0].id}`;
+      }
     }
   } catch (e) {
     if (isRedirectError(e)) {
@@ -61,10 +57,24 @@ export default async function ChatsPage({
       context: { error: String(e) },
       errorStack: (e as Error)?.stack,
     });
+    hasError = true;
+  }
+
+  if (hasError) {
     return (
       <ChatsPageLayout>
         <div className="flex items-center justify-center h-full text-red-500">
           Nie udało się załadować czatów.
+        </div>
+      </ChatsPageLayout>
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <ChatsPageLayout>
+        <div className="flex items-center justify-center h-full text-gray-500">
+          Nie znaleziono czatów.
         </div>
       </ChatsPageLayout>
     );

@@ -35,10 +35,10 @@ export function MainNav({
 
   useEffect(() => {
     if (!organizationId) {
-      setProjects([]);
       return;
     }
 
+    let isMounted = true;
     const fetchProjects = async () => {
       try {
         const encodedOrgId = encodeURIComponent(
@@ -58,7 +58,9 @@ export function MainNav({
         const projectsData: Collection<Project> = data;
         const sortedProjects = sortProjectsByRecency(projectsData.member);
 
-        setProjects(sortedProjects.slice(0, 4));
+        if (isMounted) {
+          setProjects(sortedProjects.slice(0, 4));
+        }
       } catch (error) {
         fetchApiLog({
           level: "error",
@@ -72,6 +74,10 @@ export function MainNav({
     };
 
     fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
   }, [organizationId, showError, sortProjectsByRecency]);
 
   if (!organizationId) {

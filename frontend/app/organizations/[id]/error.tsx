@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -55,12 +56,8 @@ export default function OrganizationError({
           <Button onClick={() => reset()} variant="default" className="w-full">
             Spróbuj ponownie
           </Button>
-          <Button
-            onClick={() => (window.location.href = "/organizations")}
-            variant="outline"
-            className="w-full"
-          >
-            Powrót do listy organizacji
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/organizations">Powrót do listy organizacji</Link>
           </Button>
         </div>
       </div>

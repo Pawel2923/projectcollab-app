@@ -1,13 +1,56 @@
 "use client";
 
 import { ChevronDown, ChevronsUp, ChevronUp, Equal } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 interface IssuePriorityProps {
   priority: string | undefined;
   iconSize?: number;
   showIcon?: boolean;
   asBlock?: boolean;
+}
+
+function getPriorityData(
+  priority: string | undefined,
+  iconSize: number,
+): {
+  message: string;
+  icon: React.ReactNode;
+  priorityClasses: string;
+} {
+  switch (priority) {
+    case "low":
+      return {
+        message: "Niski",
+        icon: <ChevronDown className="text-priority-low" size={iconSize} />,
+        priorityClasses: "bg-priority-low-background text-priority-low",
+      };
+    case "medium":
+      return {
+        message: "Średni",
+        icon: <Equal className="text-priority-medium" size={iconSize} />,
+        priorityClasses: "bg-priority-medium-background text-priority-medium",
+      };
+    case "high":
+      return {
+        message: "Wysoki",
+        icon: <ChevronUp className="text-priority-high" size={iconSize} />,
+        priorityClasses: "bg-priority-high-background text-priority-high",
+      };
+    case "critical":
+      return {
+        message: "Krytyczny",
+        icon: <ChevronsUp className="text-priority-critical" size={iconSize} />,
+        priorityClasses:
+          "bg-priority-critical-background text-priority-critical",
+      };
+    default:
+      return {
+        message: "Nieznany",
+        icon: null,
+        priorityClasses: "bg-muted text-muted-foreground",
+      };
+  }
 }
 
 export function IssuePriority({
@@ -17,42 +60,10 @@ export function IssuePriority({
   asBlock = false,
   ...rest
 }: IssuePriorityProps & React.HTMLAttributes<HTMLDivElement>): React.ReactNode {
-  const [message, setMessage] = useState("Nieznany");
-  const [icon, setIcon] = useState<React.ReactNode>(null);
-  const [priorityClasses, setPriorityClasses] = useState(
-    "bg-muted text-muted-foreground",
+  const { message, icon, priorityClasses } = getPriorityData(
+    priority,
+    iconSize,
   );
-
-  useEffect(() => {
-    switch (priority) {
-      case "low":
-        setMessage("Niski");
-        setIcon(<ChevronDown className="text-priority-low" size={iconSize} />);
-        setPriorityClasses("bg-priority-low-background text-priority-low");
-        break;
-      case "medium":
-        setMessage("Średni");
-        setIcon(<Equal className="text-priority-medium" size={iconSize} />);
-        setPriorityClasses(
-          "bg-priority-medium-background text-priority-medium",
-        );
-        break;
-      case "high":
-        setMessage("Wysoki");
-        setIcon(<ChevronUp className="text-priority-high" size={iconSize} />);
-        setPriorityClasses("bg-priority-high-background text-priority-high");
-        break;
-      case "critical":
-        setMessage("Krytyczny");
-        setIcon(
-          <ChevronsUp className="text-priority-critical" size={iconSize} />,
-        );
-        setPriorityClasses(
-          "bg-priority-critical-background text-priority-critical",
-        );
-        break;
-    }
-  }, [priority, iconSize]);
 
   return asBlock ? (
     <div

@@ -37,11 +37,26 @@ export function ChatWindow({
   organizationId,
   chatMembers,
 }: ChatWindowProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [oldestLoadedDate, setOldestLoadedDate] = useState<Date>(
-    new Date(initialDate),
+  const [messages, setMessages] = useState<Message[]>(() =>
+    [...initialMessages].reverse(),
   );
-  const [remainingOlderMessages, setRemainingOlderMessages] = useState(0);
+  const [oldestLoadedDate, setOldestLoadedDate] = useState<Date>(
+    () => new Date(initialDate),
+  );
+  const [remainingOlderMessages, setRemainingOlderMessages] = useState(() =>
+    Math.max(0, totalChatMessages - initialMessages.length),
+  );
+  const [prevInitialMessages, setPrevInitialMessages] =
+    useState(initialMessages);
+
+  if (prevInitialMessages !== initialMessages) {
+    setPrevInitialMessages(initialMessages);
+    setMessages([...initialMessages].reverse());
+    setOldestLoadedDate(new Date(initialDate));
+    const loadedCount = initialMessages.length;
+    setRemainingOlderMessages(Math.max(0, totalChatMessages - loadedCount));
+  }
+
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [parentMessages, setParentMessages] = useState<Map<string, Message>>(
@@ -57,14 +72,6 @@ export function ChatWindow({
     chatId,
     parseInt(currentUserId, 10),
   );
-
-  useEffect(() => {
-    setMessages([...initialMessages].reverse());
-    setOldestLoadedDate(new Date(initialDate));
-
-    const loadedCount = initialMessages.length;
-    setRemainingOlderMessages(Math.max(0, totalChatMessages - loadedCount));
-  }, [initialMessages, initialDate, totalChatMessages]);
 
   useEffect(() => {
     fetchApiLog({

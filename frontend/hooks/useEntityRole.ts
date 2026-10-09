@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import getEntityRole from "@/actions/permissions/getEntityRole";
 import {
@@ -30,10 +30,18 @@ export function useEntityRole(
   entityId: string,
 ): UseEntityRoleResult {
   const [role, setRole] = useState<Role | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(entityId));
   const [error, setError] = useState<string | null>(null);
+  const [prevEntityId, setPrevEntityId] = useState(entityId);
 
-  const fetchRole = async () => {
+  if (prevEntityId !== entityId) {
+    setPrevEntityId(entityId);
+    setLoading(Boolean(entityId));
+    setRole(null);
+    setError(null);
+  }
+
+  const fetchRole = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -91,13 +99,53 @@ export function useEntityRole(
     } finally {
       setLoading(false);
     }
-  };
+  }, [entityId, entityType]);
 
   useEffect(() => {
-    if (entityId) {
-      fetchRole();
+    if (!entityId) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    let isMounted = true;
+    const fetchInitialRole = async () => {
+      try {
+        let result = await getEntityRole(entityType, entityId);
+
+        if (
+          !result.ok &&
+          (result.code === "UNAUTHORIZED" || result.status === 401)
+        ) {
+          const refreshed = await refreshSession();
+          if (refreshed) {
+            result = await getEntityRole(entityType, entityId);
+          } else {
+            handleSessionExpired();
+            return;
+          }
+        }
+
+        if (!isMounted) return;
+
+        if (result.ok && "content" in result) {
+          setRole(result.content as Role | null);
+        } else if (!result.ok) {
+          setError(result.message || "Failed to fetch role");
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchInitialRole();
+
+    return () => {
+      isMounted = false;
+    };
   }, [entityType, entityId]);
 
   return {

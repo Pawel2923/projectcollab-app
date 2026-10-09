@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -55,12 +56,8 @@ export default function AuthError({
           <Button onClick={() => reset()} variant="default" className="w-full">
             Spróbuj ponownie
           </Button>
-          <Button
-            onClick={() => (window.location.href = "/signin")}
-            variant="outline"
-            className="w-full"
-          >
-            Powrót do logowania
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/signin">Powrót do logowania</Link>
           </Button>
         </div>
       </div>
