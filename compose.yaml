@@ -27,9 +27,12 @@ services:
       MICROSOFT_CLIENT_ID: ${MICROSOFT_CLIENT_ID}
       MICROSOFT_CLIENT_SECRET: ${MICROSOFT_CLIENT_SECRET}
       MICROSOFT_TENANT_ID: ${MICROSOFT_TENANT_ID}
+      CADDY_TLS: ${CADDY_TLS:-internal}
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./api/frankenphp/tls:/etc/caddy/tls:ro
     ports:
       - target: 80
         published: ${HTTP_PORT:-80}
