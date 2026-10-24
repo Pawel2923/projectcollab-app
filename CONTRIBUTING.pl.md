@@ -16,27 +16,33 @@ Oczekujemy od wszystkich współtwórców utrzymywania profesjonalnego, szacunko
 
 ## Wykonywanie Poleceń i Środowisko Docker
 
-Środowisko deweloperskie jest zarządzane przy użyciu Docker Compose, co zapewnia spójność zależności w całym projekcie.
+Środowisko deweloperskie jest zarządzane przy użyciu Docker Compose, co zapewnia spójność zależności w całym projekcie. Dostępny plik `Makefile` oferuje wygodne skróty do wykonywania komend wewnątrz kontenerów.
 
 > [!NOTE]
 > **Wykonywanie poleceń w kontenerach i restart usług**
 > 
-> - **Standardowe polecenia deweloperskie** (np. testy, lintery, walidacja schematu Doctrine) uruchamia się w działających kontenerach przy użyciu `docker compose exec`:
+> - **Standardowe polecenia deweloperskie** (np. testy, lintery, walidacja schematu Doctrine) uruchamia się w działających kontenerach przy użyciu poleceń `make` lub `docker compose exec`:
 >   ```bash
->   # Weryfikacja frontendu:
->   docker compose exec frontend pnpm dev-check
+>   # Za pomocą Make:
+>   make check               # Wszystkie kontrole jakości frontendu i backendu
+>   make frontend-dev-check  # Weryfikacja frontendu
+>   make db-validate         # Walidacja schematu Doctrine backendu
+>   make api-test            # Testy backendu (PHPUnit)
 >
->   # Weryfikacja backendu:
+>   # Lub bezpośrednio przez docker compose exec:
+>   docker compose exec frontend pnpm dev-check
 >   docker compose exec api php bin/console doctrine:schema:validate
 >   docker compose exec api bin/phpunit
 >   ```
 > - **Zarządzanie zależnościami i pakietami:** Ze względu na to, że usługi deweloperskie (`pnpm dev`, serwer FrankenPHP) działają w trybie ciągłym, samo wykonanie instalacji pakietów wewnątrz działającego kontenera często nie wystarcza. W przypadku instalacji nowych pakietów lub zmiany zależności (np. `pnpm add`, `composer require`) dany kontener należy zrestartować lub przebudować, aby zmiany zostały poprawnie uwzględnione przez serwery deweloperskie:
 >   ```bash
->   # Restart usługi w celu załadowania nowych zależności
->   docker compose restart frontend
+>   # Restart usługi w celu załadowania nowych zależności (Make lub Docker Compose)
+>   make restart c=frontend
+>   # Lub: docker compose restart frontend
 >
 >   # Lub przebudowa, jeśli zmieniła się konfiguracja Dockera
->   docker compose up --build -d
+>   make up
+>   # Lub: docker compose up --build -d
 >   ```
 
 ---
@@ -47,9 +53,10 @@ Oczekujemy od wszystkich współtwórców utrzymywania profesjonalnego, szacunko
 
 **Narzędzia**
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) (oraz Docker Compose v2)
 - [Node.js (wersja 22 lub nowsza)](https://nodejs.org/en/download)
 - [Git](https://git-scm.com/)
+- [GNU Make](https://www.gnu.org/software/make/) (opcjonalnie, do wygodnego uruchamiania skrótów komend)
 
 **Konfiguracja środowiska**
 
@@ -58,6 +65,16 @@ Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` w głównym katalogu p
 ---
 
 ### Instrukcja konfiguracji
+
+#### Szybka konfiguracja (automatyczna)
+
+Uruchom:
+```bash
+make init
+```
+Polecenie to automatycznie przygotuje plik `.env` z `.env.example` (jeśli jeszcze nie istnieje), zbuduje i uruchomi kontenery z flagą `--wait` oraz wygeneruje klucze JWT dla pakietu `lexik`.
+
+#### Konfiguracja krok po kroku
 
 1. **Sklonuj repozytorium:**
    ```bash
@@ -68,21 +85,25 @@ Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` w głównym katalogu p
 2. **Skopiuj plik zmiennych środowiskowych:**
    ```bash
    cp .env.example .env
+   # Lub: make env
    ```
 
 3. **Zbuduj i uruchom aplikację:**
    ```bash
    docker compose up --build --wait
+   # Lub: make up
    ```
 
 4. **Wygeneruj klucze JWT dla pakietu `lexik`:**
    ```bash
    docker compose exec api php bin/console lexik:jwt:generate-keypair
+   # Lub: make jwt-keys
    ```
 
 5. **Zatrzymaj aplikację:**
    ```bash
    docker compose stop
+   # Lub: make stop
    ```
 
 > [!NOTE]
@@ -93,7 +114,8 @@ Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` w głównym katalogu p
 #### Wczytywanie przykładowych danych do aplikacji (nie używać na środowisku produkcyjnym):
 
 ```bash
-docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
+make db-fixtures
+# Lub: docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
 
 ---
@@ -165,27 +187,36 @@ Aplikacja frontendowa zbudowana jest na **Next.js 16 (App Router)**, **React 19*
 
 ### Komendy Sprawdzania Jakości (Uruchamiane w kontenerze)
 
+Możesz uruchamiać poszczególne polecenia lub skorzystać z `make check`, aby uruchomić pełen zestaw testów i weryfikacji.
+
 ```bash
+# Pełne sprawdzenie przed komitem (typów, lintera, formatowania i testów)
+make frontend-dev-check
+# Lub: docker compose exec frontend pnpm dev-check
+
 # Sprawdzanie typów TypeScript
-docker compose exec frontend pnpm check-types
+make frontend-check-types
+# Lub: docker compose exec frontend pnpm check-types
 
 # Linter (ESLint)
-docker compose exec frontend pnpm lint
+make frontend-lint
+# Lub: docker compose exec frontend pnpm lint
 
 # Automatyczna naprawa błędów lintera
-docker compose exec frontend pnpm lint:fix
+make frontend-lint-fix
+# Lub: docker compose exec frontend pnpm lint:fix
 
 # Sprawdzenie formatowania Prettier
-docker compose exec frontend pnpm format-check
+make frontend-format-check
+# Lub: docker compose exec frontend pnpm format-check
 
 # Automatyczne formatowanie kodu
-docker compose exec frontend pnpm format
+make frontend-format
+# Lub: docker compose exec frontend pnpm format
 
 # Uruchomienie testów jednostkowych i komponentowych
-docker compose exec frontend pnpm test
-
-# Pełne sprawdzenie przed komitem (typów, lintera, formatowania i testów)
-docker compose exec frontend pnpm dev-check
+make frontend-test
+# Lub: docker compose exec frontend pnpm test
 ```
 
 ---
@@ -203,8 +234,11 @@ API backendowe zbudowane jest na **Symfony 7.3**, **API Platform 4.2**, **PHP 8.
 2. **Baza Danych i Migracje:**
    * Nigdy nie modyfikuj bazy danych ręcznie. Zawsze twórz migracje Doctrine:
      ```bash
-     docker compose exec api php bin/console make:migration
-     docker compose exec api php bin/console doctrine:migrations:migrate --no-interaction
+     make db-migration
+     # Lub: docker compose exec api php bin/console make:migration
+
+     make db-migrate
+     # Lub: docker compose exec api php bin/console doctrine:migrations:migrate --no-interaction
      ```
 
 3. **Standardy Jakości Kodu:**
@@ -215,16 +249,20 @@ API backendowe zbudowane jest na **Symfony 7.3**, **API Platform 4.2**, **PHP 8.
 
 ```bash
 # Walidacja mapowania schematu Doctrine
-docker compose exec api php bin/console doctrine:schema:validate
+make db-validate
+# Lub: docker compose exec api php bin/console doctrine:schema:validate
 
 # Formatowanie kodu z PHP-CS-Fixer
-docker compose exec api vendor/bin/php-cs-fixer fix
+make api-cs-fix
+# Lub: docker compose exec api vendor/bin/php-cs-fixer fix
 
 # Sprawdzanie formatowania kodu z PHP-CS-Fixer
-docker compose exec api vendor/bin/php-cs-fixer check
+make api-cs-check
+# Lub: docker compose exec api vendor/bin/php-cs-fixer check
 
 # Uruchomienie testów PHPUnit
-docker compose exec api bin/phpunit
+make api-test
+# Lub: docker compose exec api bin/phpunit
 ```
 
 ---
@@ -233,10 +271,8 @@ docker compose exec api bin/phpunit
 
 Przed przesłaniem Pull Requesta upewnij się, że:
 
-- [ ] Aplikacja buduje się i uruchamia poprawnie w Dockerze (`docker compose up --build`).
-- [ ] Kod frontendowy przechodzi wszystkie testy i weryfikacje: `docker compose exec frontend pnpm dev-check`.
-- [ ] Schemat bazy danych jest poprawny: `docker compose exec api php bin/console doctrine:schema:validate`.
-- [ ] Testy backendowe przechodzą: `docker compose exec api bin/phpunit`.
+- [ ] Aplikacja buduje się i uruchamia poprawnie w Dockerze (`make up` lub `docker compose up --build`).
+- [ ] Wszystkie kontrole jakości przechodzą: `make check` (lub pojedynczo: `make frontend-dev-check`, `make db-validate`, `make api-test`).
 - [ ] Kod jest zgodny z zasadami z pliku [`AGENTS.md`](AGENTS.md).
 - [ ] Tytuł PR i wiadomości komitów są zgodne z Conventional Commits.
 - [ ] Opis PR wyjaśnia rozwiązywany problem, wprowadzone zmiany oraz sposób przetestowania.

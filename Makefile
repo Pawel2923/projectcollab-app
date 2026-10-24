@@ -1,3 +1,30 @@
+# ==============================================================================
+# ProjectCollab - Makefile
+# ==============================================================================
+# Convenience automation wrapper for Docker Compose full-stack setup:
+# - API Platform (FrankenPHP / Symfony 7.3 / PHP 8.4)
+# - Next.js 16 (App Router / React 19)
+# - PostgreSQL 16 & Redis 7
+#
+# Usage:
+#   make <target> [c=service] [cmd="..."]
+#
+# Examples:
+#   make help                     # Show available targets
+#   make init                     # First-time local setup (.env, build, start, JWT)
+#   make up                       # Build and start development stack
+#   make logs c=api               # Follow logs for the api service
+#   make restart c=frontend       # Restart frontend service
+#   make api-console cmd="c:c"    # Run Symfony console command in container
+#   make prod-build               # Build production images (--no-cache)
+#   make prod-up                  # Run production stack (--env-file=.env.prod.local)
+#   make check                    # Run all quality checks (frontend + backend)
+#
+# Environment Configuration:
+#   Development: Uses .env (defaults to compose.yaml + compose.override.yaml)
+#   Production:  Uses .env.prod.local (compose.yaml + compose.prod.yaml)
+# ==============================================================================
+
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := help

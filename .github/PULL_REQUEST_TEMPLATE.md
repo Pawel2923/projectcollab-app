@@ -23,7 +23,8 @@ Fixes # (issue)
 
 ## Verification Checklist
 
-- [ ] `docker compose exec frontend pnpm dev-check` passed successfully.
-- [ ] `docker compose exec api php bin/console doctrine:schema:validate` passed successfully.
-- [ ] `docker compose exec api bin/phpunit` passed successfully (if backend changes made).
+- [ ] `make frontend-dev-check` (or `docker compose exec frontend pnpm dev-check`) passed successfully.
+- [ ] `make db-validate` (or `docker compose exec api php bin/console doctrine:schema:validate`) passed successfully.
+- [ ] `make api-test` (or `docker compose exec api bin/phpunit`) passed successfully (if backend changes made).
+- [ ] Or `make check` passed for the entire stack.
 - [ ] Tested locally in browser.
