@@ -16,27 +16,33 @@ We expect all contributors to maintain a respectful, inclusive, and professional
 
 ## Running Commands & Docker Workflow
 
-The development environment is orchestrated with Docker Compose to provide consistent dependencies across the stack.
+The development environment is orchestrated with Docker Compose to provide consistent dependencies across the stack. A `Makefile` is included to provide convenient aliases for running commands inside the containers.
 
 > [!NOTE]
 > **Container Execution & Service Restarts**
 > 
-> - **Routine development commands** (e.g. tests, linters, Doctrine schema validation) are typically executed inside running containers using `docker compose exec`:
+> - **Routine development commands** (e.g. tests, linters, Doctrine schema validation) are executed inside running containers using either the provided `make` targets or `docker compose exec`:
 >   ```bash
->   # Frontend checks
->   docker compose exec frontend pnpm dev-check
+>   # Using Make:
+>   make check               # Run all frontend and backend quality checks
+>   make frontend-dev-check  # Frontend checks
+>   make db-validate         # Backend Doctrine schema validation
+>   make api-test            # Backend PHPUnit tests
 >
->   # Backend checks
+>   # Or using docker compose exec directly:
+>   docker compose exec frontend pnpm dev-check
 >   docker compose exec api php bin/console doctrine:schema:validate
 >   docker compose exec api bin/phpunit
 >   ```
 > - **Dependency & package management:** Because the development services (`pnpm dev`, FrankenPHP server) run continuously, simply executing package installation commands inside a running container is often not enough. If new packages are added or dependencies change (e.g., `pnpm add`, `composer require`), the affected container needs to be restarted or rebuilt to properly reflect changes in the running server:
 >   ```bash
->   # Restart service to apply dependency changes
->   docker compose restart frontend
+>   # Restart service to apply dependency changes (via Make or Docker Compose)
+>   make restart c=frontend
+>   # Or: docker compose restart frontend
 >
 >   # Or rebuild if Docker configuration or base dependencies changed
->   docker compose up --build -d
+>   make up
+>   # Or: docker compose up --build -d
 >   ```
 
 ---
@@ -47,9 +53,10 @@ The development environment is orchestrated with Docker Compose to provide consi
 
 **Tools**
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) (and Docker Compose v2)
 - [Node.js (version 22 or newer)](https://nodejs.org/en/download)
 - [Git](https://git-scm.com/)
+- [GNU Make](https://www.gnu.org/software/make/) (optional, for convenience commands)
 
 **Environment Setup**
 
@@ -58,6 +65,16 @@ Configure the required environment variables in the `.env` file in the main proj
 ---
 
 ### Setup Instructions
+
+#### Quick Setup (Automated)
+
+Run:
+```bash
+make init
+```
+This automatically sets up `.env` from `.env.example` (if missing), builds and starts containers with `--wait`, and generates the JWT keypair.
+
+#### Manual Step-by-Step Setup
 
 1. **Clone the repository:**
    ```bash
@@ -68,21 +85,25 @@ Configure the required environment variables in the `.env` file in the main proj
 2. **Copy environment variables:**
    ```bash
    cp .env.example .env
+   # Or: make env
    ```
 
 3. **Build and run the application:**
    ```bash
    docker compose up --build --wait
+   # Or: make up
    ```
 
 4. **Generate JWT keys:**
    ```bash
    docker compose exec api php bin/console lexik:jwt:generate-keypair
+   # Or: make jwt-keys
    ```
 
 5. **Stop the application:**
    ```bash
    docker compose stop
+   # Or: make stop
    ```
 
 > [!NOTE]
@@ -93,7 +114,8 @@ Configure the required environment variables in the `.env` file in the main proj
 #### Loading sample data into the application (do not use in production):
 
 ```bash
-docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
+make db-fixtures
+# Or: docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
 
 ---
@@ -165,27 +187,36 @@ The frontend application is built with **Next.js 16 (App Router)**, **React 19**
 
 ### Quality & Testing Commands (Run inside Container)
 
+You can run individual checks or use `make check` to run the entire test and quality pipeline.
+
 ```bash
+# Run full development check (type-check, lint, format, and test)
+make frontend-dev-check
+# Or: docker compose exec frontend pnpm dev-check
+
 # Type check TypeScript
-docker compose exec frontend pnpm check-types
+make frontend-check-types
+# Or: docker compose exec frontend pnpm check-types
 
 # Lint code
-docker compose exec frontend pnpm lint
+make frontend-lint
+# Or: docker compose exec frontend pnpm lint
 
 # Fix linting issues automatically
-docker compose exec frontend pnpm lint:fix
+make frontend-lint-fix
+# Or: docker compose exec frontend pnpm lint:fix
 
 # Format check with Prettier
-docker compose exec frontend pnpm format-check
+make frontend-format-check
+# Or: docker compose exec frontend pnpm format-check
 
 # Auto-format files
-docker compose exec frontend pnpm format
+make frontend-format
+# Or: docker compose exec frontend pnpm format
 
 # Run unit / component tests
-docker compose exec frontend pnpm test
-
-# Run full development check (type-check, lint, format, and test)
-docker compose exec frontend pnpm dev-check
+make frontend-test
+# Or: docker compose exec frontend pnpm test
 ```
 
 ---
@@ -203,8 +234,11 @@ The backend API is built with **Symfony 7.3**, **API Platform 4.2**, **PHP 8.4+*
 2. **Database & Migrations:**
    * Never modify the database schema directly. Always generate Doctrine migrations:
      ```bash
-     docker compose exec api php bin/console make:migration
-     docker compose exec api php bin/console doctrine:migrations:migrate --no-interaction
+     make db-migration
+     # Or: docker compose exec api php bin/console make:migration
+
+     make db-migrate
+     # Or: docker compose exec api php bin/console doctrine:migrations:migrate --no-interaction
      ```
 
 3. **Code Quality Standards:**
@@ -215,16 +249,20 @@ The backend API is built with **Symfony 7.3**, **API Platform 4.2**, **PHP 8.4+*
 
 ```bash
 # Validate Doctrine schema mapping
-docker compose exec api php bin/console doctrine:schema:validate
+make db-validate
+# Or: docker compose exec api php bin/console doctrine:schema:validate
 
 # Format code with PHP-CS-Fixer
-docker compose exec api vendor/bin/php-cs-fixer fix
+make api-cs-fix
+# Or: docker compose exec api vendor/bin/php-cs-fixer fix
 
 # Check code formatting with PHP-CS-Fixer
-docker compose exec api vendor/bin/php-cs-fixer check
+make api-cs-check
+# Or: docker compose exec api vendor/bin/php-cs-fixer check
 
 # Run PHPUnit tests
-docker compose exec api bin/phpunit
+make api-test
+# Or: docker compose exec api bin/phpunit
 ```
 
 ---
@@ -233,10 +271,8 @@ docker compose exec api bin/phpunit
 
 Before submitting a Pull Request, ensure that:
 
-- [ ] All code runs cleanly inside Docker containers (`docker compose up --build`).
-- [ ] Frontend code passes all checks: `docker compose exec frontend pnpm dev-check`.
-- [ ] Backend Doctrine schema is valid: `docker compose exec api php bin/console doctrine:schema:validate`.
-- [ ] Backend tests pass: `docker compose exec api bin/phpunit`.
+- [ ] All code runs cleanly inside Docker containers (`make up` or `docker compose up --build`).
+- [ ] Quality checks pass: `make check` (or individually: `make frontend-dev-check`, `make db-validate`, `make api-test`).
 - [ ] Code adheres to the architectural rules in [`AGENTS.md`](AGENTS.md).
 - [ ] Commits follow Conventional Commits formatting.
 - [ ] PR title and description clearly explain the problem solved, changes made, and testing steps.

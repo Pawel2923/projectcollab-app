@@ -29,52 +29,105 @@ developed as an engineering thesis.
 
 **Tools**
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) (and Docker Compose v2)
 - [Node.js (version 22 or newer)](https://nodejs.org/en/download)
+- [GNU Make](https://www.gnu.org/software/make/) (optional, for convenient shortcut commands)
 
 **Environment Setup**
 
-Configure the required environment variables in the `.env` file in the main project directory. The variables are documented in the `.env.example` file.
+- **Development:** Configure required environment variables in `.env` (copy from `.env.example`).
+- **Production:** Configure production environment variables in `.env.prod.local`.
 
 ---
 ### Installation / Running Instructions
 
-#### Development
+> [!TIP]
+> A `Makefile` is provided to simplify Docker Compose commands. Run `make help` to inspect all available targets.
+
+#### Quick Start (Development)
+
+Run the automated initialization (creates `.env` if missing, builds/starts containers, and generates JWT keys):
+
+```bash
+make init
+```
+
+#### Development Step-by-Step
 
 1. Build and run:
 
+Using Make:
+```bash
+make up
+```
+
+Or using Docker Compose directly:
 ```bash
 docker compose up --build --wait
 ```
 
 2. <a id="dev-step-2"></a>Generate the key for the `lexik` package:
 
+Using Make:
+```bash
+make jwt-keys
+```
+
+Or using Docker Compose directly:
 ```bash
 docker compose exec api php bin/console lexik:jwt:generate-keypair
 ```
+
 3. Stop the application:
 
+Using Make:
+```bash
+make stop
+```
+
+Or using Docker Compose directly:
 ```bash
 docker compose stop
 ```
+
 #### Production
 
-1. Build:
+Production uses `compose.yaml` with `compose.prod.yaml` and requires the `--env-file=.env.prod.local` flag.
 
+1. Build images:
+
+Using Make:
 ```bash
-docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
+make prod-build
+```
+
+Or using Docker Compose directly:
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local build --no-cache
 ```
 
 2. Run the application:
 
+Using Make:
 ```bash
-docker compose -f compose.yaml -f compose.prod.yaml up --wait --no-build
+make prod-up
 ```
 
-3. Generate `lexik` keys, same as in the development version ([key generation](#dev-step-2)).
-
+Or using Docker Compose directly:
 ```bash
-docker compose exec api php bin/console lexik:jwt:generate-keypair
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local up --wait --no-build
+```
+
+3. Generate `lexik` keys for production:
+
+Using Make:
+```bash
+make jwt-keys-prod
+```
+
+Or using Docker Compose directly:
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local exec api php bin/console lexik:jwt:generate-keypair
 ```
 
 > [!NOTE]
@@ -84,9 +137,36 @@ docker compose exec api php bin/console lexik:jwt:generate-keypair
 
 #### Loading sample data into the application (do not use in production):
 
+Using Make:
+```bash
+make db-fixtures
+```
+
+Or using Docker Compose directly:
 ```bash
 docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
+
+---
+### Makefile Quick Reference
+
+| Target | Description |
+|---|---|
+| `make help` | Display all available targets with descriptions |
+| `make init` | Automated first-time local setup (`.env`, build, start, JWT) |
+| `make up` / `make down` | Start development stack (`--build --wait`) / Stop and remove containers |
+| `make stop` / `make start` | Stop / Start containers without recreating |
+| `make restart [c=service]` | Restart all or a specific service (e.g. `make restart c=frontend`) |
+| `make logs [c=service]` | Follow logs (e.g. `make logs c=api`) |
+| `make ps` | List running development containers |
+| `make prod-build` | Build production images (`--no-cache`) with `.env.prod.local` |
+| `make prod-up` / `prod-down` | Start / Stop production stack with `.env.prod.local` |
+| `make db-migrate` | Run pending Doctrine migrations |
+| `make db-fixtures` | Load sample fixtures into database |
+| `make db-validate` | Validate Doctrine schema and mapping |
+| `make check` | Run all quality checks across frontend and backend |
+| `make fix` | Auto-format and fix code styles across frontend and backend |
+| `make test` | Run frontend and backend test suites |
 
 ---
 ## Remote Development Support

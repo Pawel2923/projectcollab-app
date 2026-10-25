@@ -29,52 +29,105 @@ opracowana w ramach pracy inżynierskiej.
 
 **Narzędzia**
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) (oraz Docker Compose v2)
 - [Node.js (wersja 22 lub nowsza)](https://nodejs.org/en/download)
+- [GNU Make](https://www.gnu.org/software/make/) (opcjonalnie, do wygodnego uruchamiania skrótów komend)
 
 **Konfiguracja środowiska**
 
-Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` w głównym katalogu projektu. Dokumentacja zmiennych znajduje się w pliku `.env.example`.
+- **Development:** Skonfiguruj wymagane zmienne środowiskowe w pliku `.env` (skopiuj z `.env.example`).
+- **Production:** Skonfiguruj produkcyjne zmienne środowiskowe w pliku `.env.prod.local`.
 
 ---
 ### Instrukcja instalacji / uruchomienia
 
-#### Development
+> [!TIP]
+> W repozytorium dostępny jest plik `Makefile` ułatwiający pracę z Docker Compose. Uruchom `make help`, aby wyświetlić listę wszystkich dostępnych celów.
+
+#### Szybki start (Development)
+
+Uruchom automatyczną inicjalizację (tworzy `.env` w razie braku, buduje i uruchamia kontenery oraz generuje klucze JWT):
+
+```bash
+make init
+```
+
+#### Development krok po kroku
 
 1. Zbuduj i uruchom:
 
+Za pomocą Make:
+```bash
+make up
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
 ```bash
 docker compose up --build --wait
 ```
 
 2. <a id="dev-step-2"></a>Wygeneruj klucze dla pakietu `lexik`:
 
+Za pomocą Make:
+```bash
+make jwt-keys
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
 ```bash
 docker compose exec api php bin/console lexik:jwt:generate-keypair
 ```
+
 3. Zatrzymaj aplikację:
 
+Za pomocą Make:
+```bash
+make stop
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
 ```bash
 docker compose stop
 ```
+
 #### Production
 
-1. Zbuduj:
+Wersja produkcyjna wykorzystuje `compose.yaml` oraz `compose.prod.yaml` i wymaga wskazania pliku zmiennych flagą `--env-file=.env.prod.local`.
 
+1. Zbuduj obrazy:
+
+Za pomocą Make:
 ```bash
-docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
+make prod-build
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local build --no-cache
 ```
 
 2. Uruchom aplikację:
 
+Za pomocą Make:
 ```bash
-docker compose -f compose.yaml -f compose.prod.yaml up --wait --no-build
+make prod-up
 ```
 
-3. Wygeneruj klucze `lexik`, tak samo jak w wersji development ([generowanie kluczy](#dev-step-2)).
-
+Lub bezpośrednio za pomocą Docker Compose:
 ```bash
-docker compose exec api php bin/console lexik:jwt:generate-keypair
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local up --wait --no-build
+```
+
+3. Wygeneruj klucze `lexik` dla środowiska produkcyjnego:
+
+Za pomocą Make:
+```bash
+make jwt-keys-prod
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
+```bash
+docker compose -f compose.yaml -f compose.prod.yaml --env-file=.env.prod.local exec api php bin/console lexik:jwt:generate-keypair
 ```
 
 > [!NOTE]
@@ -84,9 +137,36 @@ docker compose exec api php bin/console lexik:jwt:generate-keypair
 
 #### Wczytywanie przykładowych danych do aplikacji (nie używać na środowisku produkcyjnym):
 
+Za pomocą Make:
+```bash
+make db-fixtures
+```
+
+Lub bezpośrednio za pomocą Docker Compose:
 ```bash
 docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
+
+---
+### Skrócona lista komend Makefile
+
+| Komenda | Opis |
+|---|---|
+| `make help` | Wyświetla listę wszystkich dostępnych komend z opisami |
+| `make init` | Automatyczna konfiguracja środowiska lokalnego (`.env`, build, start, JWT) |
+| `make up` / `make down` | Start kontenerów dev (`--build --wait`) / Zatrzymanie i usunięcie kontenerów |
+| `make stop` / `make start` | Zatrzymanie / Wznowienie kontenerów bez ich usuwania |
+| `make restart [c=usługa]` | Restart wszystkich lub wybranej usługi (np. `make restart c=frontend`) |
+| `make logs [c=usługa]` | Śledzenie logów (np. `make logs c=api`) |
+| `make ps` | Lista uruchomionych kontenerów deweloperskich |
+| `make prod-build` | Budowanie obrazów produkcyjnych (`--no-cache`) z `.env.prod.local` |
+| `make prod-up` / `prod-down` | Uruchomienie / Zatrzymanie stosu produkcyjnego z `.env.prod.local` |
+| `make db-migrate` | Wykonanie oczekujących migracji Doctrine |
+| `make db-fixtures` | Wczytanie przykładowych danych (fixtures) do bazy danych |
+| `make db-validate` | Walidacja schematu bazy danych i mapowania Doctrine |
+| `make check` | Uruchomienie wszystkich kontroli jakości dla frontendu i backendu |
+| `make fix` | Automatyczne formatowanie i naprawa stylów kodu (frontend i backend) |
+| `make test` | Uruchomienie testów frontendu i backendu |
 
 ---
 ## Wsparcie dla Remote Development
