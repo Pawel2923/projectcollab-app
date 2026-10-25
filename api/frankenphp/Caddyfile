@@ -67,11 +67,11 @@
 	php_server
 }
 
-:80 {
+{$SERVER_NAME:localhost} {
+	tls {$CADDY_TLS:internal}
 	import app_config
 }
 
-:443 {
-	tls {$CADDY_TLS:internal}
+api:80 {
 	import app_config
 }
