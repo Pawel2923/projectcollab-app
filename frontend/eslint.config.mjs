@@ -1,27 +1,16 @@
-import { FlatCompat } from "@eslint/eslintrc";
 import nextPlugin from "@next/eslint-plugin-next";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import boundaries from "eslint-plugin-boundaries";
+import importPlugin from "eslint-plugin-import";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
 
 const eslintConfig = defineConfig([
   ...nextCoreWebVitals,
-  ...compat.extends(
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/recommended",
-  ),
+  ...tsPlugin.configs["flat/recommended"],
   globalIgnores([
     "next-env.d.ts",
     "node_modules/**",
@@ -54,6 +43,7 @@ const eslintConfig = defineConfig([
       boundaries,
     },
     rules: {
+      ...importPlugin.flatConfigs.recommended.rules,
       ...nextPlugin.configs.recommended.rules,
       "@typescript-eslint/no-deprecated": "warn",
       "@typescript-eslint/no-unused-vars": [

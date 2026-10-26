@@ -23,15 +23,17 @@ export default async function Home() {
   return (
     <UserProvider initial={user}>
       <LandingTopNav user={user} />
-      <div className="px-2 pb-10 md:pb-26 md:px-24 xl:px-40 2xl:px-62 space-y-10 md:space-y-26 min-h-(--landing-page-height)">
-        <div className="py-10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="space-y-8 max-w-138">
-            <h1 className="text-3xl">Planuj, twórz i współpracuj</h1>
-            <p className="text-muted-foreground leading-tight">
+      <div className="relative overflow-hidden bg-hero-gradient pb-8 md:pb-26">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-6 px-4 py-8 md:flex-row md:gap-8 md:px-8 md:py-10 xl:px-12">
+          <div className="space-y-6 md:space-y-8 max-w-138">
+            <h1 className="text-2xl md:text-3xl">
+              Planuj, twórz i współpracuj
+            </h1>
+            <p className="text-muted-foreground leading-relaxed md:leading-tight">
               Zapewnij swojemu zespołowi narzędzia do zarządzania projektami i
               komunikacji w jednej aplikacji
             </p>
-            <Button className="text-2xl" asChild>
+            <Button className="text-base md:text-2xl" asChild>
               {user ? (
                 <Link href="/organizations">Przejdź do aplikacji</Link>
               ) : (
@@ -44,12 +46,17 @@ export default async function Home() {
               src={projectOverviewImage}
               alt="Podsumowanie projektu"
               className="w-full max-w-162"
+              sizes="(max-width: 767px) 100vw, 50vw"
+              priority
             />
           </div>
         </div>
-        <div className="max-w-138 md:max-w-full mx-auto">
-          <h2 className="text-3xl mb-8">Funkcjonalności</h2>
-          <div className="flex flex-col gap-10 md:gap-26">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background to-transparent"></div>
+      </div>
+
+      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 md:px-8 xl:px-12">
+        <div className="w-full space-y-20 pb-8 pt-20 md:space-y-40 md:pb-26 md:pt-40">
+          <div className="flex flex-col gap-10 md:gap-16">
             <FeatureSection
               name="Organizuj swoją pracę z użyciem intuicyjnego interfejsu"
               description="Organizacje i projekty pozwalają na zarządzanie członkami zespołów i uporządkowanie pracy"
@@ -71,12 +78,14 @@ export default async function Home() {
             />
           </div>
         </div>
-      </div>
+      </main>
       <footer className="flex flex-col py-3 gap-4 items-center justify-center text-muted-foreground bg-background border-t border-border relative w-full">
-        <p className="text-sm">ProjectCollab &copy; {currentYear}</p>
-        <div className="flex gap-2.5 text-xs underline underline-offset-4 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-          <Link href="/policy/privacy">Polityka prywatności</Link>
-          <Link href="/policy/terms">Warunki korzystania z usługi</Link>
+        <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-4 px-4 md:px-8 xl:px-12">
+          <p className="text-sm">ProjectCollab &copy; {currentYear}</p>
+          <div className="flex gap-2.5 text-xs underline underline-offset-4 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+            <Link href="/policy/privacy">Polityka prywatności</Link>
+            <Link href="/policy/terms">Warunki korzystania z usługi</Link>
+          </div>
         </div>
       </footer>
     </UserProvider>
