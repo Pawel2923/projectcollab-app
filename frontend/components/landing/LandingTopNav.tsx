@@ -27,68 +27,68 @@ export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <>
       <nav
-        className="h-16 md:h-21 w-full flex-wrap items-center justify-between gap-3 md:gap-4 border-b border-border bg-background px-4 md:px-8 lg:px-24 py-2 flex col-span-2 sticky top-0 z-20"
+        className="sticky top-0 z-20 flex h-16 w-full flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-2 md:h-21 md:gap-4 md:px-8 lg:px-24"
         suppressHydrationWarning
       >
-        <div className="flex items-center gap-4 md:gap-6">
+        <div className="flex w-full items-center justify-between">
           <Link href={"/"}>
             <ProjectCollabLogotype />
           </Link>
-        </div>
-        <div className="flex items-center gap-2">
-          <Sheet>
-            <SheetTrigger className="md:hidden">
-              <Menu />
-            </SheetTrigger>
-            <SheetContent className="flex flex-col">
-              <SheetHeader>
-                <SheetTitle>
+          <div className="flex items-center gap-2">
+            <Sheet>
+              <SheetTrigger className="md:hidden">
+                <Menu />
+              </SheetTrigger>
+              <SheetContent className="flex flex-col">
+                <SheetHeader>
+                  <SheetTitle>
+                    {user ? (
+                      <>Cześć {user.username || user.email}</>
+                    ) : (
+                      <>Rozpocznij</>
+                    )}
+                  </SheetTitle>
+                  <SheetDescription>
+                    {user ? (
+                      <>Sprawdź ustawienia i wyloguj się</>
+                    ) : (
+                      <>Zaloguj się lub zarejestruj się</>
+                    )}
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="flex-1">
                   {user ? (
-                    <>Cześć {user.username || user.email}</>
+                    <Button
+                      variant={"secondary"}
+                      onClick={logoutBtnClickHandler}
+                      className="w-full"
+                    >
+                      Wyloguj się
+                    </Button>
                   ) : (
-                    <>Rozpocznij</>
+                    <LoggedOutContent />
                   )}
-                </SheetTitle>
-                <SheetDescription>
-                  {user ? (
-                    <>Sprawdź ustawienia i wyloguj się</>
-                  ) : (
-                    <>Zaloguj się lub zarejestruj się</>
-                  )}
-                </SheetDescription>
-              </SheetHeader>
-              <div className="flex-1">
-                {user ? (
-                  <Button
-                    variant={"secondary"}
-                    onClick={logoutBtnClickHandler}
-                    className="w-full"
-                  >
-                    Wyloguj się
-                  </Button>
-                ) : (
-                  <LoggedOutContent />
-                )}
-              </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button variant="outline">Zamknij</Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
-          <div className="hidden md:flex gap-4">
-            {user ? (
-              <>
-                <UserSettings triggerMessage={`Cześć ${user.username}!`}>
-                  <DropdownMenuItem onClick={logoutBtnClickHandler}>
-                    Wyloguj się
-                  </DropdownMenuItem>
-                </UserSettings>
-              </>
-            ) : (
-              <LoggedOutContent />
-            )}
+                </div>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button variant="outline">Zamknij</Button>
+                  </SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+            <div className="hidden md:flex gap-4">
+              {user ? (
+                <>
+                  <UserSettings triggerMessage={`Cześć ${user.username}!`}>
+                    <DropdownMenuItem onClick={logoutBtnClickHandler}>
+                      Wyloguj się
+                    </DropdownMenuItem>
+                  </UserSettings>
+                </>
+              ) : (
+                <LoggedOutContent />
+              )}
+            </div>
           </div>
         </div>
       </nav>
