@@ -27,10 +27,10 @@ export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <>
       <nav
-        className="h-21 w-full flex-wrap items-center justify-between gap-4 border-b border-border bg-background px-4 py-2 flex col-span-2 sticky top-0 z-20"
+        className="h-16 md:h-21 w-full flex-wrap items-center justify-between gap-3 md:gap-4 border-b border-border bg-background px-4 md:px-8 lg:px-24 py-2 flex col-span-2 sticky top-0 z-20"
         suppressHydrationWarning
       >
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           <Link href={"/"}>
             <ProjectCollabLogotype />
           </Link>

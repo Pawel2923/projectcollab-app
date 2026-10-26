@@ -19,13 +19,13 @@ export function FeatureSection({
 }: FeatureSectionProps) {
   return (
     <div
-      className={`flex flex-col w-full justify-between gap-10 md:gap-24 ${order === "TEXT_FIRST" ? "md:flex-row" : "md:flex-row-reverse"}`}
+      className={`flex flex-col w-full justify-between gap-8 md:gap-24 ${order === "TEXT_FIRST" ? "md:flex-row" : "md:flex-row-reverse"}`}
     >
       <div
-        className={`flex flex-col gap-2.5 py-2 justify-center min-w-58 max-w-137.5 ${order === "TEXT_FIRST" ? "" : "md:ms-auto"}`}
+        className={`flex flex-col gap-2.5 py-2 justify-center min-w-0 max-w-137.5 ${order === "TEXT_FIRST" ? "" : "md:ms-auto"}`}
       >
-        <h3 className="font-medium text-xl">{name}</h3>
-        <p>{description}</p>
+        <h3 className="font-medium text-lg md:text-xl">{name}</h3>
+        <p className="text-sm leading-relaxed md:text-base">{description}</p>
       </div>
       <div className={`${order === "TEXT_FIRST" ? "ms-auto" : "me-auto"}`}>
         <Image

@@ -56,6 +56,12 @@
   --font-inter: Inter, sans-serif;
   --image-border: #c4c4c4;
   --landing-page-height: calc(100dvh - calc(var(--spacing) * 21) - 4.8rem);
+  --hero-gradient: linear-gradient(
+    135deg,
+    rgba(45, 212, 191, 0.5) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 @theme inline {
@@ -109,6 +115,7 @@
   --color-priority-high-foreground: var(--priority-high-foreground);
   --color-priority-critical-foreground: var(--priority-critical-foreground);
   --color-image-border: var(--image-border);
+  --background-image-hero-gradient: var(--hero-gradient);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -158,6 +165,12 @@
   --priority-medium-foreground: #6ee7b7;
   --priority-high-foreground: #fdba74;
   --priority-critical-foreground: #fca5a5;
+  --hero-gradient: linear-gradient(
+    135deg,
+    rgba(19, 89, 81, 0.5) 0%,
+    rgba(10, 10, 10, 1) 50%,
+    rgba(10, 10, 10, 0) 100%
+  );
 }
 
 @layer base {
