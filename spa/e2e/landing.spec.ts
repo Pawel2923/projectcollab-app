@@ -5,6 +5,22 @@ test.describe("Landing Page", () => {
     await page.goto("/")
   })
 
+  test("renders without any console errors or Base UI button warnings", async ({
+    page,
+  }) => {
+    const consoleErrors: string[] = []
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        if (!msg.text().includes("404")) {
+          consoleErrors.push(msg.text())
+        }
+      }
+    })
+    await page.goto("/")
+    await page.waitForTimeout(500)
+    expect(consoleErrors).toEqual([])
+  })
+
   test("renders navigation bar and brand identity", async ({ page }) => {
     await expect(page.locator("nav")).toBeVisible()
     const brandLink = page.getByRole("link", { name: "ProjectCollab" })
@@ -16,13 +32,13 @@ test.describe("Landing Page", () => {
     if (isMobile) {
       test.skip()
     }
-    const loginLink = page.getByRole("link", { name: "Zaloguj się" })
-    const signupLink = page.getByRole("link", { name: "Zarejestruj się" })
+    const loginBtn = page.getByRole("button", { name: "Zaloguj się" })
+    const signupBtn = page.getByRole("button", { name: "Zarejestruj się" })
 
-    await expect(loginLink).toBeVisible()
-    await expect(loginLink).toHaveAttribute("href", "/signin")
-    await expect(signupLink).toBeVisible()
-    await expect(signupLink).toHaveAttribute("href", "/signup")
+    await expect(loginBtn).toBeVisible()
+    await expect(loginBtn).toHaveAttribute("href", "/signin")
+    await expect(signupBtn).toBeVisible()
+    await expect(signupBtn).toHaveAttribute("href", "/signup")
   })
 
   test("renders hero section with heading and call-to-action", async ({
@@ -38,7 +54,7 @@ test.describe("Landing Page", () => {
     )
     await expect(heroSubtext).toBeVisible()
 
-    const startButton = page.getByRole("link", { name: "Rozpocznij" })
+    const startButton = page.getByRole("button", { name: "Rozpocznij" })
     await expect(startButton).toBeVisible()
     await expect(startButton).toHaveAttribute("href", "/signup")
 
