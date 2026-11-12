@@ -4,6 +4,8 @@ services:
     build:
       context: ./api
       dockerfile: ../.docker/api/Dockerfile
+      additional_contexts:
+        frankenphp: ./.docker/frankenphp
     depends_on:
       - database
       - redis
@@ -34,8 +36,8 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-      - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./api/frankenphp/tls:/etc/caddy/tls:ro
+      - ./.docker/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./.docker/frankenphp/tls:/etc/caddy/tls:ro
     ports:
       - target: 80
         published: ${HTTP_PORT:-80}

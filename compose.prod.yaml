@@ -4,6 +4,8 @@ services:
       context: ./api
       dockerfile: ../.docker/api/Dockerfile
       target: frankenphp_prod
+      additional_contexts:
+        frankenphp: ./.docker/frankenphp
     environment:
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}

@@ -56,9 +56,9 @@ RUN groupadd -g 1000 symfony && \
 RUN mkdir -p /data /config /var/run/frankenphp /app/var && \
 	chown -R symfony:symfony /data /config /var/run/frankenphp /app
 
-COPY --link frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/
-COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-COPY --link frankenphp/Caddyfile /etc/caddy/Caddyfile
+COPY --link --from=frankenphp conf.d/app.ini $PHP_INI_DIR/conf.d/
+COPY --link --from=frankenphp --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY --link --from=frankenphp Caddyfile /etc/caddy/Caddyfile
 
 ENTRYPOINT ["docker-entrypoint"]
 
@@ -98,7 +98,7 @@ RUN set -eux; \
 	xdebug \
 	;
 
-COPY --link frankenphp/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
+COPY --link --from=frankenphp conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 
@@ -110,8 +110,8 @@ ENV FRANKENPHP_CONFIG="import worker.Caddyfile"
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-COPY --link frankenphp/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
-COPY --link frankenphp/worker.Caddyfile /etc/caddy/worker.Caddyfile
+COPY --link --from=frankenphp conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
+COPY --link --from=frankenphp worker.Caddyfile /etc/caddy/worker.Caddyfile
 
 # Switch to non-root user
 USER symfony
@@ -123,7 +123,6 @@ RUN set -eux; \
 
 # copy sources
 COPY --link --chown=1000:1000 . ./
-RUN rm -Rf frankenphp/
 
 RUN set -eux; \
 	mkdir -p var/cache var/log; \

@@ -4,12 +4,14 @@ services:
       context: ./api
       dockerfile: ../.docker/api/Dockerfile
       target: frankenphp_dev
+      additional_contexts:
+        frankenphp: ./.docker/frankenphp
     volumes:
       - ./api:/app
       - /app/var
       - .:/workspace:cached
-      - ./api/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
-      - ./api/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      - ./.docker/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
+      - ./.docker/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
     environment:
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
       MAILER_DSN: smtp://localhost:1025
