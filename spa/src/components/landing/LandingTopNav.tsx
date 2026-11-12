@@ -17,19 +17,26 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { UserSettings } from "@/components/UserSettings"
+import { ThemeToggle, ThemeSegmentedToggle } from "@/components/ThemeToggle"
 
 export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <nav className="sticky top-0 z-20 flex h-16 w-full flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-2 md:h-21 md:gap-4 md:px-8 lg:px-24">
       <div className="flex w-full items-center justify-between">
-        <Link to="/">
+        <Link to="/" aria-label="ProjectCollab">
           <ProjectCollabLogotype />
         </Link>
         <div className="flex items-center gap-2">
+          <ThemeToggle className="hidden sm:inline-flex" />
           <Sheet>
             <SheetTrigger
               render={
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  aria-label="Otwórz menu nawigacji"
+                >
                   <Menu className="size-5" />
                 </Button>
               }
@@ -51,7 +58,7 @@ export function LandingTopNav({ user }: { user: User | null }) {
                   )}
                 </SheetDescription>
               </SheetHeader>
-              <div className="flex-1 p-4">
+              <div className="flex-1 space-y-4 p-4">
                 {user ? (
                   <Button
                     variant="secondary"
@@ -63,6 +70,12 @@ export function LandingTopNav({ user }: { user: User | null }) {
                 ) : (
                   <LoggedOutContent />
                 )}
+                <div className="border-t border-border pt-4">
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">
+                    Motyw
+                  </p>
+                  <ThemeSegmentedToggle />
+                </div>
               </div>
               <SheetFooter>
                 <SheetClose
@@ -71,7 +84,7 @@ export function LandingTopNav({ user }: { user: User | null }) {
               </SheetFooter>
             </SheetContent>
           </Sheet>
-          <div className="hidden gap-4 md:flex">
+          <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <UserSettings triggerMessage={`Cześć ${user.username}!`}>
                 <DropdownMenuItem onClick={logoutBtnClickHandler}>

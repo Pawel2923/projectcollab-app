@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10",
+    "@playwright/test": "1.50.1",
     "@tanstack/react-query-devtools": "^5.107.1",
     "@tanstack/router-devtools": "^1.167.2",
     "@types/node": "^24",
