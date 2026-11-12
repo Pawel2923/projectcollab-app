@@ -5,7 +5,7 @@
 FROM node:lts-alpine AS node_upstream
 
 
-# Base stage for dev and build
+# Base stage for build
 FROM node_upstream AS base
 
 WORKDIR /app
@@ -36,33 +36,6 @@ ENV NEXT_PUBLIC_MERCURE_URL=${NEXT_PUBLIC_MERCURE_URL}
 RUN deluser node && \
 	addgroup -g 1000 -S next && \
 	adduser -u 1000 -S next -G next
-
-# Development image
-FROM base as dev
-
-EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-# Install dev tools
-RUN apk add --no-cache zsh vim git curl wget bash shadow && \
-		sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-		chsh -s /bin/zsh next
-
-# Install Oh My Zsh for the next user
-USER next
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-USER root
-
-# Set the correct permission for prerender cache
-RUN mkdir -p .next && \
-	chown -R next:next .next
-
-COPY --link --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-ENTRYPOINT ["docker-entrypoint"]
-
-CMD ["su", "next", "-c", "CI=true pnpm install && pnpm dev"]
-
 
 FROM base AS builder
 

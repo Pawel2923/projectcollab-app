@@ -15,7 +15,7 @@
 **/docker-compose.*.yml
 **/docker-compose.yaml
 **/docker-compose.yml
-**/Dockerfile
+**/Dockerfile*
 **/Thumbs.db
 build/
 .next/
