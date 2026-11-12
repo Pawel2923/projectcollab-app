@@ -255,6 +255,12 @@ frontend-format-check: ## Check frontend code formatting with Prettier
 frontend-test: ## Run frontend tests with Vitest
 	$(COMPOSE) exec $(FRONTEND_SERVICE) pnpm test
 
+##@ SPA (Single Page Application)
+
+.PHONY: spa-build
+spa-build: ## Build static SPA application
+	$(COMPOSE) exec $(FRONTEND_SERVICE) sh -c "cd /workspace/spa && pnpm build"
+
 ##@ Quality & Testing
 
 .PHONY: check

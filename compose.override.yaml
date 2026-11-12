@@ -6,15 +6,18 @@ services:
       target: frankenphp_dev
       additional_contexts:
         frankenphp: ./.docker/frankenphp
+        spa: ./spa
     volumes:
       - ./api:/app
       - /app/var
       - .:/workspace:cached
+      - ./spa/dist:/app/public/spa:ro
       - ./.docker/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro 
       - ./.docker/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
     environment:
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
       MAILER_DSN: smtp://localhost:1025
+      MERCURE_EXTRA_DIRECTIVES: playground
     extra_hosts:
       - host.docker.internal:host-gateway
     stdin_open: true

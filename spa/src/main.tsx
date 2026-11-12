@@ -9,6 +9,7 @@ import { routeTree } from "./routeTree.gen"
 
 const router = createRouter({
   routeTree,
+  basepath: "/spa",
   context: {
     queryClient,
   },

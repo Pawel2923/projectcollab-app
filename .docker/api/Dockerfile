@@ -5,6 +5,21 @@
 
 # Versions
 FROM dunglas/frankenphp:1-php8.4 AS frankenphp_upstream
+FROM node:lts-alpine AS spa_builder
+
+WORKDIR /spa
+USER root
+
+RUN npm install -g corepack@latest && \
+	corepack enable && \
+	corepack prepare --activate pnpm@10.25.0 && \
+	pnpm config -g set store-dir /.pnpm-store
+
+COPY --from=spa package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY --from=spa . ./
+RUN pnpm run build
 
 
 # The different stages of this Dockerfile are meant to be built into separate images
@@ -59,6 +74,7 @@ RUN mkdir -p /data /config /var/run/frankenphp /app/var && \
 COPY --link --from=frankenphp conf.d/app.ini $PHP_INI_DIR/conf.d/
 COPY --link --from=frankenphp --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link --from=frankenphp Caddyfile /etc/caddy/Caddyfile
+COPY --link --from=spa_builder /spa/dist /app/public/spa
 
 ENTRYPOINT ["docker-entrypoint"]
 
@@ -123,6 +139,7 @@ RUN set -eux; \
 
 # copy sources
 COPY --link --chown=1000:1000 . ./
+COPY --link --from=spa_builder /spa/dist /app/public/spa
 
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
