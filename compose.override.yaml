@@ -2,6 +2,7 @@ services:
   api:
     build:
       context: ./api
+      dockerfile: ../.docker/api/Dockerfile
       target: frankenphp_dev
     volumes:
       - ./api:/app
@@ -22,6 +23,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: ../.docker/frontend/Dockerfile
       target: dev
     volumes:
       - ./frontend:/app

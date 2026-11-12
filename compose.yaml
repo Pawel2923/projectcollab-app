@@ -1,6 +1,9 @@
 services:
   api:
     image: ${IMAGES_PREFIX:-}projectcollab-api:${IMAGES_TAG:-latest}
+    build:
+      context: ./api
+      dockerfile: ../.docker/api/Dockerfile
     depends_on:
       - database
       - redis
@@ -47,6 +50,8 @@ services:
   frontend:
     image: ${IMAGES_PREFIX:-}projectcollab-frontend:${IMAGES_TAG:-latest}
     build:
+      context: ./frontend
+      dockerfile: ../.docker/frontend/Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://localhost/core-api}
         NEXT_PUBLIC_API_ROUTE_PREFIX: ${NEXT_PUBLIC_API_ROUTE_PREFIX:-/core-api}
