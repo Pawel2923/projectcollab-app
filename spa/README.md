@@ -19,3 +19,17 @@ To use the components in your app, import them as follows:
 ```tsx
 import { Button } from "@/components/ui/button"
 ```
+
+## Building
+
+To build the static SPA application from the project root, run:
+
+```bash
+make spa-build
+```
+
+Or execute directly inside the frontend container:
+
+```bash
+docker compose exec frontend sh -c "cd /workspace/spa && pnpm build"
+```

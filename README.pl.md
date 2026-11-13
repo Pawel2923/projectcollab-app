@@ -148,25 +148,60 @@ docker compose exec api php bin/console doctrine:fixtures:load --no-interaction
 ```
 
 ---
-### Skrócona lista komend Makefile
+### Podręczna lista komend Makefile
 
-| Komenda | Opis |
-|---|---|
-| `make help` | Wyświetla listę wszystkich dostępnych komend z opisami |
-| `make init` | Automatyczna konfiguracja środowiska lokalnego (`.env`, build, start, JWT) |
-| `make up` / `make down` | Start kontenerów dev (`--build --wait`) / Zatrzymanie i usunięcie kontenerów |
-| `make stop` / `make start` | Zatrzymanie / Wznowienie kontenerów bez ich usuwania |
-| `make restart [c=usługa]` | Restart wszystkich lub wybranej usługi (np. `make restart c=frontend`) |
-| `make logs [c=usługa]` | Śledzenie logów (np. `make logs c=api`) |
-| `make ps` | Lista uruchomionych kontenerów deweloperskich |
-| `make prod-build` | Budowanie obrazów produkcyjnych (`--no-cache`) z `.env.prod.local` |
-| `make prod-up` / `prod-down` | Uruchomienie / Zatrzymanie stosu produkcyjnego z `.env.prod.local` |
-| `make db-migrate` | Wykonanie oczekujących migracji Doctrine |
-| `make db-fixtures` | Wczytanie przykładowych danych (fixtures) do bazy danych |
-| `make db-validate` | Walidacja schematu bazy danych i mapowania Doctrine |
-| `make check` | Uruchomienie wszystkich kontroli jakości dla frontendu i backendu |
-| `make fix` | Automatyczne formatowanie i naprawa stylów kodu (frontend i backend) |
-| `make test` | Uruchomienie testów frontendu i backendu |
+Uruchom `make help`, aby wyświetlić listę wszystkich dostępnych celów z opisami bezpośrednio w terminalu.
+
+| Kategoria | Komenda | Opis |
+|---|---|---|
+| **Inicjalizacja i konfiguracja** | `make help` | Wyświetla listę wszystkich dostępnych komend z opisami |
+| | `make env` | Tworzy plik `.env` na podstawie `.env.example`, jeśli nie istnieje |
+| | `make init` | Pełna konfiguracja lokalna: tworzy `.env`, buduje/uruchamia kontenery i generuje klucze JWT |
+| | `make jwt-keys` | Generuje parę kluczy JWT Lexik w kontenerze deweloperskim `api` |
+| | `make jwt-keys-prod` | Generuje parę kluczy JWT Lexik w kontenerze produkcyjnym `api` |
+| **Development** | `make up` / `make dev-up` | Buduje i uruchamia kontenery deweloperskie (`--build --wait`) |
+| | `make up-d` / `make dev-up-d` | Uruchamia kontenery deweloperskie w tle bez przebudowywania (`-d`) |
+| | `make build` / `make dev-build` | Buduje obrazy deweloperskie |
+| | `make stop` / `make dev-stop` | Zatrzymuje kontenery deweloperskie bez ich usuwania |
+| | `make start` / `make dev-start` | Wznawia zatrzymane kontenery deweloperskie |
+| | `make down` / `make dev-down` | Zatrzymuje i usuwa kontenery deweloperskie oraz sieci |
+| | `make restart [c=usługa]` | Restartuje wszystkie lub wybraną usługę (np. `make restart c=frontend`) |
+| | `make logs [c=usługa]` | Śledzi logi wszystkich lub wybranej usługi (np. `make logs c=api`) |
+| | `make ps` / `make dev-ps` | Wyświetla listę uruchomionych kontenerów deweloperskich |
+| **Produkcja**<br>`(--env-file=.env.prod.local)` | `make prod-build` | Buduje obrazy produkcyjne bez cache (`--no-cache`) z użyciem `compose.prod.yaml` |
+| | `make prod-up` | Uruchamia kontenery produkcyjne (`--wait --no-build`) |
+| | `make prod-up-d` | Uruchamia kontenery produkcyjne w tle (`-d --wait --no-build`) |
+| | `make prod-stop` | Zatrzymuje kontenery produkcyjne |
+| | `make prod-down` | Zatrzymuje i usuwa kontenery produkcyjne oraz sieci |
+| | `make prod-restart [c=usługa]` | Restartuje kontenery produkcyjne (użyj `c=usługa`) |
+| | `make prod-logs [c=usługa]` | Śledzi logi kontenerów produkcyjnych (użyj `c=usługa`) |
+| | `make prod-ps` | Wyświetla listę uruchomionych kontenerów produkcyjnych |
+| | `make prod-push` | Wypycha obrazy produkcyjne do rejestru kontenerów |
+| **Baza danych i migracje** | `make db-migrate` | Wykonuje oczekujące migracje Doctrine |
+| | `make db-migration` | Generuje nową migrację Doctrine na podstawie zmian w encjach |
+| | `make db-fixtures` | Wczytuje przykładowe dane (fixtures) do bazy danych (środowisko dev) |
+| | `make db-validate` | Waliduje mapowania Doctrine oraz schemat bazy danych |
+| | `make db-reset` | Usuwa, odtwarza bazę danych, wykonuje migracje i ładuje fixtures |
+| **Backend**<br>*(Symfony / API Platform)* | `make api-sh` | Otwiera powłokę Bash w działającym kontenerze `api` |
+| | `make api-console cmd="..."` | Wykonuje polecenie konsoli Symfony (np. `make api-console cmd="cache:clear"`) |
+| | `make api-cache-clear` | Czyści pamięć podręczną Symfony |
+| | `make api-cs-fix` | Formatuje kod PHP za pomocą PHP-CS-Fixer |
+| | `make api-cs-check` | Sprawdza styl kodu PHP za pomocą PHP-CS-Fixer |
+| | `make api-test` | Uruchamia testy backendu (PHPUnit) |
+| **Frontend**<br>*(Next.js)* | `make frontend-sh` | Otwiera powłokę w działającym kontenerze `frontend` |
+| | `make frontend-dev-check` | Uruchamia pełną weryfikację frontendu (sprawdzanie typów, lint fix, format, vitest) |
+| | `make frontend-check-types` | Sprawdza typy TypeScript |
+| | `make frontend-lint` | Uruchamia sprawdzanie ESLint |
+| | `make frontend-lint-fix` | Automatycznie naprawia błędy ESLint |
+| | `make frontend-format` | Formatuje kod frontendu za pomocą Prettier |
+| | `make frontend-format-check` | Sprawdza formatowanie kodu z użyciem Prettier |
+| | `make frontend-test` | Uruchamia testy frontendu za pomocą Vitest |
+| **SPA**<br>*(Single Page Application)* | `make spa-build` | Buduje statyczną aplikację SPA w kontenerze frontendowym |
+| **Jakość i testy** | `make check` | Uruchamia wszystkie kontrole jakości dla frontendu i backendu |
+| | `make fix` | Automatycznie formatuje i naprawia style kodu (frontend i backend) |
+| | `make test` | Uruchamia testy frontendu i backendu |
+| **Konserwacja i czyszczenie** | `make clean` | Zatrzymuje i usuwa kontenery deweloperskie oraz osierocone sieci |
+| | `make clean-volumes` | Zatrzymuje i usuwa kontenery, osierocone sieci oraz trwałe wolumeny |
 
 ---
 ## Wsparcie dla Remote Development

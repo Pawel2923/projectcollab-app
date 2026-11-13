@@ -25,6 +25,7 @@ Oczekujemy od wszystkich współtwórców utrzymywania profesjonalnego, szacunko
 >   ```bash
 >   # Za pomocą Make:
 >   make check               # Wszystkie kontrole jakości frontendu i backendu
+>   make fix                 # Automatyczne formatowanie i naprawa stylów (frontend i backend)
 >   make frontend-dev-check  # Weryfikacja frontendu
 >   make db-validate         # Walidacja schematu Doctrine backendu
 >   make api-test            # Testy backendu (PHPUnit)
@@ -33,6 +34,11 @@ Oczekujemy od wszystkich współtwórców utrzymywania profesjonalnego, szacunko
 >   docker compose exec frontend pnpm dev-check
 >   docker compose exec api php bin/console doctrine:schema:validate
 >   docker compose exec api bin/phpunit
+>   ```
+> - **Czyszczenie i konserwacja środowiska:** Jeśli potrzebujesz zatrzymać kontenery lub zresetować wolumeny:
+>   ```bash
+>   make clean               # Zatrzymanie i usunięcie kontenerów deweloperskich oraz osieroconych sieci
+>   make clean-volumes       # Zatrzymanie i usunięcie kontenerów, sieci oraz trwałych wolumenów
 >   ```
 > - **Zarządzanie zależnościami i pakietami:** Ze względu na to, że usługi deweloperskie (`pnpm dev`, serwer FrankenPHP) działają w trybie ciągłym, samo wykonanie instalacji pakietów wewnątrz działającego kontenera często nie wystarcza. W przypadku instalacji nowych pakietów lub zmiany zależności (np. `pnpm add`, `composer require`) dany kontener należy zrestartować lub przebudować, aby zmiany zostały poprawnie uwzględnione przez serwery deweloperskie:
 >   ```bash
@@ -217,6 +223,14 @@ make frontend-format
 # Uruchomienie testów jednostkowych i komponentowych
 make frontend-test
 # Lub: docker compose exec frontend pnpm test
+
+# Otwarcie powłoki w kontenerze frontendu
+make frontend-sh
+# Lub: docker compose exec frontend sh
+
+# Zbudowanie statycznej aplikacji SPA
+make spa-build
+# Lub: docker compose exec frontend sh -c "cd /workspace/spa && pnpm build"
 ```
 
 ---
@@ -263,6 +277,21 @@ make api-cs-check
 # Uruchomienie testów PHPUnit
 make api-test
 # Lub: docker compose exec api bin/phpunit
+
+# Otwarcie powłoki w kontenerze api
+make api-sh
+# Lub: docker compose exec api bash
+
+# Wyczyszczenie pamięci podręcznej Symfony
+make api-cache-clear
+# Lub: docker compose exec api php bin/console cache:clear
+
+# Wykonanie dowolnego polecenia konsoli Symfony
+make api-console cmd="cache:clear"
+# Lub: docker compose exec api php bin/console cache:clear
+
+# Reset bazy danych (usunięcie, odtworzenie, migracje, fixtures)
+make db-reset
 ```
 
 ---

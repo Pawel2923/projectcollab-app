@@ -25,6 +25,7 @@ The development environment is orchestrated with Docker Compose to provide consi
 >   ```bash
 >   # Using Make:
 >   make check               # Run all frontend and backend quality checks
+>   make fix                 # Auto-format and fix code styles across frontend and backend
 >   make frontend-dev-check  # Frontend checks
 >   make db-validate         # Backend Doctrine schema validation
 >   make api-test            # Backend PHPUnit tests
@@ -33,6 +34,11 @@ The development environment is orchestrated with Docker Compose to provide consi
 >   docker compose exec frontend pnpm dev-check
 >   docker compose exec api php bin/console doctrine:schema:validate
 >   docker compose exec api bin/phpunit
+>   ```
+> - **Cleanup & maintenance:** When you need to tear down containers or reset volumes:
+>   ```bash
+>   make clean               # Stop and remove development containers and orphan networks
+>   make clean-volumes       # Stop and remove containers, networks, and persistent volumes
 >   ```
 > - **Dependency & package management:** Because the development services (`pnpm dev`, FrankenPHP server) run continuously, simply executing package installation commands inside a running container is often not enough. If new packages are added or dependencies change (e.g., `pnpm add`, `composer require`), the affected container needs to be restarted or rebuilt to properly reflect changes in the running server:
 >   ```bash
@@ -217,6 +223,14 @@ make frontend-format
 # Run unit / component tests
 make frontend-test
 # Or: docker compose exec frontend pnpm test
+
+# Open a shell inside the frontend container
+make frontend-sh
+# Or: docker compose exec frontend sh
+
+# Build static SPA application
+make spa-build
+# Or: docker compose exec frontend sh -c "cd /workspace/spa && pnpm build"
 ```
 
 ---
@@ -263,6 +277,21 @@ make api-cs-check
 # Run PHPUnit tests
 make api-test
 # Or: docker compose exec api bin/phpunit
+
+# Open a shell inside the api container
+make api-sh
+# Or: docker compose exec api bash
+
+# Clear Symfony cache
+make api-cache-clear
+# Or: docker compose exec api php bin/console cache:clear
+
+# Run any Symfony console command
+make api-console cmd="cache:clear"
+# Or: docker compose exec api php bin/console cache:clear
+
+# Reset database (drop, recreate, migrate, load fixtures)
+make db-reset
 ```
 
 ---
