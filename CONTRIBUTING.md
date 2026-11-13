@@ -126,12 +126,6 @@ make db-fixtures
 
 ---
 
-### Remote Development Support
-
-ProjectCollab supports developing on a remote server with Docker while writing code, testing, and debugging directly from your local IDE (PhpStorm, Visual Studio Code, or any SSH/Dev Container compatible IDE). See the [README](README.md#remote-development-support) for prerequisites.
-
----
-
 ## Branching & Commit Conventions
 
 ### Branch Naming
@@ -150,9 +144,6 @@ The [Conventional Commits](https://www.conventionalcommits.org/) standard is **s
 
 [optional body]
 ```
-
-> [!NOTE]
-> The `scope` is optional. Both scoped (e.g., `feat(frontend): add filter drawer to kanban board`) and unscoped (e.g., `feat: add filter drawer to kanban board`) commits are valid.
 
 * **Examples:**
   * `feat: add filter drawer to kanban board`

@@ -204,17 +204,6 @@ Uruchom `make help`, aby wyświetlić listę wszystkich dostępnych celów z opi
 | | `make clean-volumes` | Zatrzymuje i usuwa kontenery, osierocone sieci oraz trwałe wolumeny |
 
 ---
-## Wsparcie dla Remote Development
-
-ProjectCollab wspiera pracę na zdalnym serwerze z kontenerami Docker, umożliwiając tworzenie kodu, testowanie oraz debugowanie bezpośrednio z lokalnego IDE (PhpStorm, Visual Studio Code lub dowolnego IDE obsługującego SSH i Dev Containers).
-
-### Wymagania wstępne
-
-- Zdalny serwer z dostępem przez SSH.
-- Zainstalowany Docker i Docker Compose na zdalnym serwerze.
-- Sklonowane repozytorium ProjectCollab na zdalnym serwerze.
-
----
 ## Współtworzenie
 
 Wszelki wkład i rozwój projektu są mile widziane! Zapoznaj się z naszymi [Zasadami Współtworzenia](CONTRIBUTING.pl.md) przed przesłaniem Pull Requesta lub utworzeniem zgłoszenia.

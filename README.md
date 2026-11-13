@@ -204,17 +204,6 @@ Run `make help` to inspect all available targets with descriptions directly in t
 | | `make clean-volumes` | Stop and remove development containers, orphan networks, and persistent volumes |
 
 ---
-## Remote Development Support
-
-ProjectCollab supports developing on a remote server with Docker while writing code, testing, and debugging directly from your local IDE (PhpStorm, Visual Studio Code, or any SSH/Dev Container compatible IDE).
-
-### Prerequisites
-
-- A remote server with SSH access.
-- Docker and Docker Compose installed on the remote server.
-- The ProjectCollab repository cloned on the remote server.
-
----
 ## Contributing
 
 Contributions are welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting pull requests or opening issues.

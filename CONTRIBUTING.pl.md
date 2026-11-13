@@ -126,12 +126,6 @@ make db-fixtures
 
 ---
 
-### Wsparcie dla Remote Development
-
-ProjectCollab wspiera pracę na zdalnym serwerze z kontenerami Docker, umożliwiając tworzenie kodu, testowanie oraz debugowanie bezpośrednio z lokalnego IDE (PhpStorm, Visual Studio Code lub dowolnego IDE obsługującego SSH i Dev Containers). Wymagania wstępne opisano w pliku [README.pl.md](README.pl.md#wsparcie-dla-remote-development).
-
----
-
 ## Konwencja Gałęzi i Komitów
 
 ### Nazewnictwo Gałęzi (Branches)
@@ -150,9 +144,6 @@ Stosowanie standardu [Conventional Commits](https://www.conventionalcommits.org/
 
 [opcjonalny szczegółowy opis]
 ```
-
-> [!NOTE]
-> Zakres (`scope`) jest opcjonalny. Prawidłowe są zarówno komity z zakresem (np. `feat(frontend): dodanie panelu filtrów`), jak i bez (np. `feat: dodanie panelu filtrów`).
 
 * **Przykłady:**
   * `feat: dodanie panelu filtrów do tablicy kanban`
