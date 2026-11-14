@@ -70,20 +70,27 @@ env: ## Create .env from .env.example if it does not exist
 	fi
 
 .PHONY: init
-init: env ## Complete local setup: create .env, build/start dev containers, and generate JWT keys
+init: ## Complete local setup: create .env, build/start dev containers, and generate JWT keys
+	@if [ ! -f $(ENV_FILE) ]; then \
+		echo -e "$(COLOR_YELLOW)Creating $(ENV_FILE) from .env.example...$(COLOR_RESET)"; \
+		cp .env.example $(ENV_FILE); \
+		echo -e "$(COLOR_GREEN)$(ENV_FILE) created successfully.$(COLOR_RESET)"; \
+	else \
+		echo "$(ENV_FILE) already exists."; \
+	fi
 	@echo -e "$(COLOR_YELLOW)Starting development environment...$(COLOR_RESET)"
 	$(COMPOSE) up --build --wait
 	@echo -e "$(COLOR_YELLOW)Generating JWT keypair...$(COLOR_RESET)"
-	$(COMPOSE) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair
+	$(COMPOSE) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair --skip-if-exists
 	@echo -e "$(COLOR_GREEN)Initialization completed! Application is ready.$(COLOR_RESET)"
 
 .PHONY: jwt-keys
 jwt-keys: ## Generate Lexik JWT keypair in development api container
-	$(COMPOSE) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair
+	$(COMPOSE) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair --skip-if-exists
 
 .PHONY: jwt-keys-prod
 jwt-keys-prod: ## Generate Lexik JWT keypair in production api container
-	$(COMPOSE_PROD) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair
+	$(COMPOSE_PROD) exec $(API_SERVICE) php bin/console lexik:jwt:generate-keypair --skip-if-exists
 
 ##@ Development
 
