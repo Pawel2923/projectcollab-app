@@ -23,7 +23,7 @@ export function LandingTopNav({ user }: { user: User | null }) {
   return (
     <nav className="sticky top-0 z-20 flex h-16 w-full flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-2 md:h-21 md:gap-4 md:px-8 lg:px-24">
       <div className="flex w-full items-center justify-between">
-        <Link to="/" aria-label="ProjectCollab">
+        <Link to="/" aria-label="ProjectCollab" className="pt-2 md:pt-1">
           <ProjectCollabLogotype />
         </Link>
         <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export function LandingTopNav({ user }: { user: User | null }) {
                 </Button>
               }
             />
-            <SheetContent className="flex flex-col">
+            <SheetContent className="flex flex-col data-[side=right]:w-full sm:data-[side=right]:w-3/4 sm:data-[side=right]:max-w-sm">
               <SheetHeader>
                 <SheetTitle>
                   {user ? (
@@ -74,12 +74,12 @@ export function LandingTopNav({ user }: { user: User | null }) {
                   <p className="mb-2 text-xs font-medium text-muted-foreground">
                     Motyw
                   </p>
-                  <ThemeSegmentedToggle />
+                  <ThemeSegmentedToggle className="w-full" />
                 </div>
               </div>
               <SheetFooter>
                 <SheetClose
-                  render={<Button variant="outline">Zamknij</Button>}
+                  render={<Button variant="outline" className="w-full">Zamknij</Button>}
                 />
               </SheetFooter>
             </SheetContent>

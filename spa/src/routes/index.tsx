@@ -33,7 +33,7 @@ function HomePage() {
               komunikacji w jednej aplikacji
             </p>
             <Button
-              className="text-base md:text-2xl"
+              className="text-base md:text-2xl md:px-6 md:py-5"
               size="lg"
               render={
                 user ? <Link to="/organizations" /> : <Link to="/signup" />
@@ -82,7 +82,7 @@ function HomePage() {
       <footer className="relative flex w-full flex-col items-center justify-center gap-4 border-t border-border bg-background py-3 text-muted-foreground">
         <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-4 px-4 md:px-8 xl:px-12">
           <p className="text-sm">ProjectCollab &copy; {currentYear}</p>
-          <div className="flex gap-2.5 text-xs underline underline-offset-4 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+          <div className="flex flex-wrap justify-center gap-2.5 text-xs underline underline-offset-4 [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
             <Link to="/policy/privacy">Polityka prywatności</Link>
             <Link to="/policy/terms">Warunki korzystania z usługi</Link>
           </div>

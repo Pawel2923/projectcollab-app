@@ -37,7 +37,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="min-w-36">
+      <DropdownMenuContent align="end" className="w-auto min-w-44">
         <DropdownMenuItem
           onClick={() => setTheme("light")}
           className="justify-between gap-2"
@@ -46,7 +46,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             <Sun className="size-4" />
             <span>Jasny</span>
           </span>
-          {theme === "light" && <Check className="size-3.5 text-primary" />}
+          {theme === "light" && <Check className="size-3.5 shrink-0 text-primary" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
@@ -56,7 +56,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             <Moon className="size-4" />
             <span>Ciemny</span>
           </span>
-          {theme === "dark" && <Check className="size-3.5 text-primary" />}
+          {theme === "dark" && <Check className="size-3.5 shrink-0 text-primary" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("auto")}
@@ -67,7 +67,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             <span>Automatyczny</span>
           </span>
           {(theme === "auto" || theme === "system") && (
-            <Check className="size-3.5 text-primary" />
+            <Check className="size-3.5 shrink-0 text-primary" />
           )}
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -96,20 +96,22 @@ export function ThemeSegmentedToggle({ className }: { className?: string }) {
         const isActive =
           theme === opt.value || (opt.value === "auto" && theme === "system")
         return (
-          <button
+          <Button
             key={opt.value}
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setTheme(opt.value)}
             className={cn(
               "flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
               isActive
-                ? "bg-background text-foreground shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-background text-foreground shadow-xs hover:bg-background"
+                : "text-muted-foreground hover:bg-transparent hover:text-foreground"
             )}
           >
             <Icon className="size-3.5" />
             <span>{opt.label}</span>
-          </button>
+          </Button>
         )
       })}
     </div>
