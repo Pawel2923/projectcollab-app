@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 
 test.describe("Landing Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/")
+    await page.goto("./")
   })
 
   test("renders without any console errors or Base UI button warnings", async ({
@@ -16,7 +16,7 @@ test.describe("Landing Page", () => {
         }
       }
     })
-    await page.goto("/")
+    await page.goto("./")
     await page.waitForTimeout(500)
     expect(consoleErrors).toEqual([])
   })
@@ -25,7 +25,7 @@ test.describe("Landing Page", () => {
     await expect(page.locator("nav")).toBeVisible()
     const brandLink = page.getByRole("link", { name: "ProjectCollab" })
     await expect(brandLink).toBeVisible()
-    await expect(brandLink).toHaveAttribute("href", "/")
+    await expect(brandLink).toHaveAttribute("href", "/spa/")
   })
 
   test("renders auth actions in navigation", async ({ page, isMobile }) => {
@@ -36,9 +36,9 @@ test.describe("Landing Page", () => {
     const signupBtn = page.getByRole("button", { name: "Zarejestruj się" })
 
     await expect(loginBtn).toBeVisible()
-    await expect(loginBtn).toHaveAttribute("href", "/signin")
+    await expect(loginBtn).toHaveAttribute("href", "/spa/signin")
     await expect(signupBtn).toBeVisible()
-    await expect(signupBtn).toHaveAttribute("href", "/signup")
+    await expect(signupBtn).toHaveAttribute("href", "/spa/signup")
   })
 
   test("renders hero section with heading and call-to-action", async ({
@@ -56,7 +56,7 @@ test.describe("Landing Page", () => {
 
     const startButton = page.getByRole("button", { name: "Rozpocznij" })
     await expect(startButton).toBeVisible()
-    await expect(startButton).toHaveAttribute("href", "/signup")
+    await expect(startButton).toHaveAttribute("href", "/spa/signup")
 
     const heroImg = page.getByAltText("Podsumowanie projektu")
     await expect(heroImg).toBeVisible()
@@ -94,12 +94,12 @@ test.describe("Landing Page", () => {
       name: "Polityka prywatności",
     })
     await expect(privacyLink).toBeVisible()
-    await expect(privacyLink).toHaveAttribute("href", "/policy/privacy")
+    await expect(privacyLink).toHaveAttribute("href", "/spa/policy/privacy")
 
     const termsLink = footer.getByRole("link", {
       name: "Warunki korzystania z usługi",
     })
     await expect(termsLink).toBeVisible()
-    await expect(termsLink).toHaveAttribute("href", "/policy/terms")
+    await expect(termsLink).toHaveAttribute("href", "/spa/policy/terms")
   })
 })

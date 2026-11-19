@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || "http://127.0.0.1:5173",
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || "http://127.0.0.1:5173/spa/",
     trace: "on-first-retry",
   },
   projects: [
@@ -29,7 +29,7 @@ export default defineConfig({
     ? undefined
     : {
         command: "npx vite --host 127.0.0.1 --port 5173",
-        url: "http://127.0.0.1:5173",
+        url: "http://127.0.0.1:5173/spa/",
         reuseExistingServer: !process.env.CI,
         timeout: 30000,
       },

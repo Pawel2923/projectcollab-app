@@ -6,7 +6,7 @@ test.describe("Theme System (Light, Dark, Auto)", () => {
   }) => {
     // Emulate dark color scheme
     await page.emulateMedia({ colorScheme: "dark" })
-    await page.goto("/")
+    await page.goto("./")
     await page.evaluate(() => localStorage.clear())
     await page.reload()
 
@@ -28,7 +28,7 @@ test.describe("Theme System (Light, Dark, Auto)", () => {
       test.skip()
     }
 
-    await page.goto("/")
+    await page.goto("./")
     await page.evaluate(() => localStorage.clear())
 
     const html = page.locator("html")
@@ -81,7 +81,7 @@ test.describe("Theme System (Light, Dark, Auto)", () => {
       test.skip()
     }
 
-    await page.goto("/")
+    await page.goto("./")
     const html = page.locator("html")
     const themeTrigger = page.getByRole("button", { name: "Wybierz motyw" })
 
@@ -97,7 +97,7 @@ test.describe("Theme System (Light, Dark, Auto)", () => {
   })
 
   test("cycles themes using keyboard shortcut 'd'", async ({ page }) => {
-    await page.goto("/")
+    await page.goto("./")
     const html = page.locator("html")
 
     // Start with light mode via UI or localStorage
@@ -139,7 +139,7 @@ test.describe("Theme System (Light, Dark, Auto)", () => {
       await page.setViewportSize({ width: 390, height: 844 })
     }
 
-    await page.goto("/")
+    await page.goto("./")
     await page.evaluate(() => localStorage.clear())
 
     const html = page.locator("html")

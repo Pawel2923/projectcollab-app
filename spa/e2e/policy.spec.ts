@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test"
 
 test.describe("Privacy Policy Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/policy/privacy")
+    await page.goto("policy/privacy")
   })
 
   test("renders without console errors", async ({ page }) => {
@@ -14,7 +14,7 @@ test.describe("Privacy Policy Page", () => {
         }
       }
     })
-    await page.goto("/policy/privacy")
+    await page.goto("policy/privacy")
     await page.waitForTimeout(500)
     expect(consoleErrors).toEqual([])
   })
@@ -49,17 +49,17 @@ test.describe("Privacy Policy Page", () => {
   test("renders back button linking to home by default", async ({ page }) => {
     const backBtn = page.getByRole("button", { name: "Powróć" })
     await expect(backBtn).toBeVisible()
-    await expect(backBtn).toHaveAttribute("href", "/")
+    await expect(backBtn).toHaveAttribute("href", "/spa/")
     await expect(backBtn).toHaveClass(/bg-background/)
   })
 
   test("renders back button linking to referer when specified", async ({
     page,
   }) => {
-    await page.goto("/policy/privacy?referer=/signin")
+    await page.goto("policy/privacy?referer=/signin")
     const backBtn = page.getByRole("button", { name: "Powróć" })
     await expect(backBtn).toBeVisible()
-    await expect(backBtn).toHaveAttribute("href", "/signin")
+    await expect(backBtn).toHaveAttribute("href", "/spa/signin")
   })
 
   test("renders footer with version date", async ({ page }) => {
@@ -73,7 +73,7 @@ test.describe("Privacy Policy Page", () => {
 
 test.describe("Terms of Service Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/policy/terms")
+    await page.goto("policy/terms")
   })
 
   test("renders without console errors", async ({ page }) => {
@@ -85,7 +85,7 @@ test.describe("Terms of Service Page", () => {
         }
       }
     })
-    await page.goto("/policy/terms")
+    await page.goto("policy/terms")
     await page.waitForTimeout(500)
     expect(consoleErrors).toEqual([])
   })
@@ -117,17 +117,17 @@ test.describe("Terms of Service Page", () => {
   test("renders back button linking to home by default", async ({ page }) => {
     const backBtn = page.getByRole("button", { name: "Powróć" })
     await expect(backBtn).toBeVisible()
-    await expect(backBtn).toHaveAttribute("href", "/")
+    await expect(backBtn).toHaveAttribute("href", "/spa/")
     await expect(backBtn).toHaveClass(/bg-background/)
   })
 
   test("renders back button linking to referer when specified", async ({
     page,
   }) => {
-    await page.goto("/policy/terms?referer=/signup")
+    await page.goto("policy/terms?referer=/signup")
     const backBtn = page.getByRole("button", { name: "Powróć" })
     await expect(backBtn).toBeVisible()
-    await expect(backBtn).toHaveAttribute("href", "/signup")
+    await expect(backBtn).toHaveAttribute("href", "/spa/signup")
   })
 
   test("renders footer with version date", async ({ page }) => {
@@ -141,7 +141,7 @@ test.describe("Terms of Service Page", () => {
 
 test.describe("Policy Hub Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/policy")
+    await page.goto("policy")
   })
 
   test("renders without console errors", async ({ page }) => {
@@ -153,7 +153,7 @@ test.describe("Policy Hub Page", () => {
         }
       }
     })
-    await page.goto("/policy")
+    await page.goto("policy")
     await page.waitForTimeout(500)
     expect(consoleErrors).toEqual([])
   })
@@ -183,7 +183,7 @@ test.describe("Policy Hub Page", () => {
   test("renders back button linking to landing page", async ({ page }) => {
     const backBtn = page.getByRole("button", { name: "Powróć" })
     await expect(backBtn).toBeVisible()
-    await expect(backBtn).toHaveAttribute("href", "/")
+    await expect(backBtn).toHaveAttribute("href", "/spa/")
     await expect(backBtn).toHaveClass(/bg-background/)
   })
 
@@ -192,13 +192,13 @@ test.describe("Policy Hub Page", () => {
       name: /Warunki korzystania/i,
     })
     await expect(termsLink).toBeVisible()
-    await expect(termsLink).toHaveAttribute("href", "/policy/terms")
+    await expect(termsLink).toHaveAttribute("href", "/spa/policy/terms")
 
     const privacyLink = page.getByRole("link", {
       name: /Polityka prywatności/i,
     })
     await expect(privacyLink).toBeVisible()
-    await expect(privacyLink).toHaveAttribute("href", "/policy/privacy")
+    await expect(privacyLink).toHaveAttribute("href", "/spa/policy/privacy")
   })
 })
 
