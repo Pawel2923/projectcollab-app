@@ -138,3 +138,67 @@ test.describe("Terms of Service Page", () => {
     )
   })
 })
+
+test.describe("Policy Hub Page", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/policy")
+  })
+
+  test("renders without console errors", async ({ page }) => {
+    const consoleErrors: string[] = []
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
+        if (!msg.text().includes("404")) {
+          consoleErrors.push(msg.text())
+        }
+      }
+    })
+    await page.goto("/policy")
+    await page.waitForTimeout(500)
+    expect(consoleErrors).toEqual([])
+  })
+
+  test("renders header and descriptions", async ({ page }) => {
+    const heading = page.getByRole("heading", {
+      level: 1,
+      name: "Zasady i polityki",
+    })
+    await expect(heading).toBeVisible()
+
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Warunki korzystania" })
+    ).toBeVisible()
+    await expect(
+      page.getByRole("heading", { level: 2, name: "Polityka prywatności" })
+    ).toBeVisible()
+
+    await expect(
+      page.getByText("Zasady i regulamin korzystania z platformy ProjectCollab")
+    ).toBeVisible()
+    await expect(
+      page.getByText("Informacje o przetwarzaniu i ochronie danych osobowych")
+    ).toBeVisible()
+  })
+
+  test("renders back button linking to landing page", async ({ page }) => {
+    const backBtn = page.getByRole("button", { name: "Powróć" })
+    await expect(backBtn).toBeVisible()
+    await expect(backBtn).toHaveAttribute("href", "/")
+    await expect(backBtn).toHaveClass(/bg-background/)
+  })
+
+  test("renders links to terms and privacy policies", async ({ page }) => {
+    const termsLink = page.getByRole("link", {
+      name: /Warunki korzystania/i,
+    })
+    await expect(termsLink).toBeVisible()
+    await expect(termsLink).toHaveAttribute("href", "/policy/terms")
+
+    const privacyLink = page.getByRole("link", {
+      name: /Polityka prywatności/i,
+    })
+    await expect(privacyLink).toBeVisible()
+    await expect(privacyLink).toHaveAttribute("href", "/policy/privacy")
+  })
+})
+

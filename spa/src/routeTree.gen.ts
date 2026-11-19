@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizationsRouteImport } from './routes/organizations'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as PolicyIndexRouteImport } from './routes/policy.index'
 import { Route as PolicyPrivacyRouteImport } from './routes/policy.privacy'
 import { Route as PolicyTermsRouteImport } from './routes/policy.terms'
 
@@ -36,6 +37,11 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolicyIndexRoute = PolicyIndexRouteImport.update({
+  id: '/policy/',
+  path: '/policy/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PolicyPrivacyRoute = PolicyPrivacyRouteImport.update({
   id: '/policy/privacy',
   path: '/policy/privacy',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/policy/': typeof PolicyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/policy': typeof PolicyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/policy/': typeof PolicyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/policy/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/policy'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/policy/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   PolicyPrivacyRoute: typeof PolicyPrivacyRoute
   PolicyTermsRoute: typeof PolicyTermsRoute
+  PolicyIndexRoute: typeof PolicyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/policy/': {
+      id: '/policy/'
+      path: '/policy'
+      fullPath: '/policy/'
+      preLoaderRoute: typeof PolicyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/policy/privacy': {
       id: '/policy/privacy'
       path: '/policy/privacy'
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   PolicyPrivacyRoute: PolicyPrivacyRoute,
   PolicyTermsRoute: PolicyTermsRoute,
+  PolicyIndexRoute: PolicyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
