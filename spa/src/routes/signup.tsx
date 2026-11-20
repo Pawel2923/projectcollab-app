@@ -1,13 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { SignUpView } from "@/features/authentication"
 
 export const Route = createFileRoute("/signup")({
-  component: SignUpPage,
+  component: SignUpView,
 })
-
-function SignUpPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <h1 className="text-2xl font-bold">Rejestracja</h1>
-    </div>
-  )
-}

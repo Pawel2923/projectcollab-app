@@ -1,0 +1,106 @@
+import { describe, it, expect, vi, beforeEach } from "vitest"
+import { HttpAuthGateway } from "./http-auth-gateway"
+import type { ApiUserDto } from "../dto/user-api.dto"
+import type {
+  apiClient,
+  apiFetch,
+  refreshTokens,
+  onAuthFailure,
+} from "@/shared/api"
+
+describe("HttpAuthGateway", () => {
+  let mockApiClient: {
+    get: ReturnType<typeof vi.fn>
+    post: ReturnType<typeof vi.fn>
+  }
+  let mockApiFetch: ReturnType<typeof vi.fn>
+  let mockRefreshTokens: ReturnType<typeof vi.fn>
+  let mockOnAuthFailure: ReturnType<typeof vi.fn>
+  let gateway: HttpAuthGateway
+
+  beforeEach(() => {
+    mockApiClient = {
+      get: vi.fn(),
+      post: vi.fn(),
+    }
+    mockApiFetch = vi.fn()
+    mockRefreshTokens = vi.fn()
+    mockOnAuthFailure = vi.fn()
+
+    gateway = new HttpAuthGateway({
+      apiClient: mockApiClient as unknown as typeof apiClient,
+      apiFetch: mockApiFetch as unknown as typeof apiFetch,
+      refreshTokens: mockRefreshTokens as unknown as typeof refreshTokens,
+      onAuthFailure: mockOnAuthFailure as unknown as typeof onAuthFailure,
+    })
+  })
+
+  it("calls login endpoint with correct credentials and options", async () => {
+    mockApiFetch.mockResolvedValueOnce({})
+
+    await gateway.login({ email: "user@test.com", password: "password123" })
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/login", {
+      method: "POST",
+      body: { email: "user@test.com", password: "password123" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("calls logout endpoint with correct options", async () => {
+    mockApiFetch.mockResolvedValueOnce({})
+
+    await gateway.logout()
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/logout", {
+      method: "POST",
+      body: {},
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("fetches and maps current user to domain entity", async () => {
+    const rawUser: ApiUserDto = {
+      "@id": "/core-api/users/99",
+      "@type": "User",
+      id: 99,
+      email: "user@test.com",
+      roles: ["ROLE_USER"],
+      username: "user99",
+    }
+    mockApiClient.get.mockResolvedValueOnce(rawUser)
+
+    const result = await gateway.getCurrentUser()
+
+    expect(mockApiClient.get).toHaveBeenCalledWith("/core-api/users/me", {
+      skipAuthRedirect: true,
+    })
+    expect(result).toEqual({
+      id: 99,
+      email: "user@test.com",
+      roles: ["ROLE_USER"],
+      username: "user99",
+      registeredAt: undefined,
+      isVerified: undefined,
+    })
+  })
+
+  it("returns null when getCurrentUser fails with an error", async () => {
+    mockApiClient.get.mockRejectedValueOnce(new Error("Unauthorized"))
+
+    const result = await gateway.getCurrentUser()
+    expect(result).toBeNull()
+  })
+
+  it("delegates refreshTokens and onAuthFailure", async () => {
+    mockRefreshTokens.mockResolvedValueOnce(true)
+    const refreshed = await gateway.refreshTokens()
+    expect(refreshed).toBe(true)
+
+    const cb = vi.fn()
+    gateway.onAuthFailure(cb)
+    expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
+  })
+})
