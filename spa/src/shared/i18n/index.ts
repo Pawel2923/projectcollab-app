@@ -6,6 +6,8 @@ export {
   getAppLocale,
   setAppLocale,
   onLocaleChange,
+  detectBrowserLocale,
+  getStoredLocale,
   type AppLocale,
   type LocaleChangeListener,
 } from "./i18n"

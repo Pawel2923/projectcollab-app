@@ -7,6 +7,8 @@ import {
   setAppLocale,
   getAppLocale,
   onLocaleChange,
+  detectBrowserLocale,
+  getStoredLocale,
   type AppLocale,
 } from "./i18n"
 import { m } from "@/paraglide/messages"
@@ -39,6 +41,35 @@ describe("i18n module", () => {
     it("returns appropriate labels for locales", () => {
       expect(getLocaleLabel("pl")).toBe("Polski")
       expect(getLocaleLabel("en")).toBe("English")
+    })
+  })
+
+  describe("automatic browser locale detection", () => {
+    it("returns null for getStoredLocale when no document/storage is present", () => {
+      expect(getStoredLocale()).toBeNull()
+    })
+
+    it("detects English from en-US or en-GB", () => {
+      expect(detectBrowserLocale(["en-US", "en"])).toBe("en")
+      expect(detectBrowserLocale(["en-GB"])).toBe("en")
+      expect(detectBrowserLocale(["EN"])).toBe("en")
+    })
+
+    it("detects Polish from pl-PL or pl", () => {
+      expect(detectBrowserLocale(["pl-PL", "pl"])).toBe("pl")
+      expect(detectBrowserLocale(["pl"])).toBe("pl")
+      expect(detectBrowserLocale(["PL"])).toBe("pl")
+    })
+
+    it("picks first supported language from user preference order", () => {
+      expect(detectBrowserLocale(["de-DE", "de", "en-US"])).toBe("en")
+      expect(detectBrowserLocale(["fr-FR", "pl-PL", "en-US"])).toBe("pl")
+    })
+
+    it("falls back to default locale (pl) when user languages are unsupported", () => {
+      expect(detectBrowserLocale(["es-ES", "fr-FR", "it-IT"])).toBe("pl")
+      expect(detectBrowserLocale([])).toBe("pl")
+      expect(detectBrowserLocale(undefined as unknown as string[])).toBe("pl")
     })
   })
 

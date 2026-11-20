@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "compile:i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable baseLocale",
+    "compile:i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable preferredLanguage baseLocale",
     "check:i18n": "inlang check --project ./project.inlang",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable baseLocale && tsc -b && vite build",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable preferredLanguage baseLocale && tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",

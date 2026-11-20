@@ -9,6 +9,7 @@ import {
   type AppLocale,
   SUPPORTED_LOCALES,
   getAppLocale,
+  getStoredLocale,
   setAppLocale,
   isValidLocale,
   onLocaleChange,
@@ -41,6 +42,9 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.lang = locale
+    }
+    if (!getStoredLocale()) {
+      void setAppLocale(locale, { reload: false })
     }
   }, [locale])
 

@@ -9,7 +9,13 @@ export default defineConfig({
       outdir: "./src/paraglide",
       emitTsDeclarations: true,
       outputStructure: "message-modules",
-      strategy: ["cookie", "localStorage", "globalVariable", "baseLocale"],
+      strategy: [
+        "cookie",
+        "localStorage",
+        "globalVariable",
+        "preferredLanguage",
+        "baseLocale",
+      ],
     }),
   ],
   test: {
