@@ -3,6 +3,8 @@ import {
   formatApiUrl,
   onAuthFailure,
   notifyAuthFailure,
+  refreshTokens,
+  setRefreshTokenResolver,
   apiFetch,
 } from "./api-client"
 
@@ -190,3 +192,53 @@ describe("apiFetch auth failure and retry lifecycle", () => {
   })
 })
 
+describe("refreshTokens", () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+    setRefreshTokenResolver(null)
+  })
+
+  it("posts to /core-api/auth/refresh with JSON body containing refresh_token", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      status: 200,
+      ok: true,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => ({ token: "new-jwt", refresh_token: "new-refresh" }),
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const result = await refreshTokens("my-refresh-token")
+    expect(result).toBe(true)
+    expect(fetchMock).toHaveBeenCalledWith("/core-api/auth/refresh", {
+      method: "POST",
+      headers: {
+        Accept: "application/ld+json, application/json",
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      credentials: "include",
+      body: JSON.stringify({ refresh_token: "my-refresh-token" }),
+    })
+  })
+
+  it("uses registered refresh token resolver when no token is explicitly passed", async () => {
+    setRefreshTokenResolver(() => "resolved-refresh-token")
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      status: 200,
+      ok: true,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => ({ token: "new-jwt", refresh_token: "new-refresh" }),
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const result = await refreshTokens()
+    expect(result).toBe(true)
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/core-api/auth/refresh",
+      expect.objectContaining({
+        body: JSON.stringify({ refresh_token: "resolved-refresh-token" }),
+      })
+    )
+  })
+})

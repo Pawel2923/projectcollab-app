@@ -129,5 +129,16 @@ describe("Authentication Use Cases", () => {
       expect(result).toBe(true)
       expect(mockGateway.refreshTokens).toHaveBeenCalledTimes(1)
     })
+
+    it("passes refreshToken to gateway refreshTokens", async () => {
+      mockGateway.refreshTokens.mockResolvedValueOnce(true)
+      const useCase = new RefreshTokensUseCase(
+        mockGateway as unknown as AuthGatewayPort
+      )
+
+      const result = await useCase.execute("custom-refresh-token")
+      expect(result).toBe(true)
+      expect(mockGateway.refreshTokens).toHaveBeenCalledWith("custom-refresh-token")
+    })
   })
 })

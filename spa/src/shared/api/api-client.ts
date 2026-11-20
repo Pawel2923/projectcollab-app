@@ -29,6 +29,35 @@ export function notifyAuthFailure(): void {
 
 let refreshPromise: Promise<boolean> | null = null
 
+export type RefreshTokenResolver = () => string | null | undefined
+let refreshTokenResolver: RefreshTokenResolver | null = null
+
+export function setRefreshTokenResolver(
+  resolver: RefreshTokenResolver | null
+): void {
+  refreshTokenResolver = resolver
+}
+
+export type TokenRefreshedCallback = (token: string) => void
+const tokenRefreshedCallbacks = new Set<TokenRefreshedCallback>()
+
+export function onTokenRefreshed(callback: TokenRefreshedCallback): () => void {
+  tokenRefreshedCallbacks.add(callback)
+  return () => {
+    tokenRefreshedCallbacks.delete(callback)
+  }
+}
+
+export function notifyTokenRefreshed(token: string): void {
+  for (const callback of tokenRefreshedCallbacks) {
+    try {
+      callback(token)
+    } catch (error: unknown) {
+      console.error("Error in token refreshed listener", error)
+    }
+  }
+}
+
 export function formatApiUrl(endpoint: string): string {
   if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
     return endpoint
@@ -40,10 +69,14 @@ export function formatApiUrl(endpoint: string): string {
   return `/core-api${cleanEndpoint}`
 }
 
-export async function refreshTokens(): Promise<boolean> {
+export async function refreshTokens(
+  refreshToken?: string
+): Promise<boolean> {
   if (refreshPromise) {
     return refreshPromise
   }
+
+  const token = refreshToken ?? refreshTokenResolver?.() ?? ""
 
   refreshPromise = (async () => {
     try {
@@ -55,9 +88,23 @@ export async function refreshTokens(): Promise<boolean> {
           "X-Requested-With": "XMLHttpRequest",
         },
         credentials: "include",
+        body: JSON.stringify({ refresh_token: token }),
       })
 
-      return response.ok
+      if (response.ok) {
+        const data = await response.json().catch(() => null)
+        if (
+          data &&
+          typeof data === "object" &&
+          "refresh_token" in data &&
+          typeof (data as { refresh_token: unknown }).refresh_token === "string"
+        ) {
+          notifyTokenRefreshed((data as { refresh_token: string }).refresh_token)
+        }
+        return true
+      }
+
+      return false
     } catch (error: unknown) {
       console.error("Token refresh network failure", error)
       return false

@@ -5,7 +5,9 @@ import {
   apiClient as defaultApiClient,
   apiFetch as defaultApiFetch,
   onAuthFailure as defaultOnAuthFailure,
+  onTokenRefreshed as defaultOnTokenRefreshed,
   refreshTokens as defaultRefreshTokens,
+  setRefreshTokenResolver as defaultSetRefreshTokenResolver,
   type AuthFailureCallback,
 } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
@@ -41,6 +43,15 @@ export class HttpAuthGateway implements AuthGatewayPort {
     this.onAuthFailureFn = dependencies.onAuthFailure ?? defaultOnAuthFailure
     this.getRefreshTokenFn = dependencies.getRefreshToken
     this.setRefreshTokenFn = dependencies.setRefreshToken
+
+    if (!dependencies.refreshTokens && typeof defaultSetRefreshTokenResolver === "function") {
+      defaultSetRefreshTokenResolver(() => this.getRefreshToken())
+    }
+    if (typeof defaultOnTokenRefreshed === "function") {
+      defaultOnTokenRefreshed((newToken) => {
+        this.setRefreshToken(newToken)
+      })
+    }
   }
 
   public getRefreshToken(): string | null {
@@ -91,8 +102,9 @@ export class HttpAuthGateway implements AuthGatewayPort {
     }
   }
 
-  public async refreshTokens(): Promise<boolean> {
-    return this.refreshTokenFn()
+  public async refreshTokens(refreshToken?: string): Promise<boolean> {
+    const token = refreshToken ?? this.getRefreshToken() ?? ""
+    return this.refreshTokenFn(token)
   }
 
   public onAuthFailure(callback: AuthFailureCallback): () => void {

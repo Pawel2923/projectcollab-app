@@ -150,9 +150,44 @@ describe("HttpAuthGateway", () => {
     mockRefreshTokens.mockResolvedValueOnce(true)
     const refreshed = await gateway.refreshTokens()
     expect(refreshed).toBe(true)
+    expect(mockRefreshTokens).toHaveBeenCalledWith("")
 
     const cb = vi.fn()
     gateway.onAuthFailure(cb)
     expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
+  })
+
+  it("passes stored refresh token to refreshTokens function", async () => {
+    gateway.setRefreshToken("stored-refresh-token")
+    mockRefreshTokens.mockResolvedValueOnce(true)
+
+    const refreshed = await gateway.refreshTokens()
+
+    expect(refreshed).toBe(true)
+    expect(mockRefreshTokens).toHaveBeenCalledWith("stored-refresh-token")
+  })
+
+  it("passes explicit refresh token to refreshTokens function", async () => {
+    gateway.setRefreshToken("stored-refresh-token")
+    mockRefreshTokens.mockResolvedValueOnce(true)
+
+    const refreshed = await gateway.refreshTokens("explicit-refresh-token")
+
+    expect(refreshed).toBe(true)
+    expect(mockRefreshTokens).toHaveBeenCalledWith("explicit-refresh-token")
+  })
+
+  it("passes token captured from login to refreshTokens function", async () => {
+    mockApiFetch.mockResolvedValueOnce({
+      token: "jwt-token-123",
+      refresh_token: "captured-login-token",
+    })
+    await gateway.login({ email: "user@test.com", password: "password123" })
+
+    mockRefreshTokens.mockResolvedValueOnce(true)
+    const refreshed = await gateway.refreshTokens()
+
+    expect(refreshed).toBe(true)
+    expect(mockRefreshTokens).toHaveBeenCalledWith("captured-login-token")
   })
 })

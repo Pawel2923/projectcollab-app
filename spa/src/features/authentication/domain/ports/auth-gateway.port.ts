@@ -5,6 +5,6 @@ export interface AuthGatewayPort {
   login(credentials: LoginCredentials): Promise<void>
   logout(refreshToken?: string): Promise<void>
   getCurrentUser(): Promise<User | null>
-  refreshTokens(): Promise<boolean>
+  refreshTokens(refreshToken?: string): Promise<boolean>
   onAuthFailure(callback: () => void): () => void
 }
