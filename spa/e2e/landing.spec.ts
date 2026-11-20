@@ -102,4 +102,36 @@ test.describe("Landing Page", () => {
     await expect(termsLink).toBeVisible()
     await expect(termsLink).toHaveAttribute("href", "/spa/policy/terms")
   })
+
+  test("allows switching language between Polish and English", async ({
+    page,
+    isMobile,
+  }) => {
+    if (isMobile) {
+      test.skip()
+    }
+    // Polish by default
+    await expect(
+      page.getByRole("heading", { name: "Planuj, twórz i współpracuj" })
+    ).toBeVisible()
+
+    // Open language switcher dropdown
+    const langBtn = page.getByRole("button", { name: "Zmień język" })
+    await expect(langBtn).toBeVisible()
+    await langBtn.click()
+
+    // Select English option
+    const englishOption = page.getByRole("menuitem", { name: /English/i })
+    await expect(englishOption).toBeVisible()
+    await englishOption.click()
+
+    // Verify English translations are rendered
+    await expect(
+      page.getByRole("heading", { name: "Plan, build, and collaborate" })
+    ).toBeVisible()
+    await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible()
+    await expect(
+      page.getByRole("button", { name: "Get started" })
+    ).toBeVisible()
+  })
 })

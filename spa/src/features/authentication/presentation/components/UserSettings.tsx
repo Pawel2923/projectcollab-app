@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui"
 import { Sun, Moon, Monitor, Check } from "lucide-react"
+import { m } from "@/paraglide/messages"
 
 export interface UserSettingsProps {
   children: React.ReactNode
@@ -42,7 +43,9 @@ export function UserSettings({
       <Avatar
         initials={generateUserInitials(userCtx?.user || null)}
         size="large"
-        ariaLabel={`Profil użytkownika ${userCtx?.user?.email ?? ""}`}
+        ariaLabel={m.user_settings_avatar_aria_label({
+          email: userCtx?.user?.email ?? "",
+        })}
       />
       <ChevronDownIcon
         className="transition-transform duration-300"
@@ -65,12 +68,12 @@ export function UserSettings({
         {children}
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-          Ustawienia motywu
+          {m.common_theme_settings()}
         </DropdownMenuLabel>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="gap-2">
             <CurrentThemeIcon className="size-4" />
-            <span>Motyw</span>
+            <span>{m.common_theme()}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent className="min-w-36">
             <DropdownMenuItem
@@ -79,7 +82,7 @@ export function UserSettings({
             >
               <span className="flex items-center gap-2">
                 <Sun className="size-4" />
-                <span>Jasny</span>
+                <span>{m.common_theme_light()}</span>
               </span>
               {theme === "light" && <Check className="size-3.5 text-primary" />}
             </DropdownMenuItem>
@@ -89,7 +92,7 @@ export function UserSettings({
             >
               <span className="flex items-center gap-2">
                 <Moon className="size-4" />
-                <span>Ciemny</span>
+                <span>{m.common_theme_dark()}</span>
               </span>
               {theme === "dark" && <Check className="size-3.5 text-primary" />}
             </DropdownMenuItem>
@@ -99,7 +102,7 @@ export function UserSettings({
             >
               <span className="flex items-center gap-2">
                 <Monitor className="size-4" />
-                <span>Automatyczny</span>
+                <span>{m.common_theme_auto()}</span>
               </span>
               {(theme === "auto" || theme === "system") && (
                 <Check className="size-3.5 text-primary" />

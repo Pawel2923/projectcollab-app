@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
 import { cn } from "@/shared/lib/utils"
+import { m } from "@/paraglide/messages"
 
 export interface ThemeToggleProps {
   className?: string
@@ -31,7 +32,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             variant="ghost"
             size="icon"
             className={cn("relative", className)}
-            aria-label="Wybierz motyw"
+            aria-label={m.common_theme_choose()}
           >
             <CurrentIcon className="size-4.5 transition-all" />
           </Button>
@@ -44,7 +45,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         >
           <span className="flex items-center gap-2">
             <Sun className="size-4" />
-            <span>Jasny</span>
+            <span>{m.common_theme_light()}</span>
           </span>
           {theme === "light" && (
             <Check className="size-3.5 shrink-0 text-primary" />
@@ -56,7 +57,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         >
           <span className="flex items-center gap-2">
             <Moon className="size-4" />
-            <span>Ciemny</span>
+            <span>{m.common_theme_dark()}</span>
           </span>
           {theme === "dark" && (
             <Check className="size-3.5 shrink-0 text-primary" />
@@ -68,7 +69,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         >
           <span className="flex items-center gap-2">
             <Monitor className="size-4" />
-            <span>Automatyczny</span>
+            <span>{m.common_theme_auto()}</span>
           </span>
           {(theme === "auto" || theme === "system") && (
             <Check className="size-3.5 shrink-0 text-primary" />
@@ -83,9 +84,9 @@ export function ThemeSegmentedToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme()
 
   const options: { value: Theme; label: string; icon: typeof Sun }[] = [
-    { value: "light", label: "Jasny", icon: Sun },
-    { value: "dark", label: "Ciemny", icon: Moon },
-    { value: "auto", label: "Auto", icon: Monitor },
+    { value: "light", label: m.common_theme_light(), icon: Sun },
+    { value: "dark", label: m.common_theme_dark(), icon: Moon },
+    { value: "auto", label: m.common_theme_auto_short(), icon: Monitor },
   ]
 
   return (
@@ -107,14 +108,14 @@ export function ThemeSegmentedToggle({ className }: { className?: string }) {
             size="sm"
             onClick={() => setTheme(opt.value)}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              "flex flex-1 min-w-0 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
               isActive
                 ? "bg-background text-foreground shadow-xs hover:bg-background"
                 : "text-muted-foreground hover:bg-transparent hover:text-foreground"
             )}
           >
-            <Icon className="size-3.5" />
-            <span>{opt.label}</span>
+            <Icon className="size-3.5 shrink-0" />
+            <span className="truncate">{opt.label}</span>
           </Button>
         )
       })}

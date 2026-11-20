@@ -1,4 +1,5 @@
 import { BackButton } from "@/shared/ui"
+import { m } from "@/paraglide/messages"
 
 export interface PrivacyPolicyViewProps {
   referer?: string
@@ -7,35 +8,33 @@ export interface PrivacyPolicyViewProps {
 export function PrivacyPolicyView({ referer }: PrivacyPolicyViewProps) {
   return (
     <>
-      <BackButton href={referer || "/"} label="Powróć" position="fixed" />
+      <BackButton
+        href={referer || "/"}
+        label={m.common_back()}
+        position="fixed"
+      />
 
       <main className="mx-auto max-w-3xl px-4 py-12 text-foreground">
-        <h1 className="mb-6 text-3xl font-bold">Polityka prywatności</h1>
+        <h1 className="mb-6 text-3xl font-bold">{m.policy_privacy_title()}</h1>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            1. Postanowienia ogólne
+            {m.policy_privacy_sec1_title()}
           </h2>
           <p className="mb-2">
-            Niniejsza Polityka prywatności określa zasady przetwarzania danych
-            osobowych w aplikacji webowej{" "}
-            <span className="font-semibold">ProjectCollab</span> stanowiącej
-            projekt edukacyjny realizowany w ramach pracy dyplomowej pt.
-            „PLATFORMA DO ZARZĄDZANIA PROJEKTAMI Z INTEGRACJĄ METODOLOGII AGILE”
-            (dalej: „ProjectCollab”).
+            {m.policy_privacy_sec1_p1_before()}
+            <span className="font-semibold">ProjectCollab</span>
+            {m.policy_privacy_sec1_p1_thesis()}
           </p>
-          <p className="mb-2">
-            ProjectCollab ma charakter niekomercyjny, demonstracyjny i
-            edukacyjny. Nie stanowi ona usługi świadczonej drogą elektroniczną w
-            rozumieniu obowiązujących przepisów prawa i nie jest przeznaczona do
-            wykorzystania produkcyjnego.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec1_p2()}</p>
           <div className="mb-2">
-            <span className="font-semibold">Administrator danych:</span>{" "}
+            <span className="font-semibold">
+              {m.policy_privacy_sec1_admin_label()}
+            </span>{" "}
             <span className="text-muted-foreground italic">Paweł Poremba</span>
             <br />
             <span className="font-semibold">
-              Adres e-mail do kontaktu:
+              {m.policy_privacy_sec1_email_label()}
             </span>{" "}
             <span className="text-muted-foreground italic">
               projectcollab@nis-lab.com
@@ -45,186 +44,105 @@ export function PrivacyPolicyView({ referer }: PrivacyPolicyViewProps) {
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            2. Zakres przetwarzanych danych osobowych
+            {m.policy_privacy_sec2_title()}
           </h2>
-          <p className="mb-2">
-            W ramach funkcjonowania ProjectCollab mogą być przetwarzane
-            następujące kategorie danych osobowych:
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec2_intro()}</p>
           <ul className="mb-2 ml-4 list-inside list-disc">
-            <li>adres e-mail użytkownika,</li>
-            <li>nazwa użytkownika (login),</li>
-            <li>hasło w postaci zaszyfrowanej (hash),</li>
-            <li>
-              identyfikatory użytkownika pochodzące od zewnętrznych dostawców
-              uwierzytelniania (Google, Microsoft),
-            </li>
-            <li>
-              tokeny OAuth umożliwiające dostęp do zewnętrznych usług
-              użytkownika, w szczególności kalendarzy.
-            </li>
+            <li>{m.policy_privacy_sec2_item1()}</li>
+            <li>{m.policy_privacy_sec2_item2()}</li>
+            <li>{m.policy_privacy_sec2_item3()}</li>
+            <li>{m.policy_privacy_sec2_item4()}</li>
+            <li>{m.policy_privacy_sec2_item5()}</li>
           </ul>
-          <p className="mb-2">
-            Adres IP użytkownika może być przetwarzany w ramach standardowych
-            logów serwera w celach technicznych i bezpieczeństwa, przy czym nie
-            jest on utrwalany w bazie danych ProjectCollab.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec2_ip_info()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            3. Cele przetwarzania danych
+            {m.policy_privacy_sec3_title()}
           </h2>
-          <p className="mb-2">
-            Dane osobowe przetwarzane są wyłącznie w następujących celach:
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec3_intro()}</p>
           <ul className="mb-2 ml-4 list-inside list-disc">
-            <li>
-              zapewnienie prawidłowego procesu rejestracji i uwierzytelniania
-              użytkowników,
-            </li>
-            <li>
-              realizacja logowania lokalnego oraz logowania za pośrednictwem
-              zewnętrznych dostawców tożsamości (OAuth),
-            </li>
-            <li>
-              umożliwienie integracji ProjectCollab z usługami zewnętrznymi, w
-              szczególności usługami kalendarzowymi,
-            </li>
-            <li>
-              zapewnienie prawidłowego działania, integralności oraz
-              bezpieczeństwa ProjectCollab,
-            </li>
-            <li>
-              realizacja celów testowych, demonstracyjnych i dydaktycznych
-              związanych z wykonaniem projektu dyplomowego.
-            </li>
+            <li>{m.policy_privacy_sec3_item1()}</li>
+            <li>{m.policy_privacy_sec3_item2()}</li>
+            <li>{m.policy_privacy_sec3_item3()}</li>
+            <li>{m.policy_privacy_sec3_item4()}</li>
+            <li>{m.policy_privacy_sec3_item5()}</li>
           </ul>
-          <p className="mb-2">
-            Dane osobowe nie są wykorzystywane do celów marketingowych,
-            analitycznych ani profilowania.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec3_no_marketing()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            4. Podstawa prawna przetwarzania
+            {m.policy_privacy_sec4_title()}
           </h2>
-          <p className="mb-2">
-            Podstawą prawną przetwarzania danych osobowych jest:
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec4_intro()}</p>
           <ul className="mb-2 ml-4 list-inside list-disc">
-            <li>
-              zgoda użytkownika, o której mowa w art. 6 ust. 1 lit. a RODO,
-            </li>
-            <li>
-              niezbędność przetwarzania do realizacji funkcjonalności
-              ProjectCollab, zgodnie z art. 6 ust. 1 lit. b RODO.
-            </li>
+            <li>{m.policy_privacy_sec4_item1()}</li>
+            <li>{m.policy_privacy_sec4_item2()}</li>
           </ul>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            5. Odbiorcy danych i integracje zewnętrzne
+            {m.policy_privacy_sec5_title()}
           </h2>
-          <p className="mb-2">
-            ProjectCollab wykorzystuje mechanizmy uwierzytelniania dostarczane
-            przez podmioty trzecie:
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec5_intro()}</p>
           <ul className="mb-2 ml-4 list-inside list-disc">
             <li>Google,</li>
             <li>Microsoft.</li>
           </ul>
-          <p className="mb-2">
-            Procesy uwierzytelniania oraz integracji z tymi usługami odbywają
-            się zgodnie z regulaminami i politykami prywatności tych podmiotów.
-            Administrator nie ma wpływu na zakres i sposób przetwarzania danych
-            przez wskazanych dostawców.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec5_third_parties()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            6. Pliki cookies i technologie przechowywania danych
+            {m.policy_privacy_sec6_title()}
           </h2>
-          <p className="mb-2">
-            ProjectCollab wykorzystuje wyłącznie pliki cookies o charakterze
-            technicznym, w tym pliki cookies z atrybutem HTTP-Only, niezbędne do
-            prawidłowego funkcjonowania mechanizmów sesji i uwierzytelniania.
-          </p>
-          <p className="mb-2">
-            Dodatkowo ProjectCollab wykorzystuje mechanizmy localStorage
-            wyłącznie w celu zapisywania preferencji interfejsu użytkownika. W
-            localStorage nie są przechowywane hasła ani tokeny
-            uwierzytelniające.
-          </p>
-          <p className="mb-2">
-            ProjectCollab nie stosuje plików cookies analitycznych ani
-            marketingowych. Ewentualne pliki cookies pochodzące od Google lub
-            Microsoft mogą być zapisywane wyłącznie w ramach ich własnych
-            ekranów logowania.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec6_p1()}</p>
+          <p className="mb-2">{m.policy_privacy_sec6_p2()}</p>
+          <p className="mb-2">{m.policy_privacy_sec6_p3()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            7. Okres przechowywania danych
+            {m.policy_privacy_sec7_title()}
           </h2>
-          <p className="mb-2">
-            Dane osobowe są przechowywane wyłącznie przez okres trwania projektu
-            edukacyjnego lub do momentu ich usunięcia przez administratora.
-          </p>
-          <p className="mb-2">
-            Użytkownik nie posiada funkcjonalności samodzielnego usunięcia
-            konta. Usunięcie danych następuje na żądanie użytkownika lub na
-            podstawie decyzji administratora.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec7_p1()}</p>
+          <p className="mb-2">{m.policy_privacy_sec7_p2()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            8. Prawa osoby, której dane dotyczą
+            {m.policy_privacy_sec8_title()}
           </h2>
-          <p className="mb-2">
-            Osobie, której dane dotyczą, przysługuje prawo do:
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec8_intro()}</p>
           <ul className="mb-2 ml-4 list-inside list-disc">
-            <li>dostępu do danych osobowych,</li>
-            <li>ich sprostowania,</li>
-            <li>usunięcia danych,</li>
-            <li>ograniczenia przetwarzania.</li>
+            <li>{m.policy_privacy_sec8_item1()}</li>
+            <li>{m.policy_privacy_sec8_item2()}</li>
+            <li>{m.policy_privacy_sec8_item3()}</li>
+            <li>{m.policy_privacy_sec8_item4()}</li>
           </ul>
-          <p className="mb-2">
-            W celu realizacji powyższych praw należy skontaktować się z
-            administratorem danych.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec8_contact()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            9. Lokalny charakter ProjectCollab
+            {m.policy_privacy_sec9_title()}
           </h2>
-          <p className="mb-2">
-            ProjectCollab jest uruchamiana wyłącznie w środowisku lokalnym i nie
-            jest publicznie dostępna w sieci Internet.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec9_p1()}</p>
         </section>
 
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-semibold">
-            10. Zmiany polityki prywatności
+            {m.policy_privacy_sec10_title()}
           </h2>
-          <p className="mb-2">
-            Administrator zastrzega sobie prawo do zmiany niniejszej Polityki
-            prywatności w przypadku zmian funkcjonalnych ProjectCollab lub zmian
-            obowiązujących przepisów prawa.
-          </p>
+          <p className="mb-2">{m.policy_privacy_sec10_p1()}</p>
         </section>
       </main>
 
       <footer className="mx-auto max-w-3xl px-4 pb-8 text-center text-sm text-muted-foreground">
-        Polityka prywatności ProjectCollab – wersja z dnia 14.12.2025 r.
+        {m.policy_privacy_footer()}
       </footer>
     </>
   )

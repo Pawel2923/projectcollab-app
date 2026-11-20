@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "compile:i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable baseLocale",
+    "check:i18n": "inlang check --project ./project.inlang",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --output-structure message-modules --strategy cookie localStorage globalVariable baseLocale && tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10",
+    "@inlang/paraglide-js": "^3.2.2",
     "@playwright/test": "1.50.1",
     "@tanstack/react-query-devtools": "^5.107.1",
     "@tanstack/react-router-devtools": "^1.167.2",
@@ -48,6 +51,7 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8",
     "vite": "^8",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.1",
+    "@inlang/cli": "^3.4.0"
   }
 }

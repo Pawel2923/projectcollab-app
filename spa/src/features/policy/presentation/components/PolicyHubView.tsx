@@ -1,24 +1,23 @@
 import { Link } from "@tanstack/react-router"
 import { ChevronRightIcon, FileTextIcon, ShieldCheckIcon } from "lucide-react"
 import { BackButton } from "@/shared/ui"
+import { m } from "@/paraglide/messages"
 
 export function PolicyHubView() {
   return (
     <>
-      <BackButton href="/" label="Powróć" position="fixed" />
+      <BackButton href="/" label={m.common_back()} position="fixed" />
 
       <main className="mx-auto max-w-3xl px-4 py-12 text-foreground">
         <header className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold">Zasady i polityki</h1>
+          <h1 className="mb-2 text-3xl font-bold">{m.policy_hub_title()}</h1>
           <p className="text-base text-muted-foreground">
-            Zapoznaj się z regulaminem korzystania z serwisu oraz zasadami
-            ochrony prywatności i przetwarzania danych w aplikacji
-            ProjectCollab.
+            {m.policy_hub_description()}
           </p>
         </header>
 
         <nav
-          aria-label="Nawigacja po dokumentach prawnych"
+          aria-label={m.policy_hub_nav_aria_label()}
           className="grid gap-6 sm:grid-cols-2"
         >
           <Link
@@ -36,15 +35,14 @@ export function PolicyHubView() {
                 />
               </div>
               <h2 className="text-xl font-semibold tracking-tight text-card-foreground group-hover:text-primary">
-                Warunki korzystania
+                {m.policy_hub_terms_title()}
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Zasady i regulamin korzystania z platformy ProjectCollab, prawa
-                i obowiązki użytkowników oraz warunki techniczne.
+                {m.policy_hub_terms_description()}
               </p>
             </div>
             <div className="mt-6 flex items-center text-sm font-medium text-primary">
-              Przejdź do warunków
+              {m.policy_hub_terms_cta()}
               <ChevronRightIcon className="ml-1 size-4" aria-hidden="true" />
             </div>
           </Link>
@@ -64,15 +62,14 @@ export function PolicyHubView() {
                 />
               </div>
               <h2 className="text-xl font-semibold tracking-tight text-card-foreground group-hover:text-primary">
-                Polityka prywatności
+                {m.policy_hub_privacy_title()}
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Informacje o przetwarzaniu i ochronie danych osobowych, celach
-                ich gromadzenia oraz przysługujących Ci prawach.
+                {m.policy_hub_privacy_description()}
               </p>
             </div>
             <div className="mt-6 flex items-center text-sm font-medium text-primary">
-              Przejdź do polityki prywatności
+              {m.policy_hub_privacy_cta()}
               <ChevronRightIcon className="ml-1 size-4" aria-hidden="true" />
             </div>
           </Link>

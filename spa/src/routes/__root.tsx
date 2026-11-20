@@ -4,6 +4,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ThemeProvider } from "@/shared/theme"
 import { UserProvider } from "@/features/authentication"
+import { I18nProvider } from "@/shared/i18n"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -16,9 +17,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootComponent() {
   return (
     <ThemeProvider defaultTheme="auto" storageKey="theme">
-      <UserProvider>
-        <Outlet />
-      </UserProvider>
+      <I18nProvider>
+        <UserProvider>
+          <Outlet />
+        </UserProvider>
+      </I18nProvider>
       {import.meta.env.DEV && (
         <>
           <TanStackRouterDevtools position="bottom-right" />
