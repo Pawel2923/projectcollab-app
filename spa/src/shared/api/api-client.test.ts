@@ -1,5 +1,10 @@
-import { describe, it, expect, vi } from "vitest"
-import { formatApiUrl, onAuthFailure, notifyAuthFailure } from "./api-client"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
+import {
+  formatApiUrl,
+  onAuthFailure,
+  notifyAuthFailure,
+  apiFetch,
+} from "./api-client"
 
 describe("api-client helpers", () => {
   it("formats relative endpoints with /core-api prefix", () => {
@@ -39,3 +44,149 @@ describe("api-client helpers", () => {
     unsubscribe2()
   })
 })
+
+describe("apiFetch auth failure and retry lifecycle", () => {
+  let originalWindow: typeof window | undefined
+  let mockLocation: { pathname: string; href: string }
+
+  beforeEach(() => {
+    mockLocation = { pathname: "/dashboard", href: "" }
+    originalWindow = globalThis.window
+    // @ts-expect-error Mocking window in node environment
+    globalThis.window = { location: mockLocation }
+  })
+
+  afterEach(() => {
+    // @ts-expect-error Restoring window
+    globalThis.window = originalWindow
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  it("retries request after successful token refresh on initial 401", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Unauthorized" }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Refreshed" }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ id: 1, name: "Alice" }),
+      })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const result = await apiFetch<{ id: number; name: string }>("/users/me")
+    expect(result).toEqual({ id: 1, name: "Alice" })
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
+
+  it("notifies auth failure subscribers and redirects when retry returns a second 401", async () => {
+    const authFailureListener = vi.fn()
+    const unsubscribe = onAuthFailure(authFailureListener)
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Unauthorized" }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Refreshed" }),
+      })
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Still Unauthorized" }),
+      })
+    vi.stubGlobal("fetch", fetchMock)
+
+    await expect(apiFetch("/users/me")).rejects.toThrow("Session expired")
+
+    expect(authFailureListener).toHaveBeenCalledTimes(1)
+    expect(mockLocation.href).toBe("/signin?redirect=%2Fdashboard")
+
+    unsubscribe()
+  })
+
+  it("notifies auth failure subscribers and redirects when initial 401 refresh fails", async () => {
+    const authFailureListener = vi.fn()
+    const unsubscribe = onAuthFailure(authFailureListener)
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Unauthorized" }),
+      })
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Refresh token expired" }),
+      })
+    vi.stubGlobal("fetch", fetchMock)
+
+    await expect(apiFetch("/users/me")).rejects.toThrow("Session expired")
+
+    expect(authFailureListener).toHaveBeenCalledTimes(1)
+    expect(mockLocation.href).toBe("/signin?redirect=%2Fdashboard")
+
+    unsubscribe()
+  })
+
+  it("respects skipAuthRedirect option on second 401 failure", async () => {
+    const authFailureListener = vi.fn()
+    const unsubscribe = onAuthFailure(authFailureListener)
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Unauthorized" }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Refreshed" }),
+      })
+      .mockResolvedValueOnce({
+        status: 401,
+        ok: false,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => ({ message: "Still Unauthorized" }),
+      })
+    vi.stubGlobal("fetch", fetchMock)
+
+    await expect(
+      apiFetch("/users/me", { skipAuthRedirect: true })
+    ).rejects.toThrow("Session expired")
+
+    expect(authFailureListener).toHaveBeenCalledTimes(1)
+    expect(mockLocation.href).toBe("")
+
+    unsubscribe()
+  })
+})
+

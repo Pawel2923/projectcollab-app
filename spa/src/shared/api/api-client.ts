@@ -139,13 +139,15 @@ export async function apiFetch<T = unknown>(
     credentials: "include",
   })
 
-  if (response.status === 401 && !skipAuthRefresh && !isAuthEndpoint) {
-    const refreshed = await refreshTokens()
-    if (refreshed) {
-      return apiFetch<T>(endpoint, {
-        ...options,
-        skipAuthRefresh: true,
-      })
+  if (response.status === 401 && !isAuthEndpoint) {
+    if (!skipAuthRefresh) {
+      const refreshed = await refreshTokens()
+      if (refreshed) {
+        return apiFetch<T>(endpoint, {
+          ...options,
+          skipAuthRefresh: true,
+        })
+      }
     }
 
     notifyAuthFailure()

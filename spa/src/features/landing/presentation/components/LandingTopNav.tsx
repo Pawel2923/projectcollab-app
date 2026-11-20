@@ -39,7 +39,7 @@ export function LandingTopNav({ user }: LandingTopNavProps) {
               <UserSettings
                 triggerMessage={greeting ? `${greeting}!` : undefined}
               >
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={() => logout()}>
                   {m.landing_nav_log_out()}
                 </DropdownMenuItem>
               </UserSettings>

@@ -201,4 +201,3 @@ test.describe("Policy Hub Page", () => {
     await expect(privacyLink).toHaveAttribute("href", "/spa/policy/privacy")
   })
 })
-

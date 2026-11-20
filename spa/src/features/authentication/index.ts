@@ -60,6 +60,9 @@ export { SignUpView } from "./presentation/components/SignUpView"
 /**
  * Initiates logout, clearing query cache and redirecting to sign-in.
  */
-export async function logout(): Promise<void> {
-  await logoutUseCase.execute()
+export function logout(): Promise<void>
+export function logout(refreshToken: string): Promise<void>
+export async function logout(refreshToken?: unknown): Promise<void> {
+  const token = typeof refreshToken === "string" ? refreshToken : undefined
+  await logoutUseCase.execute(token)
 }

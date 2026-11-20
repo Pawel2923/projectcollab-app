@@ -48,14 +48,66 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("calls logout endpoint with correct options", async () => {
+  it("calls logout endpoint with refresh_token provided directly", async () => {
+    mockApiFetch.mockResolvedValueOnce({})
+
+    await gateway.logout("direct-refresh-token")
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/logout", {
+      method: "POST",
+      body: { refresh_token: "direct-refresh-token" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("calls logout endpoint with refresh_token captured from login", async () => {
+    mockApiFetch.mockResolvedValueOnce({
+      token: "jwt-token-123",
+      refresh_token: "login-refresh-token",
+    })
+    await gateway.login({ email: "user@test.com", password: "password123" })
+
+    mockApiFetch.mockResolvedValueOnce({})
+    await gateway.logout()
+
+    expect(mockApiFetch).toHaveBeenLastCalledWith("/core-api/auth/logout", {
+      method: "POST",
+      body: { refresh_token: "login-refresh-token" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("clears captured refresh_token after logout", async () => {
+    mockApiFetch.mockResolvedValueOnce({
+      token: "jwt-token-123",
+      refresh_token: "login-refresh-token",
+    })
+    await gateway.login({ email: "user@test.com", password: "password123" })
+
+    mockApiFetch.mockResolvedValueOnce({})
+    await gateway.logout()
+
+    mockApiFetch.mockResolvedValueOnce({})
+    await gateway.logout()
+
+    expect(mockApiFetch).toHaveBeenLastCalledWith("/core-api/auth/logout", {
+      method: "POST",
+      body: { refresh_token: "" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("calls logout endpoint with empty string if no refresh token is available", async () => {
     mockApiFetch.mockResolvedValueOnce({})
 
     await gateway.logout()
 
     expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/logout", {
       method: "POST",
-      body: {},
+      body: { refresh_token: "" },
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })

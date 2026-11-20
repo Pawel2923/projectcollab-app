@@ -38,7 +38,10 @@ final class LogoutController extends AbstractController
         }
 
         try {
-            $repo = $em->getRepository(GesdinetRefreshToken::class);
+            $entityClass = class_exists(\App\Entity\RefreshToken::class)
+                ? \App\Entity\RefreshToken::class
+                : GesdinetRefreshToken::class;
+            $repo = $em->getRepository($entityClass);
             $entity = $repo->findOneBy(['refreshToken' => $refreshToken]);
 
             if ($entity !== null) {

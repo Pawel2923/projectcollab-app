@@ -68,6 +68,21 @@ describe("Authentication Use Cases", () => {
       expect(redirectFn).toHaveBeenCalledWith("/signin")
     })
 
+    it("passes refreshToken to gateway logout", async () => {
+      const redirectFn = vi.fn()
+      const useCase = new LogoutUseCase(
+        mockGateway as unknown as AuthGatewayPort,
+        mockQueryClient as unknown as QueryClient,
+        redirectFn
+      )
+
+      await useCase.execute("custom-refresh-token")
+
+      expect(mockGateway.logout).toHaveBeenCalledWith("custom-refresh-token")
+      expect(mockQueryClient.clear).toHaveBeenCalled()
+      expect(redirectFn).toHaveBeenCalledWith("/signin")
+    })
+
     it("clears query cache and redirects even if backend logout fails", async () => {
       mockGateway.logout.mockRejectedValueOnce(new Error("Network error"))
       const redirectFn = vi.fn()

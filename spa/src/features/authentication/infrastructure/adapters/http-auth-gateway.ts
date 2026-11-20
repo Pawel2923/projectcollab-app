@@ -16,6 +16,13 @@ interface HttpAuthGatewayDependencies {
   readonly apiFetch?: typeof defaultApiFetch
   readonly refreshTokens?: typeof defaultRefreshTokens
   readonly onAuthFailure?: typeof defaultOnAuthFailure
+  readonly getRefreshToken?: () => string | null
+  readonly setRefreshToken?: (token: string | null) => void
+}
+
+interface LoginResponseDto {
+  readonly token?: string
+  readonly refresh_token?: string
 }
 
 export class HttpAuthGateway implements AuthGatewayPort {
@@ -23,30 +30,54 @@ export class HttpAuthGateway implements AuthGatewayPort {
   private readonly fetcher: typeof defaultApiFetch
   private readonly refreshTokenFn: typeof defaultRefreshTokens
   private readonly onAuthFailureFn: typeof defaultOnAuthFailure
+  private readonly getRefreshTokenFn?: () => string | null
+  private readonly setRefreshTokenFn?: (token: string | null) => void
+  private currentRefreshToken: string | null = null
 
   constructor(dependencies: HttpAuthGatewayDependencies = {}) {
     this.client = dependencies.apiClient ?? defaultApiClient
     this.fetcher = dependencies.apiFetch ?? defaultApiFetch
     this.refreshTokenFn = dependencies.refreshTokens ?? defaultRefreshTokens
     this.onAuthFailureFn = dependencies.onAuthFailure ?? defaultOnAuthFailure
+    this.getRefreshTokenFn = dependencies.getRefreshToken
+    this.setRefreshTokenFn = dependencies.setRefreshToken
+  }
+
+  public getRefreshToken(): string | null {
+    return this.getRefreshTokenFn ? this.getRefreshTokenFn() : this.currentRefreshToken
+  }
+
+  public setRefreshToken(token: string | null): void {
+    if (this.setRefreshTokenFn) {
+      this.setRefreshTokenFn(token)
+    }
+    this.currentRefreshToken = token
   }
 
   public async login(credentials: LoginCredentials): Promise<void> {
-    await this.fetcher("/core-api/auth/login", {
+    const response = await this.fetcher<LoginResponseDto>("/core-api/auth/login", {
       method: "POST",
       body: credentials,
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })
+    if (response?.refresh_token) {
+      this.setRefreshToken(response.refresh_token)
+    }
   }
 
-  public async logout(): Promise<void> {
-    await this.fetcher("/core-api/auth/logout", {
-      method: "POST",
-      body: {},
-      skipAuthRefresh: true,
-      skipAuthRedirect: true,
-    })
+  public async logout(refreshToken?: string): Promise<void> {
+    const token = refreshToken ?? this.getRefreshToken() ?? ""
+    try {
+      await this.fetcher("/core-api/auth/logout", {
+        method: "POST",
+        body: { refresh_token: token },
+        skipAuthRefresh: true,
+        skipAuthRedirect: true,
+      })
+    } finally {
+      this.setRefreshToken(null)
+    }
   }
 
   public async getCurrentUser(): Promise<User | null> {

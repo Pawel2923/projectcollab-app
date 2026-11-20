@@ -26,9 +26,10 @@ export class LogoutUseCase {
     this.redirect = redirect
   }
 
-  public async execute(): Promise<void> {
+  public async execute(refreshToken?: string): Promise<void> {
+    const token = typeof refreshToken === "string" ? refreshToken : undefined
     try {
-      await this.gateway.logout()
+      await this.gateway.logout(token)
     } catch (error: unknown) {
       console.warn(
         "Backend logout request failed, proceeding with local cleanup",
