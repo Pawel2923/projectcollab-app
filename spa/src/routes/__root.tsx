@@ -17,11 +17,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootComponent() {
   return (
     <ThemeProvider defaultTheme="auto" storageKey="theme">
-      <I18nProvider>
-        <UserProvider>
+      <UserProvider>
+        <I18nProvider>
           <Outlet />
-        </UserProvider>
-      </I18nProvider>
+        </I18nProvider>
+      </UserProvider>
       {import.meta.env.DEV && (
         <>
           <TanStackRouterDevtools position="bottom-right" />

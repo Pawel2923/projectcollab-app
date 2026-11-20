@@ -33,6 +33,16 @@ export function getAppLocale(): AppLocale {
   return isValidLocale(current) ? current : DEFAULT_LOCALE
 }
 
+export type LocaleChangeListener = (locale: AppLocale) => void
+const localeChangeListeners = new Set<LocaleChangeListener>()
+
+export function onLocaleChange(listener: LocaleChangeListener): () => void {
+  localeChangeListeners.add(listener)
+  return () => {
+    localeChangeListeners.delete(listener)
+  }
+}
+
 export async function setAppLocale(
   locale: AppLocale,
   options: { reload?: boolean } = { reload: false }
@@ -45,5 +55,9 @@ export async function setAppLocale(
 
   if (typeof document !== "undefined") {
     document.documentElement.lang = locale
+  }
+
+  for (const listener of localeChangeListeners) {
+    listener(locale)
   }
 }

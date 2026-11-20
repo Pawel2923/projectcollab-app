@@ -11,6 +11,7 @@ import {
   getAppLocale,
   setAppLocale,
   isValidLocale,
+  onLocaleChange,
 } from "./i18n"
 
 export interface I18nContextValue {
@@ -30,6 +31,12 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
   const [locale, setLocaleState] = useState<AppLocale>(() => {
     return initialLocale ?? getAppLocale()
   })
+
+  useEffect(() => {
+    return onLocaleChange((newLocale) => {
+      setLocaleState(newLocale)
+    })
+  }, [])
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -57,7 +64,7 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
         locales: SUPPORTED_LOCALES,
       }}
     >
-      {children}
+      <React.Fragment key={locale}>{children}</React.Fragment>
     </I18nContext.Provider>
   )
 }

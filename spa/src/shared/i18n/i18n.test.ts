@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest"
+import { describe, it, expect, beforeEach, vi } from "vitest"
 import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
@@ -6,6 +6,7 @@ import {
   getLocaleLabel,
   setAppLocale,
   getAppLocale,
+  onLocaleChange,
   type AppLocale,
 } from "./i18n"
 import { m } from "@/paraglide/messages"
@@ -71,6 +72,32 @@ describe("i18n module", () => {
       const current = getAppLocale()
       await setAppLocale("fr" as unknown as AppLocale)
       expect(getAppLocale()).toBe(current)
+    })
+
+    it("notifies registered listeners when locale changes", async () => {
+      const listener = vi.fn()
+      const unsubscribe = onLocaleChange(listener)
+
+      await setAppLocale("en")
+      expect(listener).toHaveBeenCalledWith("en")
+
+      await setAppLocale("pl")
+      expect(listener).toHaveBeenCalledWith("pl")
+
+      unsubscribe()
+
+      await setAppLocale("en")
+      expect(listener).toHaveBeenCalledTimes(2)
+    })
+
+    it("does not notify listeners when an invalid locale is passed", async () => {
+      const listener = vi.fn()
+      const unsubscribe = onLocaleChange(listener)
+
+      await setAppLocale("invalid" as unknown as AppLocale)
+      expect(listener).not.toHaveBeenCalled()
+
+      unsubscribe()
     })
   })
 

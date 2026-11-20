@@ -5,7 +5,9 @@ export {
   getLocaleLabel,
   getAppLocale,
   setAppLocale,
+  onLocaleChange,
   type AppLocale,
+  type LocaleChangeListener,
 } from "./i18n"
 export { I18nProvider, useLocale, type I18nContextValue } from "./i18n-provider"
 export {
