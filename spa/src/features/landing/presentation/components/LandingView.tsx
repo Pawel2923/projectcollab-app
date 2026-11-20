@@ -38,11 +38,13 @@ export function LandingView() {
               {user ? "Przejdź do aplikacji" : "Rozpocznij"}
             </Button>
           </div>
-          <div>
+          <div className="w-full max-w-162">
             <img
               src={projectOverviewImage}
               alt="Podsumowanie projektu"
-              className="w-full max-w-162"
+              width={1350}
+              height={853}
+              className="aspect-[1350/853] w-full"
             />
           </div>
         </div>

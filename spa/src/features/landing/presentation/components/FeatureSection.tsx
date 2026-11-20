@@ -3,6 +3,8 @@ export interface FeatureSectionProps {
   description: string
   imageSrc: string
   imageAlt: string
+  imageWidth?: number
+  imageHeight?: number
   order?: "TEXT_FIRST" | "IMAGE_FIRST"
 }
 
@@ -11,6 +13,8 @@ export function FeatureSection({
   description,
   imageSrc,
   imageAlt,
+  imageWidth = 1843,
+  imageHeight = 1271,
   order = "TEXT_FIRST",
 }: FeatureSectionProps) {
   return (
@@ -23,11 +27,14 @@ export function FeatureSection({
         <h3 className="text-lg font-medium md:text-xl">{name}</h3>
         <p className="text-sm leading-relaxed md:text-base">{description}</p>
       </div>
-      <div className={`${order === "TEXT_FIRST" ? "ms-auto" : "me-auto"}`}>
+      <div className={`max-w-lg ${order === "TEXT_FIRST" ? "ms-auto" : "me-auto"}`}>
         <img
           src={imageSrc}
           alt={imageAlt}
-          className="w-full max-w-lg rounded-sm border border-image-border"
+          width={imageWidth}
+          height={imageHeight}
+          className="w-full rounded-sm border border-image-border"
+          style={{ aspectRatio: `${imageWidth} / ${imageHeight}` }}
           loading="lazy"
         />
       </div>
