@@ -59,10 +59,9 @@ export { SignUpView } from "./presentation/components/SignUpView"
 
 /**
  * Initiates logout, clearing query cache and redirecting to sign-in.
+ * The refresh_token cookie is sent automatically — no token argument needed.
+ * @deprecated Passing a refreshToken argument is a no-op; will be removed in a future version.
  */
-export function logout(): Promise<void>
-export function logout(refreshToken: string): Promise<void>
-export async function logout(refreshToken?: unknown): Promise<void> {
-  const token = typeof refreshToken === "string" ? refreshToken : undefined
-  await logoutUseCase.execute(token)
+export async function logout(_refreshToken?: string): Promise<void> {
+  await logoutUseCase.execute()
 }

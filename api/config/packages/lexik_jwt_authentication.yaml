@@ -3,7 +3,33 @@ lexik_jwt_authentication:
     public_key: '%env(resolve:JWT_PUBLIC_KEY)%'
     pass_phrase: '%env(JWT_PASSPHRASE)%'
     user_id_claim: email
+    token_ttl: 3600
+
+    # Keep tokens in the JSON response body for backward compatibility with /frontend.
+    # @deprecated The body tokens will be removed once /frontend is fully migrated to /spa.
+    remove_token_from_body_when_cookies_used: false
+
+    token_extractors:
+        cookie:
+            enabled: true
+            name: token                    # read access JWT from this cookie name
+        authorization_header:
+            enabled: true                  # kept for /frontend server actions and CLI tools
+            prefix: Bearer
+            name: Authorization
+
+    set_cookies:
+        # Access-token cookie — created automatically by LexikJWT on every successful auth.
+        # lifetime: null means the bundle uses token_ttl (3600 s) so cookie expiry == JWT expiry.
+        token:
+            lifetime: null
+            samesite: lax
+            path: /
+            domain: '%env(COOKIE_DOMAIN)%'
+            secure: true
+            httpOnly: true
+
     api_platform:
-      check_path: /core-api/auth/login
-      username_path: email
-      password_path: security.credentials.password
+        check_path: /core-api/auth/login
+        username_path: email
+        password_path: security.credentials.password

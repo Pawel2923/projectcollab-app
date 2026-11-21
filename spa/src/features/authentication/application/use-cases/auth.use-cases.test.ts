@@ -53,7 +53,7 @@ describe("Authentication Use Cases", () => {
   })
 
   describe("LogoutUseCase", () => {
-    it("calls gateway logout, clears query cache, and triggers redirect", async () => {
+    it("calls gateway logout with no arguments, clears query cache, and redirects", async () => {
       const redirectFn = vi.fn()
       const useCase = new LogoutUseCase(
         mockGateway as unknown as AuthGatewayPort,
@@ -63,22 +63,7 @@ describe("Authentication Use Cases", () => {
 
       await useCase.execute()
 
-      expect(mockGateway.logout).toHaveBeenCalled()
-      expect(mockQueryClient.clear).toHaveBeenCalled()
-      expect(redirectFn).toHaveBeenCalledWith("/signin")
-    })
-
-    it("passes refreshToken to gateway logout", async () => {
-      const redirectFn = vi.fn()
-      const useCase = new LogoutUseCase(
-        mockGateway as unknown as AuthGatewayPort,
-        mockQueryClient as unknown as QueryClient,
-        redirectFn
-      )
-
-      await useCase.execute("custom-refresh-token")
-
-      expect(mockGateway.logout).toHaveBeenCalledWith("custom-refresh-token")
+      expect(mockGateway.logout).toHaveBeenCalledWith()
       expect(mockQueryClient.clear).toHaveBeenCalled()
       expect(redirectFn).toHaveBeenCalledWith("/signin")
     })
@@ -119,7 +104,7 @@ describe("Authentication Use Cases", () => {
   })
 
   describe("RefreshTokensUseCase", () => {
-    it("delegates token refresh to gateway", async () => {
+    it("delegates token refresh to gateway with no arguments — cookie is automatic", async () => {
       mockGateway.refreshTokens.mockResolvedValueOnce(true)
       const useCase = new RefreshTokensUseCase(
         mockGateway as unknown as AuthGatewayPort
@@ -127,18 +112,8 @@ describe("Authentication Use Cases", () => {
 
       const result = await useCase.execute()
       expect(result).toBe(true)
+      expect(mockGateway.refreshTokens).toHaveBeenCalledWith()
       expect(mockGateway.refreshTokens).toHaveBeenCalledTimes(1)
-    })
-
-    it("passes refreshToken to gateway refreshTokens", async () => {
-      mockGateway.refreshTokens.mockResolvedValueOnce(true)
-      const useCase = new RefreshTokensUseCase(
-        mockGateway as unknown as AuthGatewayPort
-      )
-
-      const result = await useCase.execute("custom-refresh-token")
-      expect(result).toBe(true)
-      expect(mockGateway.refreshTokens).toHaveBeenCalledWith("custom-refresh-token")
     })
   })
 })

@@ -126,3 +126,8 @@ services:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
     arguments:
       $mercureSecret: '%env(MERCURE_JWT_SECRET)%'
+      $cookieDomain: '%env(COOKIE_DOMAIN)%'
+
+  App\Controller\LogoutController:
+    arguments:
+      $cookieDomain: '%env(COOKIE_DOMAIN)%'

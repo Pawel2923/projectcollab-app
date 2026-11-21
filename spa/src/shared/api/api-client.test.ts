@@ -45,6 +45,12 @@ describe("api-client helpers", () => {
 
     unsubscribe2()
   })
+
+  it("setRefreshTokenResolver is a no-op for backward compatibility", () => {
+    // Should not throw
+    expect(() => setRefreshTokenResolver(() => "token")).not.toThrow()
+    expect(() => setRefreshTokenResolver(null)).not.toThrow()
+  })
 })
 
 describe("apiFetch auth failure and retry lifecycle", () => {
@@ -196,49 +202,56 @@ describe("refreshTokens", () => {
   afterEach(() => {
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
-    setRefreshTokenResolver(null)
   })
 
-  it("posts to /core-api/auth/refresh with JSON body containing refresh_token", async () => {
+  it("posts to /core-api/auth/refresh with no body — relies on refresh_token cookie", async () => {
     const fetchMock = vi.fn().mockResolvedValueOnce({
       status: 200,
       ok: true,
       headers: new Headers({ "content-type": "application/json" }),
-      json: async () => ({ token: "new-jwt", refresh_token: "new-refresh" }),
-    })
-    vi.stubGlobal("fetch", fetchMock)
-
-    const result = await refreshTokens("my-refresh-token")
-    expect(result).toBe(true)
-    expect(fetchMock).toHaveBeenCalledWith("/core-api/auth/refresh", {
-      method: "POST",
-      headers: {
-        Accept: "application/ld+json, application/json",
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-      },
-      credentials: "include",
-      body: JSON.stringify({ refresh_token: "my-refresh-token" }),
-    })
-  })
-
-  it("uses registered refresh token resolver when no token is explicitly passed", async () => {
-    setRefreshTokenResolver(() => "resolved-refresh-token")
-    const fetchMock = vi.fn().mockResolvedValueOnce({
-      status: 200,
-      ok: true,
-      headers: new Headers({ "content-type": "application/json" }),
-      json: async () => ({ token: "new-jwt", refresh_token: "new-refresh" }),
+      json: async () => ({ token: "new-jwt" }),
     })
     vi.stubGlobal("fetch", fetchMock)
 
     const result = await refreshTokens()
     expect(result).toBe(true)
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/core-api/auth/refresh",
-      expect.objectContaining({
-        body: JSON.stringify({ refresh_token: "resolved-refresh-token" }),
-      })
-    )
+    expect(fetchMock).toHaveBeenCalledWith("/core-api/auth/refresh", {
+      method: "POST",
+      headers: {
+        Accept: "application/ld+json, application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      credentials: "include",
+      // No body — refresh_token cookie is automatic
+    })
+  })
+
+  it("ignores the deprecated refreshToken argument and sends no body", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      status: 200,
+      ok: true,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => ({ token: "new-jwt" }),
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const result = await refreshTokens("ignored-token")
+    expect(result).toBe(true)
+    // Confirm no body was sent
+    const calledWith = fetchMock.mock.calls[0][1]
+    expect(calledWith.body).toBeUndefined()
+  })
+
+  it("returns false when the refresh endpoint returns a non-ok status", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      status: 401,
+      ok: false,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => ({ error: "INVALID_REFRESH_TOKEN" }),
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const result = await refreshTokens()
+    expect(result).toBe(false)
   })
 })

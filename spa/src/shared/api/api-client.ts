@@ -29,33 +29,42 @@ export function notifyAuthFailure(): void {
 
 let refreshPromise: Promise<boolean> | null = null
 
+/**
+ * @deprecated Cookie-based auth makes the refresh-token resolver unnecessary.
+ * The browser sends the refresh_token cookie automatically. Will be removed in a future version.
+ */
 export type RefreshTokenResolver = () => string | null | undefined
-let refreshTokenResolver: RefreshTokenResolver | null = null
 
+/**
+ * @deprecated Cookie-based auth makes the refresh-token resolver unnecessary.
+ * Will be removed in a future version.
+ */
 export function setRefreshTokenResolver(
-  resolver: RefreshTokenResolver | null
+  _resolver: RefreshTokenResolver | null
 ): void {
-  refreshTokenResolver = resolver
+  // no-op — kept for backward compatibility with existing imports
 }
 
+/**
+ * @deprecated Cookie-based auth — the new token is set as an HTTP-Only cookie.
+ * Will be removed in a future version.
+ */
 export type TokenRefreshedCallback = (token: string) => void
-const tokenRefreshedCallbacks = new Set<TokenRefreshedCallback>()
 
-export function onTokenRefreshed(callback: TokenRefreshedCallback): () => void {
-  tokenRefreshedCallbacks.add(callback)
-  return () => {
-    tokenRefreshedCallbacks.delete(callback)
-  }
+/**
+ * @deprecated Cookie-based auth — the new token is set as an HTTP-Only cookie.
+ * Will be removed in a future version.
+ */
+export function onTokenRefreshed(_callback: TokenRefreshedCallback): () => void {
+  return () => {}
 }
 
-export function notifyTokenRefreshed(token: string): void {
-  for (const callback of tokenRefreshedCallbacks) {
-    try {
-      callback(token)
-    } catch (error: unknown) {
-      console.error("Error in token refreshed listener", error)
-    }
-  }
+/**
+ * @deprecated Cookie-based auth — the new token is set as an HTTP-Only cookie.
+ * Will be removed in a future version.
+ */
+export function notifyTokenRefreshed(_token: string): void {
+  // no-op — kept for backward compatibility with existing imports
 }
 
 export function formatApiUrl(endpoint: string): string {
@@ -69,14 +78,20 @@ export function formatApiUrl(endpoint: string): string {
   return `/core-api${cleanEndpoint}`
 }
 
+/**
+ * Exchanges the refresh-token cookie for a new access-token cookie.
+ *
+ * The browser sends the `refresh_token` HTTP-Only cookie automatically to
+ * `/core-api/auth/refresh` — no manual token threading is required.
+ *
+ * @param _refreshToken - @deprecated Ignored. Cookie is used automatically.
+ */
 export async function refreshTokens(
-  refreshToken?: string
+  _refreshToken?: string
 ): Promise<boolean> {
   if (refreshPromise) {
     return refreshPromise
   }
-
-  const token = refreshToken ?? refreshTokenResolver?.() ?? ""
 
   refreshPromise = (async () => {
     try {
@@ -84,27 +99,13 @@ export async function refreshTokens(
         method: "POST",
         headers: {
           Accept: "application/ld+json, application/json",
-          "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
+          // No Content-Type — no body is sent; the refresh_token cookie is automatic
         },
         credentials: "include",
-        body: JSON.stringify({ refresh_token: token }),
       })
 
-      if (response.ok) {
-        const data = await response.json().catch(() => null)
-        if (
-          data &&
-          typeof data === "object" &&
-          "refresh_token" in data &&
-          typeof (data as { refresh_token: unknown }).refresh_token === "string"
-        ) {
-          notifyTokenRefreshed((data as { refresh_token: string }).refresh_token)
-        }
-        return true
-      }
-
-      return false
+      return response.ok
     } catch (error: unknown) {
       console.error("Token refresh network failure", error)
       return false
