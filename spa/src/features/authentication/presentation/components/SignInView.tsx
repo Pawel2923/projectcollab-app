@@ -5,6 +5,7 @@ import { useUserContext } from "../context/UserContext"
 import { getPostLoginRedirect } from "../../domain/services/auth-navigation"
 import { SignInForm, type SignInFormProps } from "./SignInForm"
 import { m } from "@/paraglide/messages"
+import { BackButton } from "@/shared/ui"
 
 export interface SignInViewProps {
   redirectUrl?: string
@@ -34,6 +35,7 @@ export function SignInView({
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <BackButton href="/" />
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
