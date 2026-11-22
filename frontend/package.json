@@ -12,7 +12,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,mjs}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,mjs}\"",
     "dev-check": "pnpm check-types && pnpm lint:fix && pnpm format && pnpm vitest run",
-    "test": "vitest"
+    "test": "vitest",
+    "spa:build": "sh -c 'if [ \"$(id -u)\" = \"0\" ]; then HOME=/home/next su next -c \"pnpm --dir /workspace/spa build\"; else pnpm --dir /workspace/spa build; fi'",
+    "spa:test": "sh -c 'if [ \"$(id -u)\" = \"0\" ]; then HOME=/home/next su next -c \"pnpm --dir /workspace/spa test\"; else pnpm --dir /workspace/spa test; fi'",
+    "spa:dev-check": "sh -c 'if [ \"$(id -u)\" = \"0\" ]; then HOME=/home/next su next -c \"pnpm --dir /workspace/spa dev-check\"; else pnpm --dir /workspace/spa dev-check; fi'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

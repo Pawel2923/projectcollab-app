@@ -236,7 +236,7 @@ export function SignInForm({
         </CardContent>
       </Card>
 
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors [&_a]:hover:text-primary [&_a]:hover:opacity-85 dark:[&_a]:hover:text-primary/80">
+      <div className="text-center text-xs text-balance text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors [&_a]:hover:text-primary [&_a]:hover:opacity-85 dark:[&_a]:hover:text-primary/80">
         {m.auth_policy_agreement_prefix()}
         <Link to="/policy/terms" search={{ referer: "/signin" }}>
           {m.auth_terms_link()}

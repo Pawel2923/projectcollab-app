@@ -35,7 +35,7 @@
 	handle /.well-known/mercure* {
 		mercure {
 			name default
-			transport_url {$MERCURE_TRANSPORT_URL:bolt:///data/mercure.db}
+			transport bolt {$MERCURE_TRANSPORT_URL:bolt:///data/mercure.db}
 			issuer {$MERCURE_TRUSTED_ISSUERS:https://localhost} {
 				publisher {
 					jwt {env.MERCURE_PUBLISHER_JWT_KEY}

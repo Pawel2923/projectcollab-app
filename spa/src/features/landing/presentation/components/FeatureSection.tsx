@@ -27,7 +27,9 @@ export function FeatureSection({
         <h3 className="text-lg font-medium md:text-xl">{name}</h3>
         <p className="text-sm leading-relaxed md:text-base">{description}</p>
       </div>
-      <div className={`max-w-lg ${order === "TEXT_FIRST" ? "ms-auto" : "me-auto"}`}>
+      <div
+        className={`max-w-lg ${order === "TEXT_FIRST" ? "ms-auto" : "me-auto"}`}
+      >
         <img
           src={imageSrc}
           alt={imageAlt}

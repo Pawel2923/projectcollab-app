@@ -55,7 +55,9 @@ export type TokenRefreshedCallback = (token: string) => void
  * @deprecated Cookie-based auth — the new token is set as an HTTP-Only cookie.
  * Will be removed in a future version.
  */
-export function onTokenRefreshed(_callback: TokenRefreshedCallback): () => void {
+export function onTokenRefreshed(
+  _callback: TokenRefreshedCallback
+): () => void {
   return () => {}
 }
 
@@ -86,9 +88,7 @@ export function formatApiUrl(endpoint: string): string {
  *
  * @param _refreshToken - @deprecated Ignored. Cookie is used automatically.
  */
-export async function refreshTokens(
-  _refreshToken?: string
-): Promise<boolean> {
+export async function refreshTokens(_refreshToken?: string): Promise<boolean> {
   if (refreshPromise) {
     return refreshPromise
   }

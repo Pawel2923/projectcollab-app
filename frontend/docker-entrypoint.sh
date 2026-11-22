@@ -12,6 +12,12 @@ if [ "$(id -u)" = "0" ]; then
 	# Create node_modules if it doesn't exist and chown to next
 	mkdir -p node_modules
 	chown -R next:next node_modules
+
+	# Ensure spa/dist exists and is owned by next user to prevent Docker root volume issues
+	if [ -d /workspace/spa ]; then
+		mkdir -p /workspace/spa/dist
+		chown -R next:next /workspace/spa/dist
+	fi
 fi
 
 exec "$@"

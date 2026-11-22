@@ -108,7 +108,7 @@ export function ThemeSegmentedToggle({ className }: { className?: string }) {
             size="sm"
             onClick={() => setTheme(opt.value)}
             className={cn(
-              "flex flex-1 min-w-0 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
+              "flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
               isActive
                 ? "bg-background text-foreground shadow-xs hover:bg-background"
                 : "text-muted-foreground hover:bg-transparent hover:text-foreground"
