@@ -1,7 +1,9 @@
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import type { LoginCredentials } from "../../domain/models/credentials"
 import type { User } from "../../domain/models/user"
+import { InvalidCredentialsError } from "../../domain/errors/auth-error"
 import {
+  ApiError,
   apiClient as defaultApiClient,
   apiFetch as defaultApiFetch,
   onAuthFailure as defaultOnAuthFailure,
@@ -25,19 +27,26 @@ export class HttpAuthGateway implements AuthGatewayPort {
   private readonly onAuthFailureFn: typeof defaultOnAuthFailure
 
   constructor(dependencies: HttpAuthGatewayDependencies = {}) {
-    this.client          = dependencies.apiClient     ?? defaultApiClient
-    this.fetcher         = dependencies.apiFetch      ?? defaultApiFetch
-    this.refreshTokenFn  = dependencies.refreshTokens ?? defaultRefreshTokens
+    this.client = dependencies.apiClient ?? defaultApiClient
+    this.fetcher = dependencies.apiFetch ?? defaultApiFetch
+    this.refreshTokenFn = dependencies.refreshTokens ?? defaultRefreshTokens
     this.onAuthFailureFn = dependencies.onAuthFailure ?? defaultOnAuthFailure
   }
 
   public async login(credentials: LoginCredentials): Promise<void> {
-    await this.fetcher("/core-api/auth/login", {
-      method: "POST",
-      body: credentials,
-      skipAuthRefresh: true,
-      skipAuthRedirect: true,
-    })
+    try {
+      await this.fetcher("/core-api/auth/login", {
+        method: "POST",
+        body: credentials,
+        skipAuthRefresh: true,
+        skipAuthRedirect: true,
+      })
+    } catch (error: unknown) {
+      if (error instanceof ApiError && error.status === 401) {
+        throw new InvalidCredentialsError("Invalid credentials")
+      }
+      throw error
+    }
     // Tokens are set as HTTP-Only cookies by the server — nothing to store locally.
   }
 

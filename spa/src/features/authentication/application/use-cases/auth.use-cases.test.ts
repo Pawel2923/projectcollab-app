@@ -6,6 +6,7 @@ import { GetCurrentUserUseCase } from "./get-current-user.use-case"
 import { RefreshTokensUseCase } from "./refresh-tokens.use-case"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import type { User } from "../../domain/models/user"
+import { InvalidCredentialsError } from "../../domain/errors/auth-error"
 import { authKeys } from "../auth-keys"
 
 describe("Authentication Use Cases", () => {
@@ -49,6 +50,22 @@ describe("Authentication Use Cases", () => {
       expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith({
         queryKey: authKeys.currentUser(),
       })
+    })
+
+    it("propagates error and does not invalidate query cache if gateway.login fails", async () => {
+      mockGateway.login.mockRejectedValueOnce(
+        new InvalidCredentialsError("Invalid credentials")
+      )
+      const useCase = new LoginUseCase(
+        mockGateway as unknown as AuthGatewayPort,
+        mockQueryClient as unknown as QueryClient
+      )
+
+      await expect(
+        useCase.execute({ email: "wrong@test.com", password: "bad" })
+      ).rejects.toThrow(InvalidCredentialsError)
+
+      expect(mockQueryClient.invalidateQueries).not.toHaveBeenCalled()
     })
   })
 

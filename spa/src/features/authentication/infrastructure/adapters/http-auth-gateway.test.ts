@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { HttpAuthGateway } from "./http-auth-gateway"
+import { InvalidCredentialsError } from "../../domain/errors/auth-error"
+import { ApiError } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type {
   apiClient,
@@ -46,6 +48,16 @@ describe("HttpAuthGateway", () => {
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })
+  })
+
+  it("throws InvalidCredentialsError when login returns 401 ApiError", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(401, { message: "Invalid credentials." })
+    )
+
+    await expect(
+      gateway.login({ email: "user@test.com", password: "wrong-password" })
+    ).rejects.toThrow(InvalidCredentialsError)
   })
 
   it("does not store tokens locally — cookies are managed by the server", async () => {

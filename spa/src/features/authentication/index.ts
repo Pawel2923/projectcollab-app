@@ -2,14 +2,22 @@
 export type { User, UserLike } from "./domain/models/user"
 export type { LoginCredentials } from "./domain/models/credentials"
 export type { AuthGatewayPort } from "./domain/ports/auth-gateway.port"
-export { AuthError, SessionExpiredError } from "./domain/errors/auth-error"
+export {
+  AuthError,
+  SessionExpiredError,
+  InvalidCredentialsError,
+} from "./domain/errors/auth-error"
 export {
   generateUserInitials,
   getUserDisplayName,
   getUserGreeting,
 } from "./domain/services/user-display"
+export {
+  getPostLoginRedirect,
+  DEFAULT_POST_LOGIN_REDIRECT,
+} from "./domain/services/auth-navigation"
 
-// Application use cases and query keys
+// Application use cases, validation, and query keys
 import { logoutUseCase } from "./application/use-cases/logout.use-case"
 
 export { authKeys } from "./application/auth-keys"
@@ -29,6 +37,10 @@ export {
   RefreshTokensUseCase,
   refreshTokensUseCase,
 } from "./application/use-cases/refresh-tokens.use-case"
+export {
+  signInSchema,
+  type SignInFormData,
+} from "./application/validation/sign-in.schema"
 
 // Infrastructure
 export {
@@ -54,7 +66,18 @@ export {
   UserSettings,
   type UserSettingsProps,
 } from "./presentation/components/UserSettings"
-export { SignInView } from "./presentation/components/SignInView"
+export {
+  PasswordToggle,
+  type PasswordToggleProps,
+} from "./presentation/components/PasswordToggle"
+export {
+  SignInForm,
+  type SignInFormProps,
+} from "./presentation/components/SignInForm"
+export {
+  SignInView,
+  type SignInViewProps,
+} from "./presentation/components/SignInView"
 export { SignUpView } from "./presentation/components/SignUpView"
 
 /**
