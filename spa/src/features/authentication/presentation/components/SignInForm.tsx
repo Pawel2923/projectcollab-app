@@ -171,17 +171,9 @@ export function SignInForm({
                 </div>
 
                 <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="signin-password">
-                      {m.auth_field_password()}
-                    </Label>
-                    <a
-                      href="/reset-password"
-                      className="text-sm font-medium text-dark-primary underline underline-offset-4 transition-colors hover:text-primary hover:opacity-85 dark:text-primary dark:hover:text-primary/80"
-                    >
-                      {m.auth_forgot_password()}
-                    </a>
-                  </div>
+                  <Label htmlFor="signin-password">
+                    {m.auth_field_password()}
+                  </Label>
                   <PasswordToggle
                     id="signin-password"
                     autoComplete="current-password"
@@ -201,6 +193,14 @@ export function SignInForm({
                       {errors.password.message}
                     </span>
                   )}
+                  <div>
+                    <a
+                      href="/reset-password"
+                      className="text-sm font-medium text-dark-primary underline underline-offset-4 transition-colors hover:text-primary hover:opacity-85 dark:text-primary dark:hover:text-primary/80"
+                    >
+                      {m.auth_forgot_password()}
+                    </a>
+                  </div>
                 </div>
 
                 {errors.root?.message && (
