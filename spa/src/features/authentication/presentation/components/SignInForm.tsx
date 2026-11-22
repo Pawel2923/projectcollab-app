@@ -151,7 +151,6 @@ export function SignInForm({
                     id="signin-email"
                     type="email"
                     autoComplete="email"
-                    placeholder="user@example.com"
                     disabled={isSubmitting}
                     aria-invalid={Boolean(errors.email)}
                     aria-describedby={
