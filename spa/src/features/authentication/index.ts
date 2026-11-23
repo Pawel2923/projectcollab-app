@@ -79,6 +79,14 @@ export {
   type SignInViewProps,
 } from "./presentation/components/SignInView"
 export { SignUpView } from "./presentation/components/SignUpView"
+export {
+  requireAuth,
+  requireGuest,
+  formatRedirectUrl,
+  type AuthGuardLocation,
+  type AuthGuardOptions,
+  type GuestGuardOptions,
+} from "./presentation/guards/auth-guard"
 
 /**
  * Initiates logout, clearing query cache and redirecting to sign-in.

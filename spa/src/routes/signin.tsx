@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { SignInView } from "@/features/authentication"
+import { requireGuest, SignInView } from "@/features/authentication"
 
 interface SignInSearchParams {
   redirectUrl?: string
@@ -14,6 +14,9 @@ export const Route = createFileRoute("/signin")({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
     error: typeof search.error === "string" ? search.error : undefined,
   }),
+  beforeLoad: async ({ context }) => {
+    await requireGuest({ queryClient: context.queryClient })
+  },
   component: SignInRouteComponent,
 })
 
