@@ -1,2 +1,13 @@
 gesdinet_jwt_refresh_token:
     refresh_token_class: App\Entity\RefreshToken
+    # Cookie settings for the refresh token.
+    # The bundle's built-in RequestCookieExtractor already reads refresh_token from cookies.
+    # remove_token_from_body is false to keep backward compatibility with /frontend (deprecated).
+    cookie:
+        enabled: true
+        same_site: lax
+        path: /core-api/auth/refresh
+        domain: '%env(COOKIE_DOMAIN)%'
+        http_only: true
+        secure: true
+        remove_token_from_body: false    # keep refresh_token in body for /frontend backward compat

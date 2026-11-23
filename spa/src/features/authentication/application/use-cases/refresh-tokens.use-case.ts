@@ -8,9 +8,9 @@ export class RefreshTokensUseCase {
     this.gateway = gateway
   }
 
-  public async execute(refreshToken?: string): Promise<boolean> {
-    const token = typeof refreshToken === "string" ? refreshToken : undefined
-    return this.gateway.refreshTokens(token)
+  public async execute(): Promise<boolean> {
+    // The refresh_token cookie is sent automatically by the browser.
+    return this.gateway.refreshTokens()
   }
 }
 

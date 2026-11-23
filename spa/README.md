@@ -20,10 +20,17 @@ To use the components in your app, import them as follows:
 import { Button } from "@/components/ui/button"
 ```
 
-## Building
+## Building & Testing
 
-To build the static SPA application, execute inside the frontend container:
+To build or test the static SPA application, execute inside the frontend container:
 
 ```bash
-docker compose exec frontend sh -c "cd /workspace/spa && pnpm build"
+# Build static SPA application
+docker compose exec frontend pnpm spa:build
+
+# Run SPA unit & domain tests
+docker compose exec frontend pnpm spa:test
+
+# Run full checks (i18n check, typecheck, lint, format, and tests)
+docker compose exec frontend pnpm spa:dev-check
 ```

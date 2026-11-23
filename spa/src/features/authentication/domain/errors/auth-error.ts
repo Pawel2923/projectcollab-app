@@ -11,3 +11,10 @@ export class SessionExpiredError extends AuthError {
     this.name = "SessionExpiredError"
   }
 }
+
+export class InvalidCredentialsError extends AuthError {
+  constructor(message: string = "Invalid credentials") {
+    super(message)
+    this.name = "InvalidCredentialsError"
+  }
+}

@@ -188,7 +188,13 @@ docker compose exec frontend pnpm test
 docker compose exec frontend sh
 
 # Zbudowanie statycznej aplikacji SPA
-docker compose exec frontend sh -c "cd /workspace/spa && pnpm build"
+docker compose exec frontend pnpm spa:build
+
+# Uruchomienie testów SPA
+docker compose exec frontend pnpm spa:test
+
+# Uruchomienie weryfikacji SPA dev-check (i18n, typecheck, lint, format, testy)
+docker compose exec frontend pnpm spa:dev-check
 ```
 
 ---

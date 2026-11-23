@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { HttpAuthGateway } from "./http-auth-gateway"
+import { InvalidCredentialsError } from "../../domain/errors/auth-error"
+import { ApiError } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type {
   apiClient,
@@ -48,66 +50,44 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("calls logout endpoint with refresh_token provided directly", async () => {
-    mockApiFetch.mockResolvedValueOnce({})
+  it("throws InvalidCredentialsError when login returns 401 ApiError", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(401, { message: "Invalid credentials." })
+    )
 
-    await gateway.logout("direct-refresh-token")
-
-    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/logout", {
-      method: "POST",
-      body: { refresh_token: "direct-refresh-token" },
-      skipAuthRefresh: true,
-      skipAuthRedirect: true,
-    })
+    await expect(
+      gateway.login({ email: "user@test.com", password: "wrong-password" })
+    ).rejects.toThrow(InvalidCredentialsError)
   })
 
-  it("calls logout endpoint with refresh_token captured from login", async () => {
+  it("does not store tokens locally — cookies are managed by the server", async () => {
+    // Login response body still contains tokens (additive / backward compat)
+    // but the gateway does not capture them in JS memory.
     mockApiFetch.mockResolvedValueOnce({
       token: "jwt-token-123",
-      refresh_token: "login-refresh-token",
+      refresh_token: "refresh-token-abc",
     })
+
     await gateway.login({ email: "user@test.com", password: "password123" })
 
-    mockApiFetch.mockResolvedValueOnce({})
+    // No side-effect: a subsequent logout sends no body token.
+    mockApiFetch.mockResolvedValueOnce(null)
     await gateway.logout()
 
     expect(mockApiFetch).toHaveBeenLastCalledWith("/core-api/auth/logout", {
       method: "POST",
-      body: { refresh_token: "login-refresh-token" },
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })
   })
 
-  it("clears captured refresh_token after logout", async () => {
-    mockApiFetch.mockResolvedValueOnce({
-      token: "jwt-token-123",
-      refresh_token: "login-refresh-token",
-    })
-    await gateway.login({ email: "user@test.com", password: "password123" })
-
-    mockApiFetch.mockResolvedValueOnce({})
-    await gateway.logout()
-
-    mockApiFetch.mockResolvedValueOnce({})
-    await gateway.logout()
-
-    expect(mockApiFetch).toHaveBeenLastCalledWith("/core-api/auth/logout", {
-      method: "POST",
-      body: { refresh_token: "" },
-      skipAuthRefresh: true,
-      skipAuthRedirect: true,
-    })
-  })
-
-  it("calls logout endpoint with empty string if no refresh token is available", async () => {
-    mockApiFetch.mockResolvedValueOnce({})
+  it("calls logout endpoint with no body — relies on refresh_token cookie", async () => {
+    mockApiFetch.mockResolvedValueOnce(null)
 
     await gateway.logout()
 
     expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/logout", {
       method: "POST",
-      body: { refresh_token: "" },
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })
@@ -146,48 +126,18 @@ describe("HttpAuthGateway", () => {
     expect(result).toBeNull()
   })
 
-  it("delegates refreshTokens and onAuthFailure", async () => {
+  it("delegates refreshTokens with no arguments — cookie is automatic", async () => {
     mockRefreshTokens.mockResolvedValueOnce(true)
-    const refreshed = await gateway.refreshTokens()
-    expect(refreshed).toBe(true)
-    expect(mockRefreshTokens).toHaveBeenCalledWith("")
 
+    const refreshed = await gateway.refreshTokens()
+
+    expect(refreshed).toBe(true)
+    expect(mockRefreshTokens).toHaveBeenCalledWith()
+  })
+
+  it("delegates onAuthFailure callback registration", async () => {
     const cb = vi.fn()
     gateway.onAuthFailure(cb)
     expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
-  })
-
-  it("passes stored refresh token to refreshTokens function", async () => {
-    gateway.setRefreshToken("stored-refresh-token")
-    mockRefreshTokens.mockResolvedValueOnce(true)
-
-    const refreshed = await gateway.refreshTokens()
-
-    expect(refreshed).toBe(true)
-    expect(mockRefreshTokens).toHaveBeenCalledWith("stored-refresh-token")
-  })
-
-  it("passes explicit refresh token to refreshTokens function", async () => {
-    gateway.setRefreshToken("stored-refresh-token")
-    mockRefreshTokens.mockResolvedValueOnce(true)
-
-    const refreshed = await gateway.refreshTokens("explicit-refresh-token")
-
-    expect(refreshed).toBe(true)
-    expect(mockRefreshTokens).toHaveBeenCalledWith("explicit-refresh-token")
-  })
-
-  it("passes token captured from login to refreshTokens function", async () => {
-    mockApiFetch.mockResolvedValueOnce({
-      token: "jwt-token-123",
-      refresh_token: "captured-login-token",
-    })
-    await gateway.login({ email: "user@test.com", password: "password123" })
-
-    mockRefreshTokens.mockResolvedValueOnce(true)
-    const refreshed = await gateway.refreshTokens()
-
-    expect(refreshed).toBe(true)
-    expect(mockRefreshTokens).toHaveBeenCalledWith("captured-login-token")
   })
 })

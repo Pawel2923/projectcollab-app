@@ -1,13 +1,13 @@
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import type { LoginCredentials } from "../../domain/models/credentials"
 import type { User } from "../../domain/models/user"
+import { InvalidCredentialsError } from "../../domain/errors/auth-error"
 import {
+  ApiError,
   apiClient as defaultApiClient,
   apiFetch as defaultApiFetch,
   onAuthFailure as defaultOnAuthFailure,
-  onTokenRefreshed as defaultOnTokenRefreshed,
   refreshTokens as defaultRefreshTokens,
-  setRefreshTokenResolver as defaultSetRefreshTokenResolver,
   type AuthFailureCallback,
 } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
@@ -18,13 +18,6 @@ interface HttpAuthGatewayDependencies {
   readonly apiFetch?: typeof defaultApiFetch
   readonly refreshTokens?: typeof defaultRefreshTokens
   readonly onAuthFailure?: typeof defaultOnAuthFailure
-  readonly getRefreshToken?: () => string | null
-  readonly setRefreshToken?: (token: string | null) => void
-}
-
-interface LoginResponseDto {
-  readonly token?: string
-  readonly refresh_token?: string
 }
 
 export class HttpAuthGateway implements AuthGatewayPort {
@@ -32,62 +25,42 @@ export class HttpAuthGateway implements AuthGatewayPort {
   private readonly fetcher: typeof defaultApiFetch
   private readonly refreshTokenFn: typeof defaultRefreshTokens
   private readonly onAuthFailureFn: typeof defaultOnAuthFailure
-  private readonly getRefreshTokenFn?: () => string | null
-  private readonly setRefreshTokenFn?: (token: string | null) => void
-  private currentRefreshToken: string | null = null
 
   constructor(dependencies: HttpAuthGatewayDependencies = {}) {
     this.client = dependencies.apiClient ?? defaultApiClient
     this.fetcher = dependencies.apiFetch ?? defaultApiFetch
     this.refreshTokenFn = dependencies.refreshTokens ?? defaultRefreshTokens
     this.onAuthFailureFn = dependencies.onAuthFailure ?? defaultOnAuthFailure
-    this.getRefreshTokenFn = dependencies.getRefreshToken
-    this.setRefreshTokenFn = dependencies.setRefreshToken
-
-    if (!dependencies.refreshTokens && typeof defaultSetRefreshTokenResolver === "function") {
-      defaultSetRefreshTokenResolver(() => this.getRefreshToken())
-    }
-    if (typeof defaultOnTokenRefreshed === "function") {
-      defaultOnTokenRefreshed((newToken) => {
-        this.setRefreshToken(newToken)
-      })
-    }
-  }
-
-  public getRefreshToken(): string | null {
-    return this.getRefreshTokenFn ? this.getRefreshTokenFn() : this.currentRefreshToken
-  }
-
-  public setRefreshToken(token: string | null): void {
-    if (this.setRefreshTokenFn) {
-      this.setRefreshTokenFn(token)
-    }
-    this.currentRefreshToken = token
   }
 
   public async login(credentials: LoginCredentials): Promise<void> {
-    const response = await this.fetcher<LoginResponseDto>("/core-api/auth/login", {
-      method: "POST",
-      body: credentials,
-      skipAuthRefresh: true,
-      skipAuthRedirect: true,
-    })
-    if (response?.refresh_token) {
-      this.setRefreshToken(response.refresh_token)
-    }
-  }
-
-  public async logout(refreshToken?: string): Promise<void> {
-    const token = refreshToken ?? this.getRefreshToken() ?? ""
     try {
-      await this.fetcher("/core-api/auth/logout", {
+      await this.fetcher("/core-api/auth/login", {
         method: "POST",
-        body: { refresh_token: token },
+        body: credentials,
         skipAuthRefresh: true,
         skipAuthRedirect: true,
       })
-    } finally {
-      this.setRefreshToken(null)
+    } catch (error: unknown) {
+      if (error instanceof ApiError && error.status === 401) {
+        throw new InvalidCredentialsError("Invalid credentials")
+      }
+      throw error
+    }
+    // Tokens are set as HTTP-Only cookies by the server — nothing to store locally.
+  }
+
+  public async logout(): Promise<void> {
+    try {
+      await this.fetcher("/core-api/auth/logout", {
+        method: "POST",
+        // No body — the refresh_token cookie is sent automatically by the browser.
+        // The server reads it, revokes the token, and clears both auth cookies.
+        skipAuthRefresh: true,
+        skipAuthRedirect: true,
+      })
+    } catch {
+      // Best-effort: server clears cookies regardless; local cleanup follows in the use-case.
     }
   }
 
@@ -102,9 +75,9 @@ export class HttpAuthGateway implements AuthGatewayPort {
     }
   }
 
-  public async refreshTokens(refreshToken?: string): Promise<boolean> {
-    const token = refreshToken ?? this.getRefreshToken() ?? ""
-    return this.refreshTokenFn(token)
+  public async refreshTokens(): Promise<boolean> {
+    // The refresh_token cookie is sent automatically; no manual token needed.
+    return this.refreshTokenFn()
   }
 
   public onAuthFailure(callback: AuthFailureCallback): () => void {

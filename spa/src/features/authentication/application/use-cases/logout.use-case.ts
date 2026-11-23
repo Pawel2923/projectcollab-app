@@ -26,10 +26,10 @@ export class LogoutUseCase {
     this.redirect = redirect
   }
 
-  public async execute(refreshToken?: string): Promise<void> {
-    const token = typeof refreshToken === "string" ? refreshToken : undefined
+  public async execute(): Promise<void> {
     try {
-      await this.gateway.logout(token)
+      // No refresh token argument — the browser sends the cookie automatically.
+      await this.gateway.logout()
     } catch (error: unknown) {
       console.warn(
         "Backend logout request failed, proceeding with local cleanup",

@@ -10,9 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as OrganizationsRouteImport } from './routes/organizations'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as AuthenticatedOrganizationsRouteImport } from './routes/_authenticated.organizations'
 import { Route as PolicyIndexRouteImport } from './routes/policy.index'
 import { Route as PolicyPrivacyRouteImport } from './routes/policy.privacy'
 import { Route as PolicyTermsRouteImport } from './routes/policy.terms'
@@ -22,9 +23,8 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrganizationsRoute = OrganizationsRouteImport.update({
-  id: '/organizations',
-  path: '/organizations',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SigninRoute = SigninRouteImport.update({
@@ -37,6 +37,12 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOrganizationsRoute =
+  AuthenticatedOrganizationsRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const PolicyIndexRoute = PolicyIndexRouteImport.update({
   id: '/policy/',
   path: '/policy/',
@@ -55,18 +61,18 @@ const PolicyTermsRoute = PolicyTermsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/organizations': typeof OrganizationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
   '/policy/': typeof PolicyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/organizations': typeof OrganizationsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
   '/policy': typeof PolicyIndexRoute
@@ -74,9 +80,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/organizations': typeof OrganizationsRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
   '/policy/': typeof PolicyIndexRoute
@@ -85,27 +92,28 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/organizations'
     | '/signin'
     | '/signup'
+    | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
     | '/policy/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/organizations'
     | '/signin'
     | '/signup'
+    | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
     | '/policy'
   id:
     | '__root__'
     | '/'
-    | '/organizations'
+    | '/_authenticated'
     | '/signin'
     | '/signup'
+    | '/_authenticated/organizations'
     | '/policy/privacy'
     | '/policy/terms'
     | '/policy/'
@@ -113,7 +121,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  OrganizationsRoute: typeof OrganizationsRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   PolicyPrivacyRoute: typeof PolicyPrivacyRoute
@@ -130,11 +138,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/organizations': {
-      id: '/organizations'
-      path: '/organizations'
-      fullPath: '/organizations'
-      preLoaderRoute: typeof OrganizationsRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signin': {
@@ -150,6 +158,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/organizations': {
+      id: '/_authenticated/organizations'
+      path: '/organizations'
+      fullPath: '/organizations'
+      preLoaderRoute: typeof AuthenticatedOrganizationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/policy/': {
       id: '/policy/'
@@ -175,9 +190,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedOrganizationsRoute: typeof AuthenticatedOrganizationsRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedOrganizationsRoute: AuthenticatedOrganizationsRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  OrganizationsRoute: OrganizationsRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   PolicyPrivacyRoute: PolicyPrivacyRoute,

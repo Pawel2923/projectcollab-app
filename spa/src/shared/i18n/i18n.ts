@@ -34,13 +34,12 @@ export function getLocaleLabel(locale: AppLocale): string {
  * Returns the first supported locale in the user's preference order,
  * or falls back to DEFAULT_LOCALE ("pl").
  */
-export function detectBrowserLocale(
-  languages?: readonly string[]
-): AppLocale {
+export function detectBrowserLocale(languages?: readonly string[]): AppLocale {
   const candidateLanguages =
     languages ??
     (typeof window !== "undefined" && typeof navigator !== "undefined"
-      ? navigator.languages ?? (navigator.language ? [navigator.language] : [])
+      ? (navigator.languages ??
+        (navigator.language ? [navigator.language] : []))
       : [])
 
   if (!candidateLanguages || candidateLanguages.length === 0) {

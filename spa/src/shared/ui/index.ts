@@ -41,6 +41,17 @@ export {
   TooltipProvider,
   TooltipTrigger,
 } from "./tooltip"
+export {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card"
+export { Input } from "./input"
+export { Label } from "./label"
 export { BackButton, type BackButtonProps } from "./back-button"
 export {
   ThemeSegmentedToggle,
