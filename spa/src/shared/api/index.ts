@@ -13,7 +13,7 @@ export {
   type RefreshTokenResolver,
   type TokenRefreshedCallback,
 } from "./api-client"
-export { ApiError, isApiError } from "./api-error"
+export { createApiError, isApiError, type ApiError } from "./api-error"
 export { queryClient } from "./query-client"
 export {
   SYMFONY_VIOLATION_CODES,

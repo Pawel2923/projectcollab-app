@@ -1,11 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { HttpAuthGateway } from "./http-auth-gateway"
 import {
-  InvalidCredentialsError,
-  TooManyRequestsError,
-  UserAlreadyExistsError,
+  createAuthValidationError,
+  createEmailVerificationError,
+  createInvalidCredentialsError,
+  createTooManyRequestsError,
+  createUserAlreadyExistsError,
 } from "../../domain/errors/auth-error"
-import { ApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
+import { createApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
+import { err, ok } from "@/shared/result"
 import type { AppLocale } from "@/shared/i18n"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type {
@@ -45,11 +48,15 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("calls login endpoint with correct credentials and options", async () => {
+  it("calls login endpoint with correct credentials and returns ok result", async () => {
     mockApiFetch.mockResolvedValueOnce({})
 
-    await gateway.login({ email: "user@test.com", password: "password123" })
+    const result = await gateway.login({
+      email: "user@test.com",
+      password: "password123",
+    })
 
+    expect(result).toEqual(ok())
     expect(mockApiFetch).toHaveBeenCalledWith("/core-api/auth/login", {
       method: "POST",
       body: { email: "user@test.com", password: "password123" },
@@ -58,27 +65,40 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("throws InvalidCredentialsError when login returns 401 ApiError", async () => {
+  it("returns InvalidCredentialsError result when login returns 401 ApiError", async () => {
     mockApiFetch.mockRejectedValueOnce(
-      new ApiError(401, { message: "Invalid credentials." })
+      createApiError(401, { message: "Invalid credentials." })
     )
 
+    const result = await gateway.login({
+      email: "user@test.com",
+      password: "wrong-password",
+    })
+
+    expect(result).toEqual(err(createInvalidCredentialsError()))
+  })
+
+  it("rethrows unexpected network or 5xx errors from login", async () => {
+    const networkError = new Error("Network failure")
+    mockApiFetch.mockRejectedValueOnce(networkError)
+
     await expect(
-      gateway.login({ email: "user@test.com", password: "wrong-password" })
-    ).rejects.toThrow(InvalidCredentialsError)
+      gateway.login({ email: "user@test.com", password: "password123" })
+    ).rejects.toThrow(networkError)
   })
 
   it("does not store tokens locally — cookies are managed by the server", async () => {
-    // Login response body still contains tokens (additive / backward compat)
-    // but the gateway does not capture them in JS memory.
     mockApiFetch.mockResolvedValueOnce({
       token: "jwt-token-123",
       refresh_token: "refresh-token-abc",
     })
 
-    await gateway.login({ email: "user@test.com", password: "password123" })
+    const loginResult = await gateway.login({
+      email: "user@test.com",
+      password: "password123",
+    })
+    expect(loginResult).toEqual(ok())
 
-    // No side-effect: a subsequent logout sends no body token.
     mockApiFetch.mockResolvedValueOnce(null)
     await gateway.logout()
 
@@ -155,12 +175,16 @@ describe("HttpAuthGateway", () => {
     expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
   })
 
-  it("calls signUp endpoint with JSON-LD content type, plainPassword, and current locale payload", async () => {
+  it("calls signUp endpoint with JSON-LD content type, plainPassword, and current locale payload and returns ok", async () => {
     mockGetLocale.mockReturnValueOnce("en")
     mockApiFetch.mockResolvedValueOnce({})
 
-    await gateway.signUp({ email: "new@test.com", password: "password123" })
+    const result = await gateway.signUp({
+      email: "new@test.com",
+      password: "password123",
+    })
 
+    expect(result).toEqual(ok())
     expect(mockApiFetch).toHaveBeenCalledWith("/core-api/users", {
       method: "POST",
       headers: {
@@ -176,9 +200,9 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("throws UserAlreadyExistsError when signUp returns 422 with email violation", async () => {
+  it("returns UserAlreadyExistsError result when signUp returns 422 with email violation", async () => {
     mockApiFetch.mockRejectedValueOnce(
-      new ApiError(422, {
+      createApiError(422, {
         violations: [
           {
             propertyPath: "email",
@@ -188,14 +212,17 @@ describe("HttpAuthGateway", () => {
       })
     )
 
-    await expect(
-      gateway.signUp({ email: "existing@test.com", password: "password123" })
-    ).rejects.toThrow(UserAlreadyExistsError)
+    const result = await gateway.signUp({
+      email: "existing@test.com",
+      password: "password123",
+    })
+
+    expect(result).toEqual(err(createUserAlreadyExistsError()))
   })
 
-  it("throws UserAlreadyExistsError when signUp returns 422 with UniqueEntity code and generic message", async () => {
+  it("returns UserAlreadyExistsError result when signUp returns 422 with UniqueEntity code and generic message", async () => {
     mockApiFetch.mockRejectedValueOnce(
-      new ApiError(422, {
+      createApiError(422, {
         violations: [
           {
             propertyPath: "email",
@@ -206,13 +233,16 @@ describe("HttpAuthGateway", () => {
       })
     )
 
-    await expect(
-      gateway.signUp({ email: "existing@test.com", password: "password123" })
-    ).rejects.toThrow(UserAlreadyExistsError)
+    const result = await gateway.signUp({
+      email: "existing@test.com",
+      password: "password123",
+    })
+
+    expect(result).toEqual(err(createUserAlreadyExistsError()))
   })
 
-  it("propagates non-email ApiError from signUp", async () => {
-    const apiError = new ApiError(422, {
+  it("returns AuthValidationError result for non-duplicate 422 ApiError from signUp", async () => {
+    const apiError = createApiError(422, {
       violations: [
         {
           propertyPath: "plainPassword",
@@ -222,17 +252,32 @@ describe("HttpAuthGateway", () => {
     })
     mockApiFetch.mockRejectedValueOnce(apiError)
 
-    await expect(
-      gateway.signUp({ email: "new@test.com", password: "password" })
-    ).rejects.toThrow(apiError)
+    const result = await gateway.signUp({
+      email: "new@test.com",
+      password: "password",
+    })
+
+    expect(result).toEqual(
+      err(createAuthValidationError(apiError.violations, apiError.message))
+    )
   })
 
-  it("calls verify-email/send endpoint with JSON-LD content type, email, and current locale payload", async () => {
+  it("rethrows unexpected 5xx or network error from signUp", async () => {
+    const serverError = createApiError(500, { detail: "Internal error" })
+    mockApiFetch.mockRejectedValueOnce(serverError)
+
+    await expect(
+      gateway.signUp({ email: "new@test.com", password: "password" })
+    ).rejects.toEqual(serverError)
+  })
+
+  it("calls verify-email/send endpoint with JSON-LD content type, email, and current locale payload and returns ok", async () => {
     mockGetLocale.mockReturnValueOnce("en")
     mockApiFetch.mockResolvedValueOnce({ code: "VERIFY_EMAIL_SENT" })
 
-    await gateway.resendVerificationEmail("user@test.com")
+    const result = await gateway.resendVerificationEmail("user@test.com")
 
+    expect(result).toEqual(ok())
     expect(mockApiFetch).toHaveBeenCalledWith("/core-api/verify-email/send", {
       method: "POST",
       headers: {
@@ -244,18 +289,18 @@ describe("HttpAuthGateway", () => {
     })
   })
 
-  it("throws TooManyRequestsError when resendVerificationEmail returns 429 ApiError", async () => {
+  it("returns TooManyRequestsError result when resendVerificationEmail returns 429 ApiError", async () => {
     mockApiFetch.mockRejectedValueOnce(
-      new ApiError(429, { detail: "Too many requests" })
+      createApiError(429, { detail: "Too many requests" })
     )
 
-    await expect(
-      gateway.resendVerificationEmail("user@test.com")
-    ).rejects.toThrow(TooManyRequestsError)
+    const result = await gateway.resendVerificationEmail("user@test.com")
+
+    expect(result).toEqual(err(createTooManyRequestsError()))
   })
 
-  it("propagates 422 ApiError from resendVerificationEmail", async () => {
-    const apiError = new ApiError(422, {
+  it("returns AuthValidationError result when resendVerificationEmail returns 422 ApiError", async () => {
+    const apiError = createApiError(422, {
       violations: [
         {
           propertyPath: "email",
@@ -266,12 +311,23 @@ describe("HttpAuthGateway", () => {
     })
     mockApiFetch.mockRejectedValueOnce(apiError)
 
-    await expect(
-      gateway.resendVerificationEmail("invalid-email")
-    ).rejects.toThrow(apiError)
+    const result = await gateway.resendVerificationEmail("invalid-email")
+
+    expect(result).toEqual(
+      err(createAuthValidationError(apiError.violations, apiError.message))
+    )
   })
 
-  it("calls verify-email POST endpoint with query params and maps verified response", async () => {
+  it("rethrows unexpected network or 5xx errors from resendVerificationEmail", async () => {
+    const networkError = new Error("Network failure")
+    mockApiFetch.mockRejectedValueOnce(networkError)
+
+    await expect(
+      gateway.resendVerificationEmail("user@test.com")
+    ).rejects.toThrow(networkError)
+  })
+
+  it("calls verify-email POST endpoint with query params and maps verified response to ok result", async () => {
     mockApiFetch.mockResolvedValueOnce({
       code: "EMAIL_VERIFIED",
       isVerified: true,
@@ -284,7 +340,7 @@ describe("HttpAuthGateway", () => {
       token: "tok/xyz",
     })
 
-    expect(result).toEqual({ status: "verified" })
+    expect(result).toEqual(ok())
     expect(mockApiFetch).toHaveBeenCalledWith(
       "/core-api/verify-email?expires=1799999999&id=42&signature=sig%2Babc%3D&token=tok%2Fxyz",
       {
@@ -295,7 +351,7 @@ describe("HttpAuthGateway", () => {
     )
   })
 
-  it("maps USER_NOT_FOUND verify-email response to user_not_found result", async () => {
+  it("maps USER_NOT_FOUND verify-email response to user_not_found error result", async () => {
     mockApiFetch.mockResolvedValueOnce({
       code: "USER_NOT_FOUND",
       isVerified: false,
@@ -308,12 +364,12 @@ describe("HttpAuthGateway", () => {
       token: "tok",
     })
 
-    expect(result).toEqual({ status: "failed", reason: "user_not_found" })
+    expect(result).toEqual(err(createEmailVerificationError("user_not_found")))
   })
 
-  it("maps verify-email ApiError and network failures into EmailVerificationResult", async () => {
+  it("maps expected verify-email ApiErrors into Result and rethrows unexpected network/5xx errors", async () => {
     mockApiFetch.mockRejectedValueOnce(
-      new ApiError(422, { detail: "Missing param" })
+      createApiError(422, { detail: "Missing param" })
     )
 
     await expect(
@@ -323,9 +379,10 @@ describe("HttpAuthGateway", () => {
         signature: "sig",
         token: "tok",
       })
-    ).resolves.toEqual({ status: "failed", reason: "invalid_link" })
+    ).resolves.toEqual(err(createEmailVerificationError("invalid_link")))
 
-    mockApiFetch.mockRejectedValueOnce(new Error("Network error"))
+    const networkError = new Error("Network error")
+    mockApiFetch.mockRejectedValueOnce(networkError)
 
     await expect(
       gateway.verifyEmail({
@@ -334,6 +391,6 @@ describe("HttpAuthGateway", () => {
         signature: "sig",
         token: "tok",
       })
-    ).resolves.toEqual({ status: "failed", reason: "server_error" })
+    ).rejects.toThrow(networkError)
   })
 })

@@ -28,8 +28,15 @@ import {
 import { clearCreatedIdentityEmail } from "../../infrastructure/storage/created-identity.storage"
 import { useUserContext } from "../context/UserContext"
 
+export type VerifyEmailConfirmOutcome =
+  | { readonly status: "verified" }
+  | {
+      readonly status: "failed"
+      readonly reason: EmailVerificationFailureReason
+    }
+
 export type VerifyEmailConfirmState =
-  { readonly status: "verifying" } | EmailVerificationResult
+  { readonly status: "verifying" } | VerifyEmailConfirmOutcome
 
 export interface VerifyEmailConfirmViewProps {
   params: VerifyEmailSearchParams
@@ -86,7 +93,7 @@ export function VerifyEmailConfirmView({
   const [attempt, setAttempt] = React.useState(0)
   const [resolved, setResolved] = React.useState<{
     readonly key: string
-    readonly result: EmailVerificationResult
+    readonly outcome: VerifyEmailConfirmOutcome
   } | null>(null)
 
   const attemptKey = paramsKey ? `${paramsKey}#${attempt}` : null
@@ -96,7 +103,7 @@ export function VerifyEmailConfirmView({
     : !parsedParams || !attemptKey
       ? { status: "failed", reason: "invalid_link" }
       : resolved?.key === attemptKey
-        ? resolved.result
+        ? resolved.outcome
         : { status: "verifying" }
 
   const inFlightRef = React.useRef<{
@@ -119,15 +126,33 @@ export function VerifyEmailConfirmView({
       inFlightRef.current = { key: attemptKey, promise }
     }
 
-    promise.then((result) => {
-      if (!isActive) {
-        return
-      }
-      if (result.status === "verified") {
-        clearCreatedIdentityEmail()
-      }
-      setResolved({ key: attemptKey, result })
-    })
+    promise
+      .then((result) => {
+        if (!isActive) {
+          return
+        }
+        if (result.ok) {
+          clearCreatedIdentityEmail()
+          setResolved({
+            key: attemptKey,
+            outcome: { status: "verified" },
+          })
+          return
+        }
+        setResolved({
+          key: attemptKey,
+          outcome: { status: "failed", reason: result.error.kind },
+        })
+      })
+      .catch(() => {
+        if (!isActive) {
+          return
+        }
+        setResolved({
+          key: attemptKey,
+          outcome: { status: "failed", reason: "server_error" },
+        })
+      })
 
     return () => {
       isActive = false

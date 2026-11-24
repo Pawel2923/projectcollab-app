@@ -17,8 +17,6 @@ import {
 import { GoogleLogoIcon, MicrosoftLogoIcon } from "@/assets/icons/icons"
 import { cn } from "@/shared/lib/utils"
 import { m } from "@/paraglide/messages"
-import { ApiError } from "@/shared/api"
-import { InvalidCredentialsError } from "../../domain/errors/auth-error"
 import { getPostLoginRedirect } from "../../domain/services/auth-navigation"
 import {
   LoginUseCase,
@@ -78,21 +76,24 @@ export function SignInForm({
   const onSubmit = async (data: SignInFormData) => {
     clearErrors("root")
     try {
-      await loginUseCaseInstance.execute(data)
+      const result = await loginUseCaseInstance.execute(data)
+      if (!result.ok) {
+        if (result.error.kind === "invalid_credentials") {
+          setError("root", { message: m.auth_invalid_credentials() })
+        } else {
+          setError("root", { message: m.auth_general_error() })
+        }
+        return
+      }
+
       const target = getPostLoginRedirect(redirectUrl)
       if (onSuccess) {
         onSuccess(target)
       } else {
         await navigate({ to: target })
       }
-    } catch (err: unknown) {
-      if (err instanceof InvalidCredentialsError) {
-        setError("root", { message: m.auth_invalid_credentials() })
-      } else if (err instanceof ApiError && err.status === 401) {
-        setError("root", { message: m.auth_invalid_credentials() })
-      } else {
-        setError("root", { message: m.auth_general_error() })
-      }
+    } catch {
+      setError("root", { message: m.auth_general_error() })
     }
   }
 

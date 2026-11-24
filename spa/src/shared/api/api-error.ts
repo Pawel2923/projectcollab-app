@@ -63,21 +63,35 @@ function resolveErrorMessage(status: number, data: unknown): string {
   return `Request failed with status ${status}`
 }
 
-export class ApiError extends Error {
-  public readonly status: number
-  public readonly data: unknown
-  public readonly violations: readonly ApiPlatformViolation[]
+export interface ApiError {
+  readonly name: "ApiError"
+  readonly message: string
+  readonly status: number
+  readonly data: unknown
+  readonly violations: readonly ApiPlatformViolation[]
+}
 
-  constructor(status: number, data: unknown, message?: string) {
-    const resolvedMessage = message || resolveErrorMessage(status, data)
-    super(resolvedMessage)
-    this.name = "ApiError"
-    this.status = status
-    this.data = data
-    this.violations = parseViolations(data)
-  }
+export function createApiError(
+  status: number,
+  data: unknown,
+  message?: string
+): ApiError {
+  const resolvedMessage = message || resolveErrorMessage(status, data)
+  return Object.freeze({
+    name: "ApiError",
+    message: resolvedMessage,
+    status,
+    data,
+    violations: parseViolations(data),
+  })
 }
 
 export function isApiError(value: unknown): value is ApiError {
-  return value instanceof ApiError
+  return (
+    isRecord(value) &&
+    value.name === "ApiError" &&
+    typeof value.status === "number" &&
+    typeof value.message === "string" &&
+    Array.isArray(value.violations)
+  )
 }

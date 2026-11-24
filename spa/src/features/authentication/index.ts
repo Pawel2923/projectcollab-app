@@ -12,11 +12,28 @@ export type {
 } from "./domain/models/email-verification"
 export type { AuthGatewayPort } from "./domain/ports/auth-gateway.port"
 export {
-  AuthError,
-  SessionExpiredError,
-  InvalidCredentialsError,
-  TooManyRequestsError,
-  UserAlreadyExistsError,
+  createAuthValidationError,
+  createEmailRequiredError,
+  createEmailVerificationError,
+  createInvalidCredentialsError,
+  createSessionExpiredError,
+  createTooManyRequestsError,
+  createUserAlreadyExistsError,
+  isAuthError,
+  type AuthError,
+  type AuthErrorKind,
+  type AuthValidationError,
+  type AuthValidationViolation,
+  type EmailRequiredError,
+  type EmailVerificationError,
+  type EmailVerificationErrorKind,
+  type InvalidCredentialsError,
+  type LoginError,
+  type ResendVerificationEmailError,
+  type SessionExpiredError,
+  type SignUpError,
+  type TooManyRequestsError,
+  type UserAlreadyExistsError,
 } from "./domain/errors/auth-error"
 export {
   generateUserInitials,
@@ -139,6 +156,7 @@ export {
 export {
   VerifyEmailConfirmView,
   type VerifyEmailConfirmViewProps,
+  type VerifyEmailConfirmOutcome,
   type VerifyEmailConfirmState,
 } from "./presentation/components/VerifyEmailConfirmView"
 export {

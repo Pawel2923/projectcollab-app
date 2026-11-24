@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { ApiError } from "./api-error"
+import { isApiError, type ApiError } from "./api-error"
 import {
   formatApiUrl,
   onAuthFailure,
@@ -126,7 +126,11 @@ describe("apiFetch auth failure and retry lifecycle", () => {
       })
     vi.stubGlobal("fetch", fetchMock)
 
-    await expect(apiFetch("/users/me")).rejects.toThrow("Session expired")
+    await expect(apiFetch("/users/me")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 401,
+      message: "Session expired",
+    })
 
     expect(authFailureListener).toHaveBeenCalledTimes(1)
     expect(mockLocation.href).toBe("/signin?redirect=%2Fdashboard")
@@ -154,7 +158,11 @@ describe("apiFetch auth failure and retry lifecycle", () => {
       })
     vi.stubGlobal("fetch", fetchMock)
 
-    await expect(apiFetch("/users/me")).rejects.toThrow("Session expired")
+    await expect(apiFetch("/users/me")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 401,
+      message: "Session expired",
+    })
 
     expect(authFailureListener).toHaveBeenCalledTimes(1)
     expect(mockLocation.href).toBe("/signin?redirect=%2Fdashboard")
@@ -190,7 +198,11 @@ describe("apiFetch auth failure and retry lifecycle", () => {
 
     await expect(
       apiFetch("/users/me", { skipAuthRedirect: true })
-    ).rejects.toThrow("Session expired")
+    ).rejects.toMatchObject({
+      name: "ApiError",
+      status: 401,
+      message: "Session expired",
+    })
 
     expect(authFailureListener).toHaveBeenCalledTimes(1)
     expect(mockLocation.href).toBe("")
@@ -229,7 +241,7 @@ describe("apiFetch auth failure and retry lifecycle", () => {
       caughtError = error
     }
 
-    expect(caughtError).toBeInstanceOf(ApiError)
+    expect(isApiError(caughtError)).toBe(true)
     const apiError = caughtError as ApiError
     expect(apiError.status).toBe(422)
     expect(apiError.violations).toEqual([

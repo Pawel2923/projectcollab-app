@@ -1,3 +1,9 @@
+import type { Result } from "@/shared/result"
+import type {
+  EmailVerificationError,
+  EmailVerificationErrorKind,
+} from "../errors/auth-error"
+
 export interface VerifyEmailParams {
   readonly id: string
   readonly expires: string
@@ -13,11 +19,6 @@ export interface VerifyEmailSearchParams {
 }
 
 export type EmailVerificationFailureReason =
-  "invalid_link" | "user_not_found" | "verification_failed" | "server_error"
+  EmailVerificationErrorKind | "server_error"
 
-export type EmailVerificationResult =
-  | { readonly status: "verified" }
-  | {
-      readonly status: "failed"
-      readonly reason: EmailVerificationFailureReason
-    }
+export type EmailVerificationResult = Result<void, EmailVerificationError>

@@ -1,4 +1,8 @@
-import { AuthError } from "../../domain/errors/auth-error"
+import { err, type Result } from "@/shared/result"
+import {
+  createEmailRequiredError,
+  type ResendVerificationEmailError,
+} from "../../domain/errors/auth-error"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import { authGateway as defaultAuthGateway } from "../../infrastructure/adapters/http-auth-gateway"
 
@@ -9,13 +13,15 @@ export class ResendVerificationEmailUseCase {
     this.gateway = gateway
   }
 
-  public async execute(email: string): Promise<void> {
+  public async execute(
+    email: string
+  ): Promise<Result<void, ResendVerificationEmailError>> {
     const trimmed = email.trim()
     if (!trimmed) {
-      throw new AuthError("Email is required")
+      return err(createEmailRequiredError())
     }
 
-    await this.gateway.resendVerificationEmail(trimmed)
+    return this.gateway.resendVerificationEmail(trimmed)
   }
 }
 

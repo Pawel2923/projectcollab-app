@@ -1,5 +1,9 @@
-import { ApiError } from "@/shared/api"
-import type { EmailVerificationResult } from "../../domain/models/email-verification"
+import { isApiError } from "@/shared/api"
+import { err, ok, type Result } from "@/shared/result"
+import {
+  createEmailVerificationError,
+  type EmailVerificationError,
+} from "../../domain/errors/auth-error"
 import type { ApiVerifyEmailResponseDto } from "../dto/verify-email-api.dto"
 
 function extractErrorCode(data: unknown): string | null {
@@ -13,40 +17,40 @@ function extractErrorCode(data: unknown): string | null {
 export class VerifyEmailMapper {
   public static toDomain(
     dto: ApiVerifyEmailResponseDto | null | undefined
-  ): EmailVerificationResult {
+  ): Result<void, EmailVerificationError> {
     if (dto?.isVerified === true) {
-      return { status: "verified" }
+      return ok()
     }
 
     if (dto?.code === "USER_NOT_FOUND") {
-      return { status: "failed", reason: "user_not_found" }
+      return err(createEmailVerificationError("user_not_found"))
     }
 
-    return { status: "failed", reason: "verification_failed" }
+    return err(createEmailVerificationError("verification_failed"))
   }
 
-  public static fromError(error: unknown): EmailVerificationResult {
-    if (error instanceof ApiError) {
-      const code = extractErrorCode(error.data)
-      if (code === "USER_NOT_FOUND") {
-        return { status: "failed", reason: "user_not_found" }
-      }
-
-      if (error.status === 400 || error.status === 422) {
-        return { status: "failed", reason: "invalid_link" }
-      }
-
-      if (error.status === 404) {
-        return { status: "failed", reason: "user_not_found" }
-      }
-
-      if (error.status === 403 || error.status === 410) {
-        return { status: "failed", reason: "verification_failed" }
-      }
-
-      return { status: "failed", reason: "server_error" }
+  public static fromError(error: unknown): EmailVerificationError | null {
+    if (!isApiError(error)) {
+      return null
     }
 
-    return { status: "failed", reason: "server_error" }
+    const code = extractErrorCode(error.data)
+    if (code === "USER_NOT_FOUND") {
+      return createEmailVerificationError("user_not_found")
+    }
+
+    if (error.status === 400 || error.status === 422) {
+      return createEmailVerificationError("invalid_link")
+    }
+
+    if (error.status === 404) {
+      return createEmailVerificationError("user_not_found")
+    }
+
+    if (error.status === 403 || error.status === 410) {
+      return createEmailVerificationError("verification_failed")
+    }
+
+    return null
   }
 }

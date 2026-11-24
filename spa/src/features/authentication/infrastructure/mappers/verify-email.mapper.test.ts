@@ -1,10 +1,12 @@
 import { describe, it, expect } from "vitest"
-import { ApiError } from "@/shared/api"
+import { createApiError } from "@/shared/api"
+import { err, ok } from "@/shared/result"
+import { createEmailVerificationError } from "../../domain/errors/auth-error"
 import { VerifyEmailMapper } from "./verify-email.mapper"
 
 describe("VerifyEmailMapper", () => {
   describe("toDomain", () => {
-    it("maps verified API Platform JSON-LD payload to verified result", () => {
+    it("maps verified API Platform JSON-LD payload to ok result", () => {
       expect(
         VerifyEmailMapper.toDomain({
           "@context": "/contexts/VerifyEmailResponse",
@@ -13,49 +15,47 @@ describe("VerifyEmailMapper", () => {
           code: "EMAIL_VERIFIED",
           isVerified: true,
         })
-      ).toEqual({ status: "verified" })
+      ).toEqual(ok())
     })
 
-    it("maps USER_NOT_FOUND payload to user_not_found failure", () => {
+    it("maps USER_NOT_FOUND payload to user_not_found domain error result", () => {
       expect(
         VerifyEmailMapper.toDomain({
           code: "USER_NOT_FOUND",
           isVerified: false,
         })
-      ).toEqual({ status: "failed", reason: "user_not_found" })
+      ).toEqual(err(createEmailVerificationError("user_not_found")))
     })
 
-    it("maps unverified or missing-flag payload to verification_failed", () => {
+    it("maps unverified or missing-flag payload to verification_failed domain error result", () => {
       expect(
         VerifyEmailMapper.toDomain({
           code: "EMAIL_NOT_VERIFIED",
           isVerified: false,
         })
-      ).toEqual({ status: "failed", reason: "verification_failed" })
+      ).toEqual(err(createEmailVerificationError("verification_failed")))
 
-      expect(VerifyEmailMapper.toDomain({})).toEqual({
-        status: "failed",
-        reason: "verification_failed",
-      })
+      expect(VerifyEmailMapper.toDomain({})).toEqual(
+        err(createEmailVerificationError("verification_failed"))
+      )
 
-      expect(VerifyEmailMapper.toDomain(null)).toEqual({
-        status: "failed",
-        reason: "verification_failed",
-      })
+      expect(VerifyEmailMapper.toDomain(null)).toEqual(
+        err(createEmailVerificationError("verification_failed"))
+      )
     })
   })
 
   describe("fromError", () => {
-    it("maps 400 and 422 ApiError to invalid_link", () => {
+    it("maps 400 and 422 ApiError to invalid_link domain error", () => {
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(400, { detail: "Bad request" })
+          createApiError(400, { detail: "Bad request" })
         )
-      ).toEqual({ status: "failed", reason: "invalid_link" })
+      ).toEqual(createEmailVerificationError("invalid_link"))
 
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(422, {
+          createApiError(422, {
             violations: [
               {
                 propertyPath: "signature",
@@ -64,48 +64,47 @@ describe("VerifyEmailMapper", () => {
             ],
           })
         )
-      ).toEqual({ status: "failed", reason: "invalid_link" })
+      ).toEqual(createEmailVerificationError("invalid_link"))
     })
 
-    it("maps 404 ApiError to user_not_found", () => {
+    it("maps 404 ApiError to user_not_found domain error", () => {
       expect(
-        VerifyEmailMapper.fromError(new ApiError(404, { detail: "Not found" }))
-      ).toEqual({ status: "failed", reason: "user_not_found" })
+        VerifyEmailMapper.fromError(
+          createApiError(404, { detail: "Not found" })
+        )
+      ).toEqual(createEmailVerificationError("user_not_found"))
     })
 
-    it("maps 403 and 410 ApiError to verification_failed", () => {
+    it("maps 403 and 410 ApiError to verification_failed domain error", () => {
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(403, { detail: "Invalid signature" })
+          createApiError(403, { detail: "Invalid signature" })
         )
-      ).toEqual({ status: "failed", reason: "verification_failed" })
+      ).toEqual(createEmailVerificationError("verification_failed"))
 
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(410, { detail: "Link expired" })
+          createApiError(410, { detail: "Link expired" })
         )
-      ).toEqual({ status: "failed", reason: "verification_failed" })
+      ).toEqual(createEmailVerificationError("verification_failed"))
     })
 
-    it("maps 5xx ApiError and unexpected errors to server_error", () => {
+    it("returns null for 5xx ApiError and unexpected errors so they propagate as unexpected failures", () => {
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(500, { detail: "Internal error" })
+          createApiError(500, { detail: "Internal error" })
         )
-      ).toEqual({ status: "failed", reason: "server_error" })
+      ).toBeNull()
 
-      expect(VerifyEmailMapper.fromError(new Error("Network down"))).toEqual({
-        status: "failed",
-        reason: "server_error",
-      })
+      expect(VerifyEmailMapper.fromError(new Error("Network down"))).toBeNull()
     })
 
-    it("maps ApiError payload with explicit USER_NOT_FOUND code to user_not_found", () => {
+    it("maps ApiError payload with explicit USER_NOT_FOUND code to user_not_found domain error", () => {
       expect(
         VerifyEmailMapper.fromError(
-          new ApiError(400, { code: "USER_NOT_FOUND", isVerified: false })
+          createApiError(400, { code: "USER_NOT_FOUND", isVerified: false })
         )
-      ).toEqual({ status: "failed", reason: "user_not_found" })
+      ).toEqual(createEmailVerificationError("user_not_found"))
     })
   })
 })

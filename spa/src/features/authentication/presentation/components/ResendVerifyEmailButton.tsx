@@ -4,9 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, MailCheck, MailX } from "lucide-react"
 
 import { Button, Input, Label } from "@/shared/ui"
-import { mapApiPlatformValidationError } from "@/shared/api"
+import { mapApiPlatformViolations } from "@/shared/api"
 import { m } from "@/paraglide/messages"
-import { TooManyRequestsError } from "../../domain/errors/auth-error"
+import {
+  isAuthError,
+  type ResendVerificationEmailError,
+} from "../../domain/errors/auth-error"
 import {
   ResendVerificationEmailUseCase,
   resendVerificationEmailUseCase as defaultResendVerificationEmailUseCase,
@@ -34,20 +37,28 @@ interface ResendFeedback {
   readonly message: string
 }
 
-export function resolveResendVerifyEmailError(err: unknown): string {
-  if (err instanceof TooManyRequestsError) {
-    return m.auth_verify_email_too_many_requests()
-  }
+export function resolveResendVerifyEmailError(
+  err: ResendVerificationEmailError | unknown
+): string {
+  if (isAuthError(err)) {
+    if (err.kind === "too_many_requests") {
+      return m.auth_verify_email_too_many_requests()
+    }
 
-  const validationErrors = mapApiPlatformValidationError(err, {
-    allowedFields: ["email"] as const,
-  })
-  if (validationErrors) {
-    return (
-      validationErrors.fieldErrors.email?.[0] ??
-      validationErrors.formErrors[0] ??
-      validationErrors.summary
-    )
+    if (err.kind === "email_required") {
+      return m.auth_verify_email_missing_identity()
+    }
+
+    if (err.kind === "validation_error") {
+      const validationErrors = mapApiPlatformViolations(err.violations, {
+        allowedFields: ["email"] as const,
+      })
+      return (
+        validationErrors.fieldErrors.email?.[0] ??
+        validationErrors.formErrors[0] ??
+        validationErrors.summary
+      )
+    }
   }
 
   return m.auth_verify_email_send_failed()
@@ -113,7 +124,18 @@ export function ResendVerifyEmailButton({
     setFeedback(null)
 
     try {
-      await resendUseCaseInstance.execute(trimmed)
+      const result = await resendUseCaseInstance.execute(trimmed)
+      if (!result.ok) {
+        setFeedback({
+          kind: "error",
+          message: resolveResendVerifyEmailError(result.error),
+        })
+        if (result.error.kind === "too_many_requests") {
+          setCooldown(cooldownSeconds)
+        }
+        return
+      }
+
       if (persistIdentity) {
         saveCreatedIdentityEmail(trimmed)
         setStoredEmail(trimmed)
@@ -128,9 +150,6 @@ export function ResendVerifyEmailButton({
         kind: "error",
         message: resolveResendVerifyEmailError(err),
       })
-      if (err instanceof TooManyRequestsError) {
-        setCooldown(cooldownSeconds)
-      }
     } finally {
       setIsPending(false)
     }

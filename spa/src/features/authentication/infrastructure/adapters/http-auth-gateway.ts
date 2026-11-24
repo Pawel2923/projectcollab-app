@@ -1,28 +1,35 @@
+import { err, ok, type Result } from "@/shared/result"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import type {
   LoginCredentials,
   SignUpCredentials,
 } from "../../domain/models/credentials"
-import type {
-  EmailVerificationResult,
-  VerifyEmailParams,
-} from "../../domain/models/email-verification"
+import type { VerifyEmailParams } from "../../domain/models/email-verification"
 import type { User } from "../../domain/models/user"
 import {
-  InvalidCredentialsError,
-  TooManyRequestsError,
-  UserAlreadyExistsError,
+  createAuthValidationError,
+  createInvalidCredentialsError,
+  createTooManyRequestsError,
+  createUserAlreadyExistsError,
+  type AuthValidationError,
+  type EmailVerificationError,
+  type InvalidCredentialsError,
+  type TooManyRequestsError,
+  type UserAlreadyExistsError,
 } from "../../domain/errors/auth-error"
 import {
-  ApiError,
   SYMFONY_VIOLATION_CODES,
   apiClient as defaultApiClient,
   apiFetch as defaultApiFetch,
+  isApiError,
   onAuthFailure as defaultOnAuthFailure,
   refreshTokens as defaultRefreshTokens,
   type AuthFailureCallback,
 } from "@/shared/api"
-import { getAppLocale as defaultGetAppLocale, type AppLocale } from "@/shared/i18n"
+import {
+  getAppLocale as defaultGetAppLocale,
+  type AppLocale,
+} from "@/shared/i18n"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type { ApiVerifyEmailResponseDto } from "../dto/verify-email-api.dto"
 import { UserMapper } from "../mappers/user.mapper"
@@ -51,7 +58,9 @@ export class HttpAuthGateway implements AuthGatewayPort {
     this.getLocaleFn = dependencies.getLocale ?? defaultGetAppLocale
   }
 
-  public async login(credentials: LoginCredentials): Promise<void> {
+  public async login(
+    credentials: LoginCredentials
+  ): Promise<Result<void, InvalidCredentialsError>> {
     try {
       await this.fetcher("/core-api/auth/login", {
         method: "POST",
@@ -59,16 +68,19 @@ export class HttpAuthGateway implements AuthGatewayPort {
         skipAuthRefresh: true,
         skipAuthRedirect: true,
       })
+      // Tokens are set as HTTP-Only cookies by the server — nothing to store locally.
+      return ok()
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 401) {
-        throw new InvalidCredentialsError("Invalid credentials")
+      if (isApiError(error) && error.status === 401) {
+        return err(createInvalidCredentialsError())
       }
       throw error
     }
-    // Tokens are set as HTTP-Only cookies by the server — nothing to store locally.
   }
 
-  public async signUp(credentials: SignUpCredentials): Promise<void> {
+  public async signUp(
+    credentials: SignUpCredentials
+  ): Promise<Result<void, UserAlreadyExistsError | AuthValidationError>> {
     try {
       await this.fetcher("/core-api/users", {
         method: "POST",
@@ -83,11 +95,9 @@ export class HttpAuthGateway implements AuthGatewayPort {
         skipAuthRefresh: true,
         skipAuthRedirect: true,
       })
+      return ok()
     } catch (error: unknown) {
-      if (
-        error instanceof ApiError &&
-        (error.status === 422 || error.status === 400)
-      ) {
+      if (isApiError(error) && (error.status === 422 || error.status === 400)) {
         const isDuplicateEmailViolation = error.violations.some(
           (v) =>
             v.propertyPath === "email" &&
@@ -100,16 +110,20 @@ export class HttpAuthGateway implements AuthGatewayPort {
           /email.*already exists|already exists.*email/i.test(error.message)
 
         if (isDuplicateEmailViolation || isDuplicateInDescription) {
-          throw new UserAlreadyExistsError(
-            "User with this email already exists"
-          )
+          return err(createUserAlreadyExistsError())
+        }
+
+        if (error.status === 422) {
+          return err(createAuthValidationError(error.violations, error.message))
         }
       }
       throw error
     }
   }
 
-  public async resendVerificationEmail(email: string): Promise<void> {
+  public async resendVerificationEmail(
+    email: string
+  ): Promise<Result<void, TooManyRequestsError | AuthValidationError>> {
     try {
       await this.fetcher("/core-api/verify-email/send", {
         method: "POST",
@@ -123,9 +137,13 @@ export class HttpAuthGateway implements AuthGatewayPort {
         skipAuthRefresh: true,
         skipAuthRedirect: true,
       })
+      return ok()
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 429) {
-        throw new TooManyRequestsError()
+      if (isApiError(error) && error.status === 429) {
+        return err(createTooManyRequestsError())
+      }
+      if (isApiError(error) && error.status === 422) {
+        return err(createAuthValidationError(error.violations, error.message))
       }
       throw error
     }
@@ -133,7 +151,7 @@ export class HttpAuthGateway implements AuthGatewayPort {
 
   public async verifyEmail(
     params: VerifyEmailParams
-  ): Promise<EmailVerificationResult> {
+  ): Promise<Result<void, EmailVerificationError>> {
     const query = new URLSearchParams({
       expires: params.expires,
       id: params.id,
@@ -152,7 +170,11 @@ export class HttpAuthGateway implements AuthGatewayPort {
       )
       return VerifyEmailMapper.toDomain(response)
     } catch (error: unknown) {
-      return VerifyEmailMapper.fromError(error)
+      const domainError = VerifyEmailMapper.fromError(error)
+      if (domainError !== null) {
+        return err(domainError)
+      }
+      throw error
     }
   }
 

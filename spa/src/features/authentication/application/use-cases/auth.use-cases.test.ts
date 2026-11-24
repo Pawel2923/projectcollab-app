@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import type { QueryClient } from "@tanstack/react-query"
+import { err, ok } from "@/shared/result"
 import { LoginUseCase } from "./login.use-case"
 import { LogoutUseCase } from "./logout.use-case"
 import { GetCurrentUserUseCase } from "./get-current-user.use-case"
 import { RefreshTokensUseCase } from "./refresh-tokens.use-case"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import type { User } from "../../domain/models/user"
-import { InvalidCredentialsError } from "../../domain/errors/auth-error"
+import { createInvalidCredentialsError } from "../../domain/errors/auth-error"
 import { authKeys } from "../auth-keys"
 
 describe("Authentication Use Cases", () => {
@@ -27,8 +28,8 @@ describe("Authentication Use Cases", () => {
 
   beforeEach(() => {
     mockGateway = {
-      login: vi.fn(),
-      signUp: vi.fn(),
+      login: vi.fn().mockResolvedValue(ok()),
+      signUp: vi.fn().mockResolvedValue(ok()),
       logout: vi.fn(),
       getCurrentUser: vi.fn(),
       refreshTokens: vi.fn(),
@@ -43,34 +44,36 @@ describe("Authentication Use Cases", () => {
   })
 
   describe("LoginUseCase", () => {
-    it("logs in with credentials and invalidates currentUser query cache", async () => {
+    it("logs in with credentials, invalidates currentUser query cache, and returns ok", async () => {
       const useCase = new LoginUseCase(
         mockGateway as unknown as AuthGatewayPort,
         mockQueryClient as unknown as QueryClient
       )
       const credentials = { email: "test@example.com", password: "secret" }
 
-      await useCase.execute(credentials)
+      const result = await useCase.execute(credentials)
 
+      expect(result).toEqual(ok())
       expect(mockGateway.login).toHaveBeenCalledWith(credentials)
       expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith({
         queryKey: authKeys.currentUser(),
       })
     })
 
-    it("propagates error and does not invalidate query cache if gateway.login fails", async () => {
-      mockGateway.login.mockRejectedValueOnce(
-        new InvalidCredentialsError("Invalid credentials")
-      )
+    it("returns domain error result and does not invalidate query cache when gateway.login returns err", async () => {
+      const invalidCredentials = createInvalidCredentialsError()
+      mockGateway.login.mockResolvedValueOnce(err(invalidCredentials))
       const useCase = new LoginUseCase(
         mockGateway as unknown as AuthGatewayPort,
         mockQueryClient as unknown as QueryClient
       )
 
-      await expect(
-        useCase.execute({ email: "wrong@test.com", password: "bad" })
-      ).rejects.toThrow(InvalidCredentialsError)
+      const result = await useCase.execute({
+        email: "wrong@test.com",
+        password: "bad",
+      })
 
+      expect(result).toEqual(err(invalidCredentials))
       expect(mockQueryClient.invalidateQueries).not.toHaveBeenCalled()
     })
   })

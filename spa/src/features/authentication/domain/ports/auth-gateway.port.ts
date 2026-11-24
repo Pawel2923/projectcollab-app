@@ -1,15 +1,28 @@
-import type { LoginCredentials, SignUpCredentials } from "../models/credentials"
+import type { Result } from "@/shared/result"
 import type {
-  EmailVerificationResult,
-  VerifyEmailParams,
-} from "../models/email-verification"
+  AuthValidationError,
+  EmailVerificationError,
+  InvalidCredentialsError,
+  TooManyRequestsError,
+  UserAlreadyExistsError,
+} from "../errors/auth-error"
+import type { LoginCredentials, SignUpCredentials } from "../models/credentials"
+import type { VerifyEmailParams } from "../models/email-verification"
 import type { User } from "../models/user"
 
 export interface AuthGatewayPort {
-  login(credentials: LoginCredentials): Promise<void>
-  signUp(credentials: SignUpCredentials): Promise<void>
-  resendVerificationEmail(email: string): Promise<void>
-  verifyEmail(params: VerifyEmailParams): Promise<EmailVerificationResult>
+  login(
+    credentials: LoginCredentials
+  ): Promise<Result<void, InvalidCredentialsError>>
+  signUp(
+    credentials: SignUpCredentials
+  ): Promise<Result<void, UserAlreadyExistsError | AuthValidationError>>
+  resendVerificationEmail(
+    email: string
+  ): Promise<Result<void, TooManyRequestsError | AuthValidationError>>
+  verifyEmail(
+    params: VerifyEmailParams
+  ): Promise<Result<void, EmailVerificationError>>
   /** Invalidates the refresh-token server-side and clears auth cookies. */
   logout(): Promise<void>
   getCurrentUser(): Promise<User | null>
