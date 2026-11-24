@@ -18,6 +18,7 @@ describe("UserSettings", () => {
     user: dummyUser,
     setUser: () => {},
     isLoading: false,
+    isLoggingOut: false,
     logout: async () => {},
   }
 

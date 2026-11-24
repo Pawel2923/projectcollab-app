@@ -20,6 +20,8 @@ describe("Authentication Use Cases", () => {
   }
   let mockQueryClient: {
     invalidateQueries: ReturnType<typeof vi.fn>
+    cancelQueries: ReturnType<typeof vi.fn>
+    setQueryData: ReturnType<typeof vi.fn>
     clear: ReturnType<typeof vi.fn>
   }
 
@@ -34,6 +36,8 @@ describe("Authentication Use Cases", () => {
     }
     mockQueryClient = {
       invalidateQueries: vi.fn().mockResolvedValue(undefined),
+      cancelQueries: vi.fn().mockResolvedValue(undefined),
+      setQueryData: vi.fn(),
       clear: vi.fn(),
     }
   })
@@ -72,23 +76,73 @@ describe("Authentication Use Cases", () => {
   })
 
   describe("LogoutUseCase", () => {
-    it("calls gateway logout with no arguments, clears query cache, and redirects", async () => {
+    it("calls gateway logout, cancels queries, clears cache, nulls current user, runs cleanup, and redirects", async () => {
       const redirectFn = vi.fn()
+      const onCleanup = vi.fn()
       const useCase = new LogoutUseCase(
         mockGateway as unknown as AuthGatewayPort,
         mockQueryClient as unknown as QueryClient,
         redirectFn
       )
 
-      await useCase.execute()
+      await useCase.execute({ onCleanup })
 
       expect(mockGateway.logout).toHaveBeenCalledWith()
-      expect(mockQueryClient.clear).toHaveBeenCalled()
+      expect(mockQueryClient.cancelQueries).toHaveBeenCalledTimes(1)
+      expect(mockQueryClient.clear).toHaveBeenCalledTimes(1)
+      expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(
+        authKeys.currentUser(),
+        null
+      )
+      expect(onCleanup).toHaveBeenCalledTimes(1)
       expect(redirectFn).toHaveBeenCalledWith("/signin")
     })
 
-    it("clears query cache and redirects even if backend logout fails", async () => {
+    it("clears query cache, nulls current user, runs cleanup, and redirects even if backend logout fails", async () => {
       mockGateway.logout.mockRejectedValueOnce(new Error("Network error"))
+      const redirectFn = vi.fn()
+      const onCleanup = vi.fn()
+      const useCase = new LogoutUseCase(
+        mockGateway as unknown as AuthGatewayPort,
+        mockQueryClient as unknown as QueryClient,
+        redirectFn
+      )
+
+      await useCase.execute({ onCleanup })
+
+      expect(mockQueryClient.cancelQueries).toHaveBeenCalledTimes(1)
+      expect(mockQueryClient.clear).toHaveBeenCalledTimes(1)
+      expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(
+        authKeys.currentUser(),
+        null
+      )
+      expect(onCleanup).toHaveBeenCalledTimes(1)
+      expect(redirectFn).toHaveBeenCalledWith("/signin")
+    })
+
+    it("uses per-execution redirect override when provided", async () => {
+      const defaultRedirect = vi.fn()
+      const customRedirect = vi.fn()
+      const useCase = new LogoutUseCase(
+        mockGateway as unknown as AuthGatewayPort,
+        mockQueryClient as unknown as QueryClient,
+        defaultRedirect
+      )
+
+      await useCase.execute({ redirect: customRedirect })
+
+      expect(customRedirect).toHaveBeenCalledWith("/signin")
+      expect(defaultRedirect).not.toHaveBeenCalled()
+    })
+
+    it("deduplicates concurrent logout calls while a logout is already in flight", async () => {
+      let resolveLogout!: () => void
+      mockGateway.logout.mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveLogout = resolve
+          })
+      )
       const redirectFn = vi.fn()
       const useCase = new LogoutUseCase(
         mockGateway as unknown as AuthGatewayPort,
@@ -96,10 +150,15 @@ describe("Authentication Use Cases", () => {
         redirectFn
       )
 
-      await useCase.execute()
+      const first = useCase.execute()
+      const second = useCase.execute()
 
-      expect(mockQueryClient.clear).toHaveBeenCalled()
-      expect(redirectFn).toHaveBeenCalledWith("/signin")
+      resolveLogout()
+      await Promise.all([first, second])
+
+      expect(mockGateway.logout).toHaveBeenCalledTimes(1)
+      expect(mockQueryClient.clear).toHaveBeenCalledTimes(1)
+      expect(redirectFn).toHaveBeenCalledTimes(1)
     })
   })
 

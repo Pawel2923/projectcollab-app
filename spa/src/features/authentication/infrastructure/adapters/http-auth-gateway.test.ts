@@ -97,6 +97,12 @@ describe("HttpAuthGateway", () => {
     })
   })
 
+  it("resolves gracefully when logout endpoint fails", async () => {
+    mockApiFetch.mockRejectedValueOnce(new Error("Network error"))
+
+    await expect(gateway.logout()).resolves.toBeUndefined()
+  })
+
   it("fetches and maps current user to domain entity", async () => {
     const rawUser: ApiUserDto = {
       "@id": "/core-api/users/99",

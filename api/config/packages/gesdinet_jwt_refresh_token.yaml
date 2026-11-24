@@ -6,7 +6,7 @@ gesdinet_jwt_refresh_token:
     cookie:
         enabled: true
         same_site: lax
-        path: /core-api/auth/refresh
+        path: /core-api/auth
         domain: '%env(COOKIE_DOMAIN)%'
         http_only: true
         secure: true

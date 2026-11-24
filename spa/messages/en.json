@@ -74,6 +74,7 @@
   "auth_sign_up_policy_agreement_prefix": "By signing up, you agree to our ",
   "auth_user_already_exists": "User with this email already exists.",
   "auth_sign_up_general_error": "An error occurred during sign up.",
+  "auth_logging_out": "Signing out...",
   "organizations_title": "Organizations",
   "policy_hub_title": "Terms & Policies",
   "policy_hub_description": "Review the terms of service and rules governing privacy protection and data processing in the ProjectCollab application.",

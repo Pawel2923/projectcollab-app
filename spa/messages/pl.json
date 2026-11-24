@@ -74,6 +74,7 @@
   "auth_sign_up_policy_agreement_prefix": "Rejestrując się, akceptujesz nasze ",
   "auth_user_already_exists": "Użytkownik o tym adresie email już istnieje.",
   "auth_sign_up_general_error": "Wystąpił błąd podczas rejestracji.",
+  "auth_logging_out": "Wylogowywanie...",
   "organizations_title": "Organizacje",
   "policy_hub_title": "Zasady i polityki",
   "policy_hub_description": "Zapoznaj się z regulaminem korzystania z serwisu oraz zasadami ochrony prywatności i przetwarzania danych w aplikacji ProjectCollab.",

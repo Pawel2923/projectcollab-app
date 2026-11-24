@@ -24,8 +24,10 @@ export {
   getUserGreeting,
 } from "./domain/services/user-display"
 export {
+  buildAppUrl,
   getPostLoginRedirect,
   DEFAULT_POST_LOGIN_REDIRECT,
+  DEFAULT_POST_LOGOUT_REDIRECT,
 } from "./domain/services/auth-navigation"
 export {
   getVerifyEmailKey,
@@ -56,6 +58,8 @@ export {
 export {
   LogoutUseCase,
   logoutUseCase,
+  type LogoutExecuteOptions,
+  type LogoutRedirectFn,
 } from "./application/use-cases/logout.use-case"
 export {
   GetCurrentUserUseCase,
@@ -137,6 +141,10 @@ export {
   type VerifyEmailConfirmViewProps,
   type VerifyEmailConfirmState,
 } from "./presentation/components/VerifyEmailConfirmView"
+export {
+  LogoutView,
+  type LogoutViewProps,
+} from "./presentation/components/LogoutView"
 export {
   requireAuth,
   requireGuest,

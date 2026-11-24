@@ -74,6 +74,7 @@ describe("VerifyEmailView & ResendVerifyEmailButton", () => {
           },
           setUser: () => {},
           isLoading: false,
+          isLoggingOut: false,
           logout: async () => {},
         }}
       >
