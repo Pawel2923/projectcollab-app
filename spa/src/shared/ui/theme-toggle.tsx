@@ -7,14 +7,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip"
 import { cn } from "@/shared/lib/utils"
 import { m } from "@/paraglide/messages"
 
 export interface ThemeToggleProps {
   className?: string
+  tooltip?: string | boolean
+  tooltipSide?: "top" | "bottom" | "left" | "right"
 }
 
-export function ThemeToggle({ className }: ThemeToggleProps) {
+export function ThemeToggle({
+  className,
+  tooltip,
+  tooltipSide = "bottom",
+}: ThemeToggleProps) {
   const { theme, resolvedTheme, setTheme } = useTheme()
 
   const CurrentIcon =
@@ -24,20 +31,34 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         ? Moon
         : Sun
 
+  const tooltipText =
+    typeof tooltip === "string" ? tooltip : m.common_theme_choose()
+
+  const trigger = (
+    <DropdownMenuTrigger
+      render={
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn("relative", className)}
+          aria-label={m.common_theme_choose()}
+        >
+          <CurrentIcon className="size-4.5 transition-all" />
+        </Button>
+      }
+    />
+  )
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn("relative", className)}
-            aria-label={m.common_theme_choose()}
-          >
-            <CurrentIcon className="size-4.5 transition-all" />
-          </Button>
-        }
-      />
+      {tooltip ? (
+        <Tooltip>
+          <TooltipTrigger render={trigger} />
+          <TooltipContent side={tooltipSide}>{tooltipText}</TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
       <DropdownMenuContent align="end" className="w-auto min-w-44">
         <DropdownMenuItem
           onClick={() => setTheme("light")}

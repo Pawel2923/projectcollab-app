@@ -31,8 +31,8 @@ export function LandingTopNav({ user }: LandingTopNavProps) {
           <ProjectCollabLogotype />
         </Link>
         <div className="flex items-center gap-2">
-          <ThemeToggle className="hidden sm:inline-flex" />
-          <LanguageSwitcher className="hidden sm:inline-flex" />
+          <ThemeToggle className="hidden sm:inline-flex" tooltip />
+          <LanguageSwitcher className="hidden sm:inline-flex" tooltip />
           <LandingMobileMenu user={user} onLogout={logout} />
           <div className="hidden items-center gap-4 md:flex">
             {user ? (

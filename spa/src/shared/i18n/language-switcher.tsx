@@ -8,37 +8,56 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip"
 import { cn } from "@/shared/lib/utils"
 import { m } from "@/paraglide/messages"
 
 export interface LanguageSwitcherProps {
   className?: string
   showLabel?: boolean
+  tooltip?: string | boolean
+  tooltipSide?: "top" | "bottom" | "left" | "right"
 }
 
 export function LanguageSwitcher({
   className,
   showLabel = false,
+  tooltip,
+  tooltipSide = "bottom",
 }: LanguageSwitcherProps) {
   const { locale, setLocale, locales } = useLocale()
 
+  const tooltipText =
+    typeof tooltip === "string" ? tooltip : m.language_switcher_label()
+
+  const trigger = (
+    <DropdownMenuTrigger
+      render={
+        <Button
+          variant="ghost"
+          size={showLabel ? "default" : "icon"}
+          className={cn("relative gap-1.5", className)}
+          aria-label={m.language_switcher_label()}
+        >
+          <Languages className="size-4.5 transition-all" />
+          {showLabel && (
+            <span className="text-xs font-medium uppercase">{locale}</span>
+          )}
+        </Button>
+      }
+    />
+  )
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size={showLabel ? "default" : "icon"}
-            className={cn("relative gap-1.5", className)}
-            aria-label={m.language_switcher_label()}
-          >
-            <Languages className="size-4.5 transition-all" />
-            {showLabel && (
-              <span className="text-xs font-medium uppercase">{locale}</span>
-            )}
-          </Button>
-        }
-      />
+      {tooltip ? (
+        <Tooltip>
+          <TooltipTrigger render={trigger} />
+          <TooltipContent side={tooltipSide}>{tooltipText}</TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
       <DropdownMenuContent align="end" className="w-auto min-w-36">
         {locales.map((itemLocale) => (
           <DropdownMenuItem

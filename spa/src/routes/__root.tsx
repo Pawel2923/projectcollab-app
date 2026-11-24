@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ThemeProvider } from "@/shared/theme"
 import { UserProvider } from "@/features/authentication"
 import { I18nProvider } from "@/shared/i18n"
+import { TooltipProvider } from "@/shared/ui"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -19,7 +20,9 @@ function RootComponent() {
     <ThemeProvider defaultTheme="auto" storageKey="theme">
       <UserProvider>
         <I18nProvider>
-          <Outlet />
+          <TooltipProvider>
+            <Outlet />
+          </TooltipProvider>
         </I18nProvider>
       </UserProvider>
       {import.meta.env.DEV && (
