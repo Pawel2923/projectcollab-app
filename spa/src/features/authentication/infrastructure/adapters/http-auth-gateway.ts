@@ -22,6 +22,7 @@ import {
   refreshTokens as defaultRefreshTokens,
   type AuthFailureCallback,
 } from "@/shared/api"
+import { getAppLocale as defaultGetAppLocale, type AppLocale } from "@/shared/i18n"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type { ApiVerifyEmailResponseDto } from "../dto/verify-email-api.dto"
 import { UserMapper } from "../mappers/user.mapper"
@@ -32,6 +33,7 @@ interface HttpAuthGatewayDependencies {
   readonly apiFetch?: typeof defaultApiFetch
   readonly refreshTokens?: typeof defaultRefreshTokens
   readonly onAuthFailure?: typeof defaultOnAuthFailure
+  readonly getLocale?: () => AppLocale
 }
 
 export class HttpAuthGateway implements AuthGatewayPort {
@@ -39,12 +41,14 @@ export class HttpAuthGateway implements AuthGatewayPort {
   private readonly fetcher: typeof defaultApiFetch
   private readonly refreshTokenFn: typeof defaultRefreshTokens
   private readonly onAuthFailureFn: typeof defaultOnAuthFailure
+  private readonly getLocaleFn: () => AppLocale
 
   constructor(dependencies: HttpAuthGatewayDependencies = {}) {
     this.client = dependencies.apiClient ?? defaultApiClient
     this.fetcher = dependencies.apiFetch ?? defaultApiFetch
     this.refreshTokenFn = dependencies.refreshTokens ?? defaultRefreshTokens
     this.onAuthFailureFn = dependencies.onAuthFailure ?? defaultOnAuthFailure
+    this.getLocaleFn = dependencies.getLocale ?? defaultGetAppLocale
   }
 
   public async login(credentials: LoginCredentials): Promise<void> {
@@ -74,6 +78,7 @@ export class HttpAuthGateway implements AuthGatewayPort {
         body: {
           email: credentials.email,
           plainPassword: credentials.password,
+          locale: this.getLocaleFn(),
         },
         skipAuthRefresh: true,
         skipAuthRedirect: true,
@@ -111,7 +116,10 @@ export class HttpAuthGateway implements AuthGatewayPort {
         headers: {
           "Content-Type": "application/ld+json",
         },
-        body: { email },
+        body: {
+          email,
+          locale: this.getLocaleFn(),
+        },
         skipAuthRefresh: true,
         skipAuthRedirect: true,
       })

@@ -40,7 +40,7 @@ final readonly class UserCreatedSubscriber implements EventSubscriberInterface
 
         try {
             $this->logger->info('Sending verification email to new user.');
-            $this->emailVerifier->send($user);
+            $this->emailVerifier->send($user, $user->getLocale());
             $this->logger->info('Verification email sent successfully.');
         } catch (Throwable $ex) {
             $this->logger->error('There was an error sending the verification email.');

@@ -32,6 +32,9 @@ class VerificationEmailRequest
     #[Groups(['verification:write'])]
     private ?string $email = null;
 
+    #[Groups(['verification:write'])]
+    private ?string $locale = null;
+
     #[Groups('verification:read')]
     private ?string $code = null;
 
@@ -43,6 +46,16 @@ class VerificationEmailRequest
     public function setEmail(?string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): void
+    {
+        $this->locale = $locale;
     }
 
     public function getCode(): ?string

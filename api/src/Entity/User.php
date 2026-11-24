@@ -90,6 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotCompromisedPassword(groups: ['user:create', 'user:update'])]
     private ?string $plainPassword = null;
 
+    #[Groups(['user:create'])]
+    private ?string $locale = null;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Groups(['user:read'])]
     private ?DateTimeImmutable $registeredAt = null;
@@ -217,6 +220,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): static
+    {
+        $this->locale = $locale;
 
         return $this;
     }

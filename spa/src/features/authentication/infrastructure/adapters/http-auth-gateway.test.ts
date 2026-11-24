@@ -6,6 +6,7 @@ import {
   UserAlreadyExistsError,
 } from "../../domain/errors/auth-error"
 import { ApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
+import type { AppLocale } from "@/shared/i18n"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type {
   apiClient,
@@ -22,6 +23,7 @@ describe("HttpAuthGateway", () => {
   let mockApiFetch: ReturnType<typeof vi.fn>
   let mockRefreshTokens: ReturnType<typeof vi.fn>
   let mockOnAuthFailure: ReturnType<typeof vi.fn>
+  let mockGetLocale: ReturnType<typeof vi.fn<() => AppLocale>>
   let gateway: HttpAuthGateway
 
   beforeEach(() => {
@@ -32,12 +34,14 @@ describe("HttpAuthGateway", () => {
     mockApiFetch = vi.fn()
     mockRefreshTokens = vi.fn()
     mockOnAuthFailure = vi.fn()
+    mockGetLocale = vi.fn<() => AppLocale>(() => "pl")
 
     gateway = new HttpAuthGateway({
       apiClient: mockApiClient as unknown as typeof apiClient,
       apiFetch: mockApiFetch as unknown as typeof apiFetch,
       refreshTokens: mockRefreshTokens as unknown as typeof refreshTokens,
       onAuthFailure: mockOnAuthFailure as unknown as typeof onAuthFailure,
+      getLocale: mockGetLocale,
     })
   })
 
@@ -151,7 +155,8 @@ describe("HttpAuthGateway", () => {
     expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
   })
 
-  it("calls signUp endpoint with JSON-LD content type and plainPassword payload", async () => {
+  it("calls signUp endpoint with JSON-LD content type, plainPassword, and current locale payload", async () => {
+    mockGetLocale.mockReturnValueOnce("en")
     mockApiFetch.mockResolvedValueOnce({})
 
     await gateway.signUp({ email: "new@test.com", password: "password123" })
@@ -161,7 +166,11 @@ describe("HttpAuthGateway", () => {
       headers: {
         "Content-Type": "application/ld+json",
       },
-      body: { email: "new@test.com", plainPassword: "password123" },
+      body: {
+        email: "new@test.com",
+        plainPassword: "password123",
+        locale: "en",
+      },
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })
@@ -218,7 +227,8 @@ describe("HttpAuthGateway", () => {
     ).rejects.toThrow(apiError)
   })
 
-  it("calls verify-email/send endpoint with JSON-LD content type and email payload", async () => {
+  it("calls verify-email/send endpoint with JSON-LD content type, email, and current locale payload", async () => {
+    mockGetLocale.mockReturnValueOnce("en")
     mockApiFetch.mockResolvedValueOnce({ code: "VERIFY_EMAIL_SENT" })
 
     await gateway.resendVerificationEmail("user@test.com")
@@ -228,7 +238,7 @@ describe("HttpAuthGateway", () => {
       headers: {
         "Content-Type": "application/ld+json",
       },
-      body: { email: "user@test.com" },
+      body: { email: "user@test.com", locale: "en" },
       skipAuthRefresh: true,
       skipAuthRedirect: true,
     })

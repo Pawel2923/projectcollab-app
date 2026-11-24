@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface EmailVerifierInterface
 {
-    public function send(User $user): void;
+    public function send(User $user, ?string $locale = null): void;
 
     public function handleConfirmation(Request $request, User $user): void;
 }
