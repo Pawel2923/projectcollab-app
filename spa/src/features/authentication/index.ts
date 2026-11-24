@@ -21,7 +21,6 @@ export {
 export {
   generateUserInitials,
   getUserDisplayName,
-  getUserGreeting,
 } from "./domain/services/user-display"
 export {
   buildAppUrl,
@@ -103,6 +102,7 @@ export {
   fetchCurrentUser,
   type UserContextType,
 } from "./presentation/context/UserContext"
+export { getUserGreeting } from "./presentation/user-greeting"
 export { Avatar, type AvatarProps } from "./presentation/components/Avatar"
 export {
   UserSettings,

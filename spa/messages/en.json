@@ -37,6 +37,7 @@
   "common_theme_dark": "Dark",
   "common_theme_auto": "Automatic",
   "common_theme_auto_short": "Auto",
+  "user_greeting": "Hi {name}",
   "user_settings_avatar_aria_label": "User profile {email}",
   "auth_sign_in_title": "Sign in",
   "auth_sign_in_welcome_back": "Welcome back",
