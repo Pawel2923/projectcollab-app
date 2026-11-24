@@ -1,6 +1,5 @@
 import * as React from "react"
 import { ChevronDownIcon } from "@/assets/icons/ChevronDownIcon"
-import { useTheme } from "@/shared/theme"
 import { generateUserInitials } from "../../domain/services/user-display"
 import { useUserContext } from "../context/UserContext"
 import { Avatar } from "./Avatar"
@@ -8,108 +7,59 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/shared/ui"
-import { Sun, Moon, Monitor, Check } from "lucide-react"
 import { m } from "@/paraglide/messages"
 
 export interface UserSettingsProps {
   children: React.ReactNode
   trigger?: React.ReactElement
   triggerMessage?: string
+  open?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function UserSettings({
   children,
   trigger,
   triggerMessage,
+  open,
+  defaultOpen,
+  onOpenChange,
 }: UserSettingsProps) {
   const userCtx = useUserContext()
-  const { theme, resolvedTheme, setTheme } = useTheme()
 
   const defaultTrigger = (
     <Button
       variant="transparent"
       size="dynamic"
-      className="data-[state=open]:[&_svg]:rotate-180"
+      className="flex items-center gap-2.5 aria-expanded:[&_svg]:rotate-180 data-popup-open:[&_svg]:rotate-180 data-[state=open]:[&_svg]:rotate-180"
     >
-      {triggerMessage}
+      {triggerMessage && <span>{triggerMessage}</span>}
       <Avatar
         initials={generateUserInitials(userCtx?.user || null)}
-        size="large"
+        size="medium"
         ariaLabel={m.user_settings_avatar_aria_label({
           email: userCtx?.user?.email ?? "",
         })}
       />
       <ChevronDownIcon
-        className="transition-transform duration-300"
+        className="transition-transform duration-300 ease-in-out group-aria-expanded/button:rotate-180 group-data-popup-open/button:rotate-180"
         aria-hidden="true"
       />
     </Button>
   )
 
-  const CurrentThemeIcon =
-    theme === "auto" || theme === "system"
-      ? Monitor
-      : resolvedTheme === "dark"
-        ? Moon
-        : Sun
-
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
       <DropdownMenuTrigger render={trigger ?? defaultTrigger} />
-      <DropdownMenuContent align="end" className="w-max max-w-[300px]">
+      <DropdownMenuContent align="end" className="w-max max-w-75">
         {children}
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-          {m.common_theme_settings()}
-        </DropdownMenuLabel>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="gap-2">
-            <CurrentThemeIcon className="size-4" />
-            <span>{m.common_theme()}</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="min-w-36">
-            <DropdownMenuItem
-              onClick={() => setTheme("light")}
-              className="justify-between gap-2"
-            >
-              <span className="flex items-center gap-2">
-                <Sun className="size-4" />
-                <span>{m.common_theme_light()}</span>
-              </span>
-              {theme === "light" && <Check className="size-3.5 text-primary" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("dark")}
-              className="justify-between gap-2"
-            >
-              <span className="flex items-center gap-2">
-                <Moon className="size-4" />
-                <span>{m.common_theme_dark()}</span>
-              </span>
-              {theme === "dark" && <Check className="size-3.5 text-primary" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setTheme("auto")}
-              className="justify-between gap-2"
-            >
-              <span className="flex items-center gap-2">
-                <Monitor className="size-4" />
-                <span>{m.common_theme_auto()}</span>
-              </span>
-              {(theme === "auto" || theme === "system") && (
-                <Check className="size-3.5 text-primary" />
-              )}
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   )

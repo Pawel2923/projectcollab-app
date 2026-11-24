@@ -24,7 +24,7 @@ export function Avatar({
     size === "small"
       ? "h-6 w-6 text-xs"
       : size === "large"
-        ? "h-[3.125rem] w-[3.125rem] text-xl"
+        ? "h-10 w-10 text-sm"
         : "h-8 w-8 text-sm"
 
   const rounding = isCircle ? "rounded-full" : "rounded-lg"
