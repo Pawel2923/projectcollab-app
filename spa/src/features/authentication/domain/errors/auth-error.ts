@@ -18,3 +18,17 @@ export class InvalidCredentialsError extends AuthError {
     this.name = "InvalidCredentialsError"
   }
 }
+
+export class UserAlreadyExistsError extends AuthError {
+  constructor(message: string = "User with this email already exists") {
+    super(message)
+    this.name = "UserAlreadyExistsError"
+  }
+}
+
+export class TooManyRequestsError extends AuthError {
+  constructor(message: string = "Too many requests") {
+    super(message)
+    this.name = "TooManyRequestsError"
+  }
+}

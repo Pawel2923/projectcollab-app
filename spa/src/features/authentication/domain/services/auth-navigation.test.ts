@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest"
-import { getPostLoginRedirect } from "./auth-navigation"
+import {
+  buildAppUrl,
+  DEFAULT_POST_LOGOUT_REDIRECT,
+  getPostLoginRedirect,
+} from "./auth-navigation"
 
 describe("getPostLoginRedirect", () => {
   it("defaults to /organizations when redirectUrl is not provided", () => {
@@ -33,5 +37,30 @@ describe("getPostLoginRedirect", () => {
     expect(getPostLoginRedirect("/dashboard?tab=activity")).toBe(
       "/dashboard?tab=activity"
     )
+  })
+})
+
+describe("buildAppUrl", () => {
+  it("exports /signin as the default post-logout redirect path", () => {
+    expect(DEFAULT_POST_LOGOUT_REDIRECT).toBe("/signin")
+  })
+
+  it("prefixes relative routes with the SPA base path", () => {
+    expect(buildAppUrl("/signin", "/spa/")).toBe("/spa/signin")
+    expect(buildAppUrl("/signin", "/spa")).toBe("/spa/signin")
+    expect(buildAppUrl("signin", "/spa/")).toBe("/spa/signin")
+  })
+
+  it("preserves root-mounted paths when base path is /", () => {
+    expect(buildAppUrl("/signin", "/")).toBe("/signin")
+    expect(buildAppUrl("/", "/")).toBe("/")
+  })
+
+  it("handles root path with a non-root base path", () => {
+    expect(buildAppUrl("/", "/spa/")).toBe("/spa/")
+  })
+
+  it("does not double-prefix paths that already start with the base path", () => {
+    expect(buildAppUrl("/spa/signin", "/spa/")).toBe("/spa/signin")
   })
 })

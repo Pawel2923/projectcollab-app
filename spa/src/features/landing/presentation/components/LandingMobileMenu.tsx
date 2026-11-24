@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react"
+import { Loader2, Menu } from "lucide-react"
 
 import type { User } from "@/features/authentication"
 import { logout, getUserGreeting } from "@/features/authentication"
@@ -20,12 +20,14 @@ import { LoggedOutContent } from "./LoggedOutContent"
 
 export interface LandingMobileMenuProps {
   user: User | null
-  onLogout?: () => void
+  onLogout?: () => Promise<void> | void
+  isLoggingOut?: boolean
 }
 
 export function LandingMobileMenu({
   user,
   onLogout = logout,
+  isLoggingOut = false,
 }: LandingMobileMenuProps) {
   const greeting = getUserGreeting(user)
 
@@ -62,8 +64,14 @@ export function LandingMobileMenu({
         </SheetHeader>
         <div className="flex-1 space-y-4 p-4">
           {user ? (
-            <Button variant="secondary" onClick={onLogout} className="w-full">
+            <Button
+              variant="secondary"
+              onClick={() => void onLogout()}
+              disabled={isLoggingOut}
+              className="w-full gap-2"
+            >
               {m.landing_nav_log_out()}
+              {isLoggingOut && <Loader2 className="size-4 animate-spin" />}
             </Button>
           ) : (
             <LoggedOutContent />

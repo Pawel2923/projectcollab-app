@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\ExpiredSignatureException;
 
 class VerifyEmailProviderTest extends TestCase
 {
@@ -92,5 +93,53 @@ class VerifyEmailProviderTest extends TestCase
         $this->assertInstanceOf(VerifyEmailResponse::class, $response);
         $this->assertEquals('EMAIL_VERIFIED', $response->getCode());
         $this->assertTrue($response->getIsVerified());
+    }
+
+    public function testProvideInvalidOrExpiredSignature(): void
+    {
+        $request = new Request([
+            'id' => '1',
+            'expires' => '1700000000',
+            'token' => 'sampletoken',
+            'signature' => 'expiredsignature',
+        ]);
+
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->method('getCurrentRequest')->willReturn($request);
+
+        $user = new User();
+        $reflection = new \ReflectionClass($user);
+        $property = $reflection->getProperty('id');
+        $property->setValue($user, 1);
+        $user->setEmail('user@example.com');
+
+        $userRepository = $this->createMock(UserRepository::class);
+        $userRepository->method('find')->with('1')->willReturn($user);
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $emailVerifier = $this->createMock(EmailVerifierInterface::class);
+        $emailVerifier->expects($this->once())
+            ->method('handleConfirmation')
+            ->with($request, $user)
+            ->willThrowException(new ExpiredSignatureException());
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->never())->method('flush');
+
+        $provider = new VerifyEmailProvider(
+            $requestStack,
+            $userRepository,
+            $logger,
+            $emailVerifier,
+            $entityManager
+        );
+
+        $operation = $this->createMock(Operation::class);
+        /** @var VerifyEmailResponse $response */
+        $response = $provider->provide($operation);
+
+        $this->assertInstanceOf(VerifyEmailResponse::class, $response);
+        $this->assertEquals('EMAIL_NOT_VERIFIED', $response->getCode());
+        $this->assertFalse($response->getIsVerified());
     }
 }

@@ -25,9 +25,8 @@ final class LogoutController extends AbstractController
     public function __invoke(Request $request, EntityManagerInterface $em): Response
     {
         // ── Resolve refresh token ────────────────────────────────────────
-        // Cookie-first: SPA/browser clients send the refresh_token cookie automatically.
-        // Even though the cookie was issued with Path=/core-api/auth/refresh, the server
-        // can read any cookie on the domain regardless of path restrictions.
+        // Cookie-first: SPA/browser clients send the refresh_token cookie automatically
+        // because it is issued with Path=/core-api/auth (covering /auth/refresh and /auth/logout).
         $refreshToken = $request->cookies->get('refresh_token');
 
         // Body fallback for /frontend server actions and CLI tools (deprecated).
@@ -60,13 +59,20 @@ final class LogoutController extends AbstractController
         $isSecure = $request->isSecure();
         $domain   = $this->cookieDomain !== '' ? $this->cookieDomain : null;
 
-        // ── Clear access-token cookie ─────────────────────────────────────
+        // ── Clear access-token & Mercure cookies ──────────────────────────
         $response->headers->setCookie(
             Cookie::create('token', '', 1, '/', $domain, $isSecure, true, false, Cookie::SAMESITE_LAX)
+        );
+        $response->headers->setCookie(
+            Cookie::create('mercureAuthorization', '', 1, '/', $domain, $isSecure, true, false, Cookie::SAMESITE_LAX)
         );
 
         // ── Clear refresh-token cookie ────────────────────────────────────
         // Must use the same path/domain as when the cookie was set.
+        // Clear both the current /core-api/auth path and legacy /core-api/auth/refresh path.
+        $response->headers->setCookie(
+            Cookie::create('refresh_token', '', 1, '/core-api/auth', $domain, $isSecure, true, false, Cookie::SAMESITE_LAX)
+        );
         $response->headers->setCookie(
             Cookie::create('refresh_token', '', 1, '/core-api/auth/refresh', $domain, $isSecure, true, false, Cookie::SAMESITE_LAX)
         );

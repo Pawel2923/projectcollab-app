@@ -1,4 +1,9 @@
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
+import * as React from "react"
+import {
+  createRootRouteWithContext,
+  Outlet,
+  useNavigate,
+} from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
@@ -16,9 +21,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootComponent() {
+  const navigate = useNavigate()
+
+  const handleLogoutRedirect = React.useCallback(async () => {
+    await navigate({ to: "/signin", replace: true })
+  }, [navigate])
+
   return (
     <ThemeProvider defaultTheme="auto" storageKey="theme">
-      <UserProvider>
+      <UserProvider onLogoutRedirect={handleLogoutRedirect}>
         <I18nProvider>
           <TooltipProvider>
             <Outlet />

@@ -12,11 +12,15 @@ use App\State\Auth\VerifyEmail\VerifyEmailProvider;
     operations: [
         new Post(
             uriTemplate: '/verify-email',
+            status: 200,
             openapi: new Operation(
                 tags: ['Verify Email'],
                 summary: 'Verify user email',
                 description: 'Endpoint to verify a user\'s email address using a verification link.',
             ),
+            input: false,
+            read: true,
+            deserialize: false,
             provider: VerifyEmailProvider::class,
             parameters: [
                 'expires' => new QueryParameter(

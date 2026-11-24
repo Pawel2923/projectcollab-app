@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest"
-import {
-  generateUserInitials,
-  getUserDisplayName,
-  getUserGreeting,
-} from "./user-display"
+import { generateUserInitials, getUserDisplayName } from "./user-display"
 
 describe("user-display domain service", () => {
   describe("generateUserInitials", () => {
@@ -42,20 +38,6 @@ describe("user-display domain service", () => {
       expect(getUserDisplayName(null)).toBe("")
       expect(getUserDisplayName(undefined)).toBe("")
       expect(getUserDisplayName({})).toBe("")
-    })
-  })
-
-  describe("getUserGreeting", () => {
-    it("returns friendly greeting with display name when available", () => {
-      expect(getUserGreeting({ username: "alice" })).toBe("Cześć alice")
-      expect(getUserGreeting({ email: "bob@example.com" })).toBe(
-        "Cześć bob@example.com"
-      )
-    })
-
-    it("returns empty string when display name cannot be resolved", () => {
-      expect(getUserGreeting(null)).toBe("")
-      expect(getUserGreeting(undefined)).toBe("")
     })
   })
 })

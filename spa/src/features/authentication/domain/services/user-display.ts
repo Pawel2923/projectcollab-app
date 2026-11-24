@@ -19,11 +19,3 @@ export function generateUserInitials(user?: UserLike | null): string {
 export function getUserDisplayName(user?: UserLike | null): string {
   return user?.username || user?.email || ""
 }
-
-/**
- * Returns a friendly greeting for the user based on their username or email.
- */
-export function getUserGreeting(user?: UserLike | null): string {
-  const name = getUserDisplayName(user)
-  return name ? `Cześć ${name}` : ""
-}

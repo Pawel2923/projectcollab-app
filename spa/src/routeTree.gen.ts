@@ -11,12 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as AuthenticatedOrganizationsRouteImport } from './routes/_authenticated.organizations'
 import { Route as PolicyIndexRouteImport } from './routes/policy.index'
 import { Route as PolicyPrivacyRouteImport } from './routes/policy.privacy'
 import { Route as PolicyTermsRouteImport } from './routes/policy.terms'
+import { Route as VerifyEmailIndexRouteImport } from './routes/verify-email.index'
+import { Route as VerifyEmailVerifyRouteImport } from './routes/verify-email.verify'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,6 +31,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
@@ -35,6 +44,11 @@ const SigninRoute = SigninRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedOrganizationsRoute =
@@ -58,72 +72,106 @@ const PolicyTermsRoute = PolicyTermsRouteImport.update({
   path: '/policy/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyEmailIndexRoute = VerifyEmailIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VerifyEmailRoute,
+} as any)
+const VerifyEmailVerifyRoute = VerifyEmailVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => VerifyEmailRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/logout': typeof LogoutRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/verify-email': typeof VerifyEmailRouteWithChildren
   '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy/': typeof PolicyIndexRoute
+  '/verify-email/': typeof VerifyEmailIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/logout': typeof LogoutRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy': typeof PolicyIndexRoute
+  '/verify-email': typeof VerifyEmailIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/logout': typeof LogoutRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/verify-email': typeof VerifyEmailRouteWithChildren
   '/_authenticated/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy/': typeof PolicyIndexRoute
+  '/verify-email/': typeof VerifyEmailIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/logout'
     | '/signin'
     | '/signup'
+    | '/verify-email'
     | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy/'
+    | '/verify-email/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/logout'
     | '/signin'
     | '/signup'
     | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy'
+    | '/verify-email'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/logout'
     | '/signin'
     | '/signup'
+    | '/verify-email'
     | '/_authenticated/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy/'
+    | '/verify-email/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LogoutRoute: typeof LogoutRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  VerifyEmailRoute: typeof VerifyEmailRouteWithChildren
   PolicyPrivacyRoute: typeof PolicyPrivacyRoute
   PolicyTermsRoute: typeof PolicyTermsRoute
   PolicyIndexRoute: typeof PolicyIndexRoute
@@ -145,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
@@ -157,6 +212,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/organizations': {
@@ -187,6 +249,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PolicyTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify-email/': {
+      id: '/verify-email/'
+      path: '/'
+      fullPath: '/verify-email/'
+      preLoaderRoute: typeof VerifyEmailIndexRouteImport
+      parentRoute: typeof VerifyEmailRoute
+    }
+    '/verify-email/verify': {
+      id: '/verify-email/verify'
+      path: '/verify'
+      fullPath: '/verify-email/verify'
+      preLoaderRoute: typeof VerifyEmailVerifyRouteImport
+      parentRoute: typeof VerifyEmailRoute
+    }
   }
 }
 
@@ -202,11 +278,27 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface VerifyEmailRouteChildren {
+  VerifyEmailVerifyRoute: typeof VerifyEmailVerifyRoute
+  VerifyEmailIndexRoute: typeof VerifyEmailIndexRoute
+}
+
+const VerifyEmailRouteChildren: VerifyEmailRouteChildren = {
+  VerifyEmailVerifyRoute: VerifyEmailVerifyRoute,
+  VerifyEmailIndexRoute: VerifyEmailIndexRoute,
+}
+
+const VerifyEmailRouteWithChildren = VerifyEmailRoute._addFileChildren(
+  VerifyEmailRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LogoutRoute: LogoutRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  VerifyEmailRoute: VerifyEmailRouteWithChildren,
   PolicyPrivacyRoute: PolicyPrivacyRoute,
   PolicyTermsRoute: PolicyTermsRoute,
   PolicyIndexRoute: PolicyIndexRoute,

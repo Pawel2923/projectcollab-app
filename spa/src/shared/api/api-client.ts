@@ -208,10 +208,11 @@ export async function apiFetch<T = unknown>(
   }
 
   const contentType = response.headers.get("content-type") || ""
+  const normalizedContentType = contentType.toLowerCase()
   let responseData: unknown
   if (
-    contentType.includes("application/json") ||
-    contentType.includes("application/ld+json")
+    normalizedContentType.includes("application/json") ||
+    normalizedContentType.includes("+json")
   ) {
     responseData = await response.json().catch(() => null)
   } else {

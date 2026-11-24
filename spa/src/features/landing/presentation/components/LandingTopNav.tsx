@@ -5,6 +5,7 @@ import type { User } from "@/features/authentication"
 import {
   logout,
   getUserGreeting,
+  useUserContext,
   UserSettings,
 } from "@/features/authentication"
 import { DropdownMenuItem, ThemeToggle } from "@/shared/ui"
@@ -15,10 +16,14 @@ import { LoggedOutContent } from "./LoggedOutContent"
 
 export interface LandingTopNavProps {
   user: User | null
+  onLogout?: () => Promise<void> | void
 }
 
-export function LandingTopNav({ user }: LandingTopNavProps) {
+export function LandingTopNav({ user, onLogout }: LandingTopNavProps) {
+  const userContext = useUserContext()
   const greeting = getUserGreeting(user)
+  const handleLogout = onLogout ?? userContext?.logout ?? logout
+  const isLoggingOut = userContext?.isLoggingOut ?? false
 
   return (
     <nav className="sticky top-0 z-20 flex h-16 w-full flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-2 md:h-21 md:gap-4 md:px-8 lg:px-24">
@@ -33,13 +38,20 @@ export function LandingTopNav({ user }: LandingTopNavProps) {
         <div className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" tooltip />
           <LanguageSwitcher className="hidden sm:inline-flex" tooltip />
-          <LandingMobileMenu user={user} onLogout={logout} />
+          <LandingMobileMenu
+            user={user}
+            onLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+          />
           <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <UserSettings
                 triggerMessage={greeting ? `${greeting}!` : undefined}
               >
-                <DropdownMenuItem onClick={() => logout()}>
+                <DropdownMenuItem
+                  disabled={isLoggingOut}
+                  onClick={() => void handleLogout()}
+                >
                   {m.landing_nav_log_out()}
                 </DropdownMenuItem>
               </UserSettings>

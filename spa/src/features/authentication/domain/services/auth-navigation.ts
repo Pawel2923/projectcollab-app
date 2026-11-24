@@ -12,6 +12,29 @@ const INVALID_REDIRECT_URLS: readonly string[] = Object.freeze([
 ])
 
 export const DEFAULT_POST_LOGIN_REDIRECT = "/organizations"
+export const DEFAULT_POST_LOGOUT_REDIRECT = "/signin"
+
+/**
+ * Resolves an internal SPA route path against a base path (e.g. "/spa/")
+ * without double-prefixing paths that already include the base path.
+ */
+export function buildAppUrl(path: string, baseUrl = "/"): string {
+  const normalizedBase = baseUrl.replace(/\/+$/, "")
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`
+
+  if (!normalizedBase) {
+    return normalizedPath
+  }
+
+  if (
+    normalizedPath === normalizedBase ||
+    normalizedPath.startsWith(`${normalizedBase}/`)
+  ) {
+    return normalizedPath
+  }
+
+  return `${normalizedBase}${normalizedPath}`
+}
 
 /**
  * Returns a safe, validated application redirect path after successful sign in.

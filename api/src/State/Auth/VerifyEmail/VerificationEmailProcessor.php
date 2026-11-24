@@ -24,7 +24,7 @@ final readonly class VerificationEmailProcessor implements ProcessorInterface
     {
         $user = $this->userRepository->findOneBy(['email' => $data->getEmail()]);
 
-        if ($user || !($user->isVerified())) {
+        if ($user && !($user->isVerified())) {
             $this->logger->info('Processing email verification request for user: ' . $user->getEmail());
             $this->emailVerifier->send($user);
         }
