@@ -1,8 +1,10 @@
-import type { LoginCredentials } from "../models/credentials"
+import type { LoginCredentials, SignUpCredentials } from "../models/credentials"
 import type { User } from "../models/user"
 
 export interface AuthGatewayPort {
   login(credentials: LoginCredentials): Promise<void>
+  signUp(credentials: SignUpCredentials): Promise<void>
+  resendVerificationEmail(email: string): Promise<void>
   /** Invalidates the refresh-token server-side and clears auth cookies. */
   logout(): Promise<void>
   getCurrentUser(): Promise<User | null>

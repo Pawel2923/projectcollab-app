@@ -23,6 +23,15 @@ describe("ApiError", () => {
     expect(error.status).toBe(404)
   })
 
+  it("extracts description when hydra:description and detail are missing", () => {
+    const error = new ApiError(422, {
+      description: "Validation failed",
+    })
+
+    expect(error.message).toBe("Validation failed")
+    expect(error.status).toBe(422)
+  })
+
   it("extracts message when hydra:description and detail are missing", () => {
     const error = new ApiError(500, {
       message: "Internal server error",
@@ -61,6 +70,47 @@ describe("ApiError", () => {
       message: "This value is not a valid email address.",
     })
     expect(Object.isFrozen(error.violations)).toBe(true)
+  })
+
+  it("preserves violation codes when present, freezes violation items, and normalizes missing propertyPath", () => {
+    const error = new ApiError(422, {
+      violations: [
+        {
+          propertyPath: "email",
+          message: "This value is not a valid email address.",
+          code: " bd79c0ab-ddba-46cc-a703-a7a4b08de310 ",
+        },
+        {
+          propertyPath: "plainPassword",
+          message: "This value should not be blank.",
+          code: "   ",
+        },
+        {
+          message: "Class-level constraint violation.",
+          code: "23bd9dbf-6b9b-41cd-a99e-4844bcf3077f",
+        },
+      ],
+    })
+
+    expect(error.violations).toHaveLength(3)
+    expect(error.violations[0]).toEqual({
+      propertyPath: "email",
+      message: "This value is not a valid email address.",
+      code: "bd79c0ab-ddba-46cc-a703-a7a4b08de310",
+    })
+    expect(error.violations[1]).toEqual({
+      propertyPath: "plainPassword",
+      message: "This value should not be blank.",
+    })
+    expect("code" in error.violations[1]).toBe(false)
+    expect(error.violations[2]).toEqual({
+      propertyPath: "",
+      message: "Class-level constraint violation.",
+      code: "23bd9dbf-6b9b-41cd-a99e-4844bcf3077f",
+    })
+    expect(Object.isFrozen(error.violations[0])).toBe(true)
+    expect(Object.isFrozen(error.violations[1])).toBe(true)
+    expect(Object.isFrozen(error.violations[2])).toBe(true)
   })
 
   it("handles empty violations safely", () => {

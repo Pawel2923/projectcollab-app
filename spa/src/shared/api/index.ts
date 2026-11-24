@@ -15,4 +15,18 @@ export {
 } from "./api-client"
 export { ApiError, isApiError } from "./api-error"
 export { queryClient } from "./query-client"
+export {
+  SYMFONY_VIOLATION_CODES,
+  SYMFONY_VIOLATION_MESSAGE_MAP,
+  type SymfonyViolationCode,
+} from "./symfony-violation-codes"
+export {
+  mapApiPlatformValidationError,
+  mapApiPlatformViolation,
+  mapApiPlatformViolations,
+  translateSymfonyViolation,
+  type MappedValidationResult,
+  type MappedViolation,
+  type MapViolationsOptions,
+} from "./violation-mapper"
 export type { ApiPlatformErrorPayload, ApiPlatformViolation } from "./types"

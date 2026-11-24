@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
+import { ApiError } from "./api-error"
 import {
   formatApiUrl,
   onAuthFailure,
@@ -195,6 +196,49 @@ describe("apiFetch auth failure and retry lifecycle", () => {
     expect(mockLocation.href).toBe("")
 
     unsubscribe()
+  })
+
+  it("parses 422 application/problem+json responses into ApiError with violations and codes", async () => {
+    const payload = {
+      status: 422,
+      detail: "email: This value is not a valid email address.",
+      violations: [
+        {
+          propertyPath: "email",
+          message: "This value is not a valid email address.",
+          code: "bd79c0ab-ddba-46cc-a703-a7a4b08de310",
+        },
+      ],
+    }
+
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      status: 422,
+      ok: false,
+      headers: new Headers({
+        "content-type": "application/problem+json; charset=utf-8",
+      }),
+      json: async () => payload,
+      text: async () => JSON.stringify(payload),
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    let caughtError: unknown
+    try {
+      await apiFetch("/users", { method: "POST", body: { email: "bad" } })
+    } catch (error: unknown) {
+      caughtError = error
+    }
+
+    expect(caughtError).toBeInstanceOf(ApiError)
+    const apiError = caughtError as ApiError
+    expect(apiError.status).toBe(422)
+    expect(apiError.violations).toEqual([
+      {
+        propertyPath: "email",
+        message: "This value is not a valid email address.",
+        code: "bd79c0ab-ddba-46cc-a703-a7a4b08de310",
+      },
+    ])
   })
 })
 

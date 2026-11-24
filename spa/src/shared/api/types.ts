@@ -1,6 +1,7 @@
 export interface ApiPlatformViolation {
   readonly propertyPath: string
   readonly message: string
+  readonly code?: string
 }
 
 export interface ApiPlatformErrorPayload {
@@ -11,6 +12,7 @@ export interface ApiPlatformErrorPayload {
   readonly violations?: readonly ApiPlatformViolation[]
   readonly message?: string
   readonly detail?: string
+  readonly description?: string
   readonly title?: string
   readonly status?: number
 }

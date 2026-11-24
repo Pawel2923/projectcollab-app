@@ -1,11 +1,16 @@
 // Domain models, ports, and services
 export type { User, UserLike } from "./domain/models/user"
-export type { LoginCredentials } from "./domain/models/credentials"
+export type {
+  LoginCredentials,
+  SignUpCredentials,
+} from "./domain/models/credentials"
 export type { AuthGatewayPort } from "./domain/ports/auth-gateway.port"
 export {
   AuthError,
   SessionExpiredError,
   InvalidCredentialsError,
+  TooManyRequestsError,
+  UserAlreadyExistsError,
 } from "./domain/errors/auth-error"
 export {
   generateUserInitials,
@@ -26,6 +31,14 @@ export {
   loginUseCase,
 } from "./application/use-cases/login.use-case"
 export {
+  SignUpUseCase,
+  signUpUseCase,
+} from "./application/use-cases/sign-up.use-case"
+export {
+  ResendVerificationEmailUseCase,
+  resendVerificationEmailUseCase,
+} from "./application/use-cases/resend-verification-email.use-case"
+export {
   LogoutUseCase,
   logoutUseCase,
 } from "./application/use-cases/logout.use-case"
@@ -41,6 +54,10 @@ export {
   signInSchema,
   type SignInFormData,
 } from "./application/validation/sign-in.schema"
+export {
+  signUpSchema,
+  type SignUpFormData,
+} from "./application/validation/sign-up.schema"
 
 // Infrastructure
 export {
@@ -78,7 +95,22 @@ export {
   SignInView,
   type SignInViewProps,
 } from "./presentation/components/SignInView"
-export { SignUpView } from "./presentation/components/SignUpView"
+export {
+  SignUpForm,
+  type SignUpFormProps,
+} from "./presentation/components/SignUpForm"
+export {
+  SignUpView,
+  type SignUpViewProps,
+} from "./presentation/components/SignUpView"
+export {
+  ResendVerifyEmailButton,
+  type ResendVerifyEmailButtonProps,
+} from "./presentation/components/ResendVerifyEmailButton"
+export {
+  VerifyEmailView,
+  type VerifyEmailViewProps,
+} from "./presentation/components/VerifyEmailView"
 export {
   requireAuth,
   requireGuest,

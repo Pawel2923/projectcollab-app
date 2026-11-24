@@ -12,6 +12,7 @@ import { authKeys } from "../auth-keys"
 describe("Authentication Use Cases", () => {
   let mockGateway: {
     login: ReturnType<typeof vi.fn>
+    signUp: ReturnType<typeof vi.fn>
     logout: ReturnType<typeof vi.fn>
     getCurrentUser: ReturnType<typeof vi.fn>
     refreshTokens: ReturnType<typeof vi.fn>
@@ -25,6 +26,7 @@ describe("Authentication Use Cases", () => {
   beforeEach(() => {
     mockGateway = {
       login: vi.fn(),
+      signUp: vi.fn(),
       logout: vi.fn(),
       getCurrentUser: vi.fn(),
       refreshTokens: vi.fn(),

@@ -13,13 +13,27 @@ function parseViolations(data: unknown): readonly ApiPlatformViolation[] {
   for (const item of data.violations) {
     if (
       isRecord(item) &&
-      typeof item.propertyPath === "string" &&
-      typeof item.message === "string"
+      typeof item.message === "string" &&
+      (typeof item.propertyPath === "string" || item.propertyPath === undefined)
     ) {
-      violations.push({
-        propertyPath: item.propertyPath,
-        message: item.message,
-      })
+      const propertyPath =
+        typeof item.propertyPath === "string" ? item.propertyPath : ""
+      const trimmedCode =
+        typeof item.code === "string" ? item.code.trim() : undefined
+
+      const violation: ApiPlatformViolation =
+        trimmedCode && trimmedCode.length > 0
+          ? {
+              propertyPath,
+              message: item.message,
+              code: trimmedCode,
+            }
+          : {
+              propertyPath,
+              message: item.message,
+            }
+
+      violations.push(Object.freeze(violation))
     }
   }
 
@@ -34,6 +48,9 @@ function resolveErrorMessage(status: number, data: unknown): string {
     }
     if (payload.detail) {
       return payload.detail
+    }
+    if (payload.description) {
+      return payload.description
     }
     if (payload.message) {
       return payload.message

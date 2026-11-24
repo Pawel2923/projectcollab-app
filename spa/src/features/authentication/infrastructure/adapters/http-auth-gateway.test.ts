@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { HttpAuthGateway } from "./http-auth-gateway"
-import { InvalidCredentialsError } from "../../domain/errors/auth-error"
-import { ApiError } from "@/shared/api"
+import {
+  InvalidCredentialsError,
+  TooManyRequestsError,
+  UserAlreadyExistsError,
+} from "../../domain/errors/auth-error"
+import { ApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
 import type {
   apiClient,
@@ -139,5 +143,115 @@ describe("HttpAuthGateway", () => {
     const cb = vi.fn()
     gateway.onAuthFailure(cb)
     expect(mockOnAuthFailure).toHaveBeenCalledWith(cb)
+  })
+
+  it("calls signUp endpoint with JSON-LD content type and plainPassword payload", async () => {
+    mockApiFetch.mockResolvedValueOnce({})
+
+    await gateway.signUp({ email: "new@test.com", password: "password123" })
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/ld+json",
+      },
+      body: { email: "new@test.com", plainPassword: "password123" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("throws UserAlreadyExistsError when signUp returns 422 with email violation", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(422, {
+        violations: [
+          {
+            propertyPath: "email",
+            message: "User with this email already exists",
+          },
+        ],
+      })
+    )
+
+    await expect(
+      gateway.signUp({ email: "existing@test.com", password: "password123" })
+    ).rejects.toThrow(UserAlreadyExistsError)
+  })
+
+  it("throws UserAlreadyExistsError when signUp returns 422 with UniqueEntity code and generic message", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(422, {
+        violations: [
+          {
+            propertyPath: "email",
+            message: "This value is already used.",
+            code: SYMFONY_VIOLATION_CODES.UNIQUE_ENTITY_NOT_UNIQUE,
+          },
+        ],
+      })
+    )
+
+    await expect(
+      gateway.signUp({ email: "existing@test.com", password: "password123" })
+    ).rejects.toThrow(UserAlreadyExistsError)
+  })
+
+  it("propagates non-email ApiError from signUp", async () => {
+    const apiError = new ApiError(422, {
+      violations: [
+        {
+          propertyPath: "plainPassword",
+          message: "This password has been leaked in a data breach.",
+        },
+      ],
+    })
+    mockApiFetch.mockRejectedValueOnce(apiError)
+
+    await expect(
+      gateway.signUp({ email: "new@test.com", password: "password" })
+    ).rejects.toThrow(apiError)
+  })
+
+  it("calls verify-email/send endpoint with JSON-LD content type and email payload", async () => {
+    mockApiFetch.mockResolvedValueOnce({ code: "VERIFY_EMAIL_SENT" })
+
+    await gateway.resendVerificationEmail("user@test.com")
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/core-api/verify-email/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/ld+json",
+      },
+      body: { email: "user@test.com" },
+      skipAuthRefresh: true,
+      skipAuthRedirect: true,
+    })
+  })
+
+  it("throws TooManyRequestsError when resendVerificationEmail returns 429 ApiError", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(429, { detail: "Too many requests" })
+    )
+
+    await expect(
+      gateway.resendVerificationEmail("user@test.com")
+    ).rejects.toThrow(TooManyRequestsError)
+  })
+
+  it("propagates 422 ApiError from resendVerificationEmail", async () => {
+    const apiError = new ApiError(422, {
+      violations: [
+        {
+          propertyPath: "email",
+          message: "This value is not a valid email address.",
+          code: SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT,
+        },
+      ],
+    })
+    mockApiFetch.mockRejectedValueOnce(apiError)
+
+    await expect(
+      gateway.resendVerificationEmail("invalid-email")
+    ).rejects.toThrow(apiError)
   })
 })
