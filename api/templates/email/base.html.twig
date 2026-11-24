@@ -1,0 +1,75 @@
+{% set emailLocale = locale|default('pl') %}
+<!DOCTYPE html>
+<html lang="{{ emailLocale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ProjectCollab{% endblock %}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0a0a0a;">
+    <div style="display: none; max-height: 0; max-width: 0; overflow: hidden; opacity: 0; font-size: 1px; line-height: 1px; color: #f5f5f5;">{% block preheader %}{% endblock %}</div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f5f5f5" style="width: 100%; border-collapse: collapse; background-color: #f5f5f5;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 520px; border-collapse: collapse;">
+                    <tr>
+                        <td align="center" style="padding: 0 0 24px 0;">
+                            <span style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 22px; font-weight: 700; line-height: 28px; color: #0a0a0a; letter-spacing: -0.02em;">ProjectCollab</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff" style="background-color: #ffffff; border: 1px solid #ecf0f1; border-radius: 12px; padding: 32px 24px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 0 0 12px 0;">
+                                        <h1 style="margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 600; line-height: 28px; color: #0a0a0a;">{% block heading %}{% endblock %}</h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0 0 24px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 24px; color: #525252;">
+                                        {% block lead %}{% endblock %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding: 0 0 24px 0;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
+                                            <tr>
+                                                <td align="center" bgcolor="#1abc9c" style="background-color: #1abc9c; border-radius: 8px;">
+                                                    <a href="{% block cta_url %}{% endblock %}" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 20px; color: #000000; text-decoration: none; border-radius: 8px;">{% block cta_label %}{% endblock %}</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0 0 20px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 22px; color: #525252;">
+                                        {% block notice %}{% endblock %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0 0 20px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 400; line-height: 20px; color: #7f8c8d;">
+                                        {{ 'email.common.fallback_link_intro'|trans({}, 'emails', emailLocale) }}<br>
+                                        <a href="{{ block('cta_url') }}" target="_blank" style="color: #0e7e68; text-decoration: underline; word-break: break-all;">{{ block('cta_url') }}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 20px 0 0 0; border-top: 1px solid #ecf0f1; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 22px; color: #525252;">
+                                        {{ 'email.common.regards'|trans({}, 'emails', emailLocale) }}<br>
+                                        <strong style="font-weight: 600; color: #0a0a0a;">{{ 'email.common.team'|trans({}, 'emails', emailLocale) }}</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding: 20px 16px 0 16px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 400; line-height: 18px; color: #7f8c8d;">
+                            {{ 'email.common.automated_notice'|trans({}, 'emails', emailLocale) }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -26,7 +26,7 @@ final readonly class VerificationEmailProcessor implements ProcessorInterface
 
         if ($user && !($user->isVerified())) {
             $this->logger->info('Processing email verification request for user: ' . $user->getEmail());
-            $this->emailVerifier->send($user);
+            $this->emailVerifier->send($user, $data->getLocale());
         }
 
         // Always return a generic response to avoid user enumeration

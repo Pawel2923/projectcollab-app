@@ -36,7 +36,7 @@ final readonly class ResetPasswordEmailProcessor implements ProcessorInterface
         $user = $this->userRepository->findOneBy(['email' => $data->getEmail()]);
         if ($user instanceof User) {
             $this->logger->info('[ResetPasswordEmailProcessor]: Processing reset email request', ['email' => $data->getEmail()]);
-            $this->resetPasswordService->sendRequest($user);
+            $this->resetPasswordService->sendRequest($user, $data->getLocale());
         }
 
         $data->setCode('RESET_PASSWORD_EMAIL_SENT');

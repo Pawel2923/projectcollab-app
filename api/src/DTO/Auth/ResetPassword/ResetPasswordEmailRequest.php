@@ -32,6 +32,9 @@ class ResetPasswordEmailRequest
     #[Groups(['reset_password:write'])]
     private ?string $email = null;
 
+    #[Groups(['reset_password:write'])]
+    private ?string $locale = null;
+
     #[Groups('reset_password:read')]
     private ?string $code = null;
 
@@ -43,6 +46,16 @@ class ResetPasswordEmailRequest
     public function setEmail(?string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): void
+    {
+        $this->locale = $locale;
     }
 
     public function getCode(): ?string

@@ -3,12 +3,14 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Service\Locale\EmailLocaleResolver;
 use App\Util\UrlManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
@@ -20,6 +22,8 @@ readonly class EmailVerifier implements EmailVerifierInterface
         private MailerInterface                        $mailer,
         private LoggerInterface                        $logger,
         private UrlManagerInterface                    $urlManager,
+        private TranslatorInterface                    $translator,
+        private EmailLocaleResolver                    $localeResolver,
         #[Autowire(env: 'SERVER_NAME')] private string $serverName
     )
     {
@@ -28,8 +32,10 @@ readonly class EmailVerifier implements EmailVerifierInterface
     /**
      * @throws TransportExceptionInterface
      */
-    public function send(User $user): void
+    public function send(User $user, ?string $locale = null): void
     {
+        $resolvedLocale = $this->localeResolver->resolve($locale);
+
         $signatureComponents = $this->helper->generateSignature(
             '_api_/core-api/verify-email_post',
             (string)$user->getId(),
@@ -49,9 +55,10 @@ readonly class EmailVerifier implements EmailVerifierInterface
         $email = new TemplatedEmail()
             ->from("no-reply@$this->serverName")
             ->to($user->getEmail())
-            ->subject('Zweryfikuj swój adres e-mail')
+            ->subject($this->translator->trans('email.verify.subject', [], 'emails', $resolvedLocale))
             ->context([
                 'verificationUrl' => $frontendVerifyUrl,
+                'locale' => $resolvedLocale,
             ])
             ->htmlTemplate('email/verify_email.html.twig');
 

@@ -1,0 +1,22 @@
+email:
+    common:
+        fallback_link_intro: 'Jeśli przycisk nie działa, skopiuj i wklej poniższy adres w przeglądarce:'
+        regards: 'Pozdrawiamy,'
+        team: 'Zespół ProjectCollab'
+        automated_notice: 'Ta wiadomość została wysłana automatycznie przez ProjectCollab. Prosimy na nią nie odpowiadać.'
+    verify:
+        subject: 'Zweryfikuj swój adres e-mail'
+        title: 'Zweryfikuj swój adres e-mail'
+        preheader: 'Potwierdź swój adres e-mail, aby zweryfikować konto ProjectCollab.'
+        heading: 'Witaj'
+        lead: 'Prosimy o potwierdzenie adresu e-mail, klikając poniższy przycisk:'
+        cta: 'Potwierdź adres e-mail'
+        notice: 'Jeśli nie utworzyłeś konta, nie musisz podejmować żadnych działań.'
+    reset_password:
+        subject: 'Zresetuj swoje hasło'
+        title: 'Zresetuj swoje hasło'
+        preheader: 'Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta ProjectCollab. Kliknij link, aby ustawić nowe hasło.'
+        heading: 'Witaj'
+        lead: 'Możesz zresetować swoje hasło, klikając poniższy przycisk:'
+        cta: 'Zresetuj hasło'
+        notice: 'Jeśli nie prosiłeś o zresetowanie hasła, nie musisz podejmować żadnych działań.'
