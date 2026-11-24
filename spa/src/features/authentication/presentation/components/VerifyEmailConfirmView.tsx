@@ -142,7 +142,7 @@ export function VerifyEmailConfirmView({
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <BackButton href="/" />
-      <div className="flex w-full max-w-lg flex-col gap-6">
+      <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
           className="flex items-center gap-2 self-center font-medium"
@@ -152,11 +152,7 @@ export function VerifyEmailConfirmView({
         </Link>
 
         {state.status === "verifying" && (
-          <Card
-            className="flex w-full flex-col gap-6"
-            role="status"
-            aria-live="polite"
-          >
+          <Card className="w-full" role="status" aria-live="polite">
             <CardHeader className="flex flex-col items-center gap-3 text-center">
               <div className="rounded-full bg-primary/10 p-3 text-primary">
                 <Loader2 className="size-8 animate-spin" aria-hidden="true" />
@@ -172,7 +168,7 @@ export function VerifyEmailConfirmView({
         )}
 
         {state.status === "verified" && (
-          <Card className="flex w-full flex-col gap-6" role="status">
+          <Card className="w-full" role="status">
             <CardHeader className="flex flex-col items-center gap-3 text-center">
               <div className="rounded-full bg-primary/10 p-3 text-primary">
                 <MailCheck className="size-8" aria-hidden="true" />
@@ -184,7 +180,7 @@ export function VerifyEmailConfirmView({
             <CardContent className="text-center text-sm text-muted-foreground">
               <p>{m.auth_verify_email_confirm_success_description()}</p>
             </CardContent>
-            <CardFooter className="flex flex-col gap-2">
+            <CardFooter className="flex flex-col items-stretch gap-2">
               {isAuthenticated ? (
                 <Button
                   className="w-full"
@@ -215,7 +211,7 @@ export function VerifyEmailConfirmView({
               state.reason === "server_error" ? AlertTriangle : MailX
 
             return (
-              <Card className="flex w-full flex-col gap-6" role="alert">
+              <Card className="w-full" role="alert">
                 <CardHeader className="flex flex-col items-center gap-3 text-center">
                   <div className="rounded-full bg-destructive/10 p-3 text-destructive">
                     <IconComponent className="size-8" aria-hidden="true" />
@@ -227,7 +223,7 @@ export function VerifyEmailConfirmView({
                 <CardContent className="text-center text-sm text-muted-foreground">
                   <p>{content.description}</p>
                 </CardContent>
-                <CardFooter className="flex flex-col gap-2">
+                <CardFooter className="flex flex-col items-stretch gap-2">
                   {state.reason === "server_error" && (
                     <Button
                       type="button"

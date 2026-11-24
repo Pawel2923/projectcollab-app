@@ -153,18 +153,18 @@ export function ResendVerifyEmailButton({
   return (
     <div className="flex w-full flex-col gap-3">
       {knownEmail ? (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full flex-col items-center gap-2">
           <Button
             type="button"
             onClick={handleDirectClick}
             disabled={isPending || cooldown > 0}
-            className="gap-2"
+            className="w-full gap-2"
           >
             {m.auth_verify_email_resend_button()}
             {isPending && <Loader2 className="size-4 animate-spin" />}
           </Button>
           {cooldown > 0 && (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-center text-sm text-muted-foreground">
               {m.auth_verify_email_cooldown({ seconds: cooldown })}
             </span>
           )}
@@ -173,9 +173,9 @@ export function ResendVerifyEmailButton({
         <form
           onSubmit={handleSubmit(handleManualSubmit)}
           noValidate
-          className="flex w-full flex-col gap-3"
+          className="flex w-full flex-col gap-4"
         >
-          <p className="text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             {m.auth_verify_email_enter_email_hint()}
           </p>
           <div className="grid gap-2">
@@ -201,17 +201,17 @@ export function ResendVerifyEmailButton({
               </span>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex w-full flex-col items-center gap-2">
             <Button
               type="submit"
               disabled={isPending || cooldown > 0}
-              className="gap-2"
+              className="w-full gap-2"
             >
               {m.auth_verify_email_resend_button()}
               {isPending && <Loader2 className="size-4 animate-spin" />}
             </Button>
             {cooldown > 0 && (
-              <span className="text-sm text-muted-foreground">
+              <span className="text-center text-sm text-muted-foreground">
                 {m.auth_verify_email_cooldown({ seconds: cooldown })}
               </span>
             )}
@@ -224,14 +224,14 @@ export function ResendVerifyEmailButton({
           role={feedback.kind === "error" ? "alert" : "status"}
           className={
             feedback.kind === "error"
-              ? "flex items-center gap-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive"
-              : "flex items-center gap-2 rounded-md bg-primary/10 p-3 text-sm text-foreground"
+              ? "flex items-start gap-2 rounded-md bg-destructive/15 p-3 text-sm text-destructive"
+              : "flex items-start gap-2 rounded-md bg-primary/10 p-3 text-sm text-foreground"
           }
         >
           {feedback.kind === "error" ? (
-            <MailX className="size-4 shrink-0" aria-hidden="true" />
+            <MailX className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           ) : (
-            <MailCheck className="size-4 shrink-0" aria-hidden="true" />
+            <MailCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           )}
           <span>{feedback.message}</span>
         </div>

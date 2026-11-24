@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { MailCheck } from "lucide-react"
+import { Mail, MailCheck } from "lucide-react"
 import { ProjectCollabLogotype } from "@/assets/img/ProjectCollabLogotype"
 import { m } from "@/paraglide/messages"
 import {
@@ -40,7 +40,7 @@ export function VerifyEmailView({
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <BackButton href="/signup" label={m.auth_verify_email_back_to_signup()} />
-      <div className="flex w-full max-w-lg flex-col gap-6">
+      <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
           className="flex items-center gap-2 self-center font-medium"
@@ -50,7 +50,7 @@ export function VerifyEmailView({
         </Link>
 
         {isAlreadyVerified ? (
-          <Card className="flex w-full flex-col gap-6">
+          <Card className="w-full">
             <CardHeader className="flex flex-col items-center gap-3 text-center">
               <div className="rounded-full bg-primary/10 p-3 text-primary">
                 <MailCheck className="size-8" aria-hidden="true" />
@@ -62,22 +62,25 @@ export function VerifyEmailView({
             <CardContent className="text-center text-sm text-muted-foreground">
               <p>{m.auth_verify_email_already_verified_description()}</p>
             </CardContent>
-            <CardFooter className="flex flex-col gap-2">
+            <CardFooter className="flex flex-col items-stretch gap-2">
               <Button className="w-full" render={<Link to="/organizations" />}>
                 {m.auth_verify_email_confirm_go_to_app()}
               </Button>
             </CardFooter>
           </Card>
         ) : (
-          <Card className="flex w-full flex-col gap-6">
-            <CardHeader>
+          <Card className="w-full">
+            <CardHeader className="flex flex-col items-center gap-3 text-center">
+              <div className="rounded-full bg-primary/10 p-3 text-primary">
+                <Mail className="size-8" aria-hidden="true" />
+              </div>
               <CardTitle className="text-xl">
                 <h1>{m.auth_verify_email_title()}</h1>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <CardContent className="space-y-2 text-center text-sm text-muted-foreground">
               {resolvedEmail && (
-                <p className="font-medium text-foreground">
+                <p className="font-medium break-words text-foreground">
                   {m.auth_verify_email_sent_to({ email: resolvedEmail })}
                 </p>
               )}
