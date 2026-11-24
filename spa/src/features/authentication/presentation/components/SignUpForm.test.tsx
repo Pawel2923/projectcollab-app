@@ -2,8 +2,11 @@ import * as React from "react"
 import { describe, it, expect, vi } from "vitest"
 import { renderToString } from "react-dom/server"
 import { m } from "@/paraglide/messages"
-import { ApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
-import { UserAlreadyExistsError } from "../../domain/errors/auth-error"
+import { SYMFONY_VIOLATION_CODES } from "@/shared/api"
+import {
+  createAuthValidationError,
+  createUserAlreadyExistsError,
+} from "../../domain/errors/auth-error"
 import { SignUpForm, applySignUpError } from "./SignUpForm"
 import { SignUpView } from "./SignUpView"
 
@@ -84,45 +87,41 @@ describe("SignUpForm & SignUpView", () => {
   describe("applySignUpError", () => {
     it("maps UserAlreadyExistsError to email field error", () => {
       const setError = vi.fn()
-      applySignUpError(new UserAlreadyExistsError(), setError)
+      applySignUpError(createUserAlreadyExistsError(), setError)
 
       expect(setError).toHaveBeenCalledWith("email", {
         message: m.auth_user_already_exists(),
       })
     })
 
-    it("maps plainPassword API Platform violation to translated password field error", () => {
+    it("maps plainPassword AuthValidationError violation to translated password field error", () => {
       const setError = vi.fn()
-      const apiError = new ApiError(422, {
-        violations: [
-          {
-            propertyPath: "plainPassword",
-            message: "This password has been leaked in a data breach.",
-            code: SYMFONY_VIOLATION_CODES.NOT_COMPROMISED_PASSWORD,
-          },
-        ],
-      })
+      const validationError = createAuthValidationError([
+        {
+          propertyPath: "plainPassword",
+          message: "This password has been leaked in a data breach.",
+          code: SYMFONY_VIOLATION_CODES.NOT_COMPROMISED_PASSWORD,
+        },
+      ])
 
-      applySignUpError(apiError, setError)
+      applySignUpError(validationError, setError)
 
       expect(setError).toHaveBeenCalledWith("password", {
         message: m.validation_compromised_password(),
       })
     })
 
-    it("maps email API Platform violation with Email UUID code to translated email field error without leaking code", () => {
+    it("maps email AuthValidationError violation with Email UUID code to translated email field error without leaking code", () => {
       const setError = vi.fn()
-      const apiError = new ApiError(422, {
-        violations: [
-          {
-            propertyPath: "email",
-            message: "This value is not a valid email address.",
-            code: SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT,
-          },
-        ],
-      })
+      const validationError = createAuthValidationError([
+        {
+          propertyPath: "email",
+          message: "This value is not a valid email address.",
+          code: SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT,
+        },
+      ])
 
-      applySignUpError(apiError, setError)
+      applySignUpError(validationError, setError)
 
       expect(setError).toHaveBeenCalledWith("email", {
         message: m.validation_invalid_email(),
@@ -136,17 +135,15 @@ describe("SignUpForm & SignUpView", () => {
     it("maps unknown violation code to safe translated field message without leaking code or raw technical message", () => {
       const setError = vi.fn()
       const unknownCode = "99999999-aaaa-bbbb-cccc-dddddddddddd"
-      const apiError = new ApiError(422, {
-        violations: [
-          {
-            propertyPath: "plainPassword",
-            message: "SQLSTATE[23505] constraint failed code=99999999",
-            code: unknownCode,
-          },
-        ],
-      })
+      const validationError = createAuthValidationError([
+        {
+          propertyPath: "plainPassword",
+          message: "SQLSTATE[23505] constraint failed code=99999999",
+          code: unknownCode,
+        },
+      ])
 
-      applySignUpError(apiError, setError)
+      applySignUpError(validationError, setError)
 
       expect(setError).toHaveBeenCalledWith("password", {
         message: m.validation_invalid_value(),
@@ -156,19 +153,17 @@ describe("SignUpForm & SignUpView", () => {
       expect(passedMessage).not.toContain("SQLSTATE")
     })
 
-    it("maps form-level or unknown-field 422 violations to root form error with translated message", () => {
+    it("maps form-level or unknown-field validation violations to root form error with translated message", () => {
       const setError = vi.fn()
-      const apiError = new ApiError(422, {
-        violations: [
-          {
-            propertyPath: "username",
-            message: "This value should not be blank.",
-            code: SYMFONY_VIOLATION_CODES.NOT_BLANK,
-          },
-        ],
-      })
+      const validationError = createAuthValidationError([
+        {
+          propertyPath: "username",
+          message: "This value should not be blank.",
+          code: SYMFONY_VIOLATION_CODES.NOT_BLANK,
+        },
+      ])
 
-      applySignUpError(apiError, setError)
+      applySignUpError(validationError, setError)
 
       expect(setError).toHaveBeenCalledWith("root", {
         message: m.validation_not_blank(),

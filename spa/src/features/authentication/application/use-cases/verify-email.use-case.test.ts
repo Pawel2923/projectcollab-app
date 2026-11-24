@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import type { QueryClient } from "@tanstack/react-query"
+import { err, ok } from "@/shared/result"
 import { VerifyEmailUseCase } from "./verify-email.use-case"
+import { createEmailVerificationError } from "../../domain/errors/auth-error"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import { authKeys } from "../auth-keys"
 
@@ -36,7 +38,7 @@ describe("VerifyEmailUseCase", () => {
   })
 
   it("verifies valid link params via gateway and invalidates currentUser cache on success", async () => {
-    mockGateway.verifyEmail.mockResolvedValueOnce({ status: "verified" })
+    mockGateway.verifyEmail.mockResolvedValueOnce(ok())
     const useCase = new VerifyEmailUseCase(
       mockGateway as unknown as AuthGatewayPort,
       mockQueryClient as unknown as QueryClient
@@ -49,7 +51,7 @@ describe("VerifyEmailUseCase", () => {
       token: "tok-456",
     })
 
-    expect(result).toEqual({ status: "verified" })
+    expect(result).toEqual(ok())
     expect(mockGateway.verifyEmail).toHaveBeenCalledWith({
       id: "42",
       expires: "1799999999",
@@ -61,7 +63,7 @@ describe("VerifyEmailUseCase", () => {
     })
   })
 
-  it("returns invalid_link without calling gateway or invalidating cache when params are missing or malformed", async () => {
+  it("returns invalid_link domain error result without calling gateway or invalidating cache when params are missing or malformed", async () => {
     const useCase = new VerifyEmailUseCase(
       mockGateway as unknown as AuthGatewayPort,
       mockQueryClient as unknown as QueryClient
@@ -74,16 +76,14 @@ describe("VerifyEmailUseCase", () => {
       token: "tok-456",
     })
 
-    expect(result).toEqual({ status: "failed", reason: "invalid_link" })
+    expect(result).toEqual(err(createEmailVerificationError("invalid_link")))
     expect(mockGateway.verifyEmail).not.toHaveBeenCalled()
     expect(mockQueryClient.invalidateQueries).not.toHaveBeenCalled()
   })
 
-  it("returns gateway failure result without invalidating currentUser cache", async () => {
-    mockGateway.verifyEmail.mockResolvedValueOnce({
-      status: "failed",
-      reason: "user_not_found",
-    })
+  it("returns gateway domain error result without invalidating currentUser cache", async () => {
+    const userNotFoundError = createEmailVerificationError("user_not_found")
+    mockGateway.verifyEmail.mockResolvedValueOnce(err(userNotFoundError))
     const useCase = new VerifyEmailUseCase(
       mockGateway as unknown as AuthGatewayPort,
       mockQueryClient as unknown as QueryClient
@@ -96,7 +96,7 @@ describe("VerifyEmailUseCase", () => {
       token: "tok-456",
     })
 
-    expect(result).toEqual({ status: "failed", reason: "user_not_found" })
+    expect(result).toEqual(err(userNotFoundError))
     expect(mockQueryClient.invalidateQueries).not.toHaveBeenCalled()
   })
 })

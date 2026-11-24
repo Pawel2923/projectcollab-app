@@ -1,9 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query"
 import { queryClient as defaultQueryClient } from "@/shared/api"
-import type {
-  EmailVerificationResult,
-  VerifyEmailSearchParams,
-} from "../../domain/models/email-verification"
+import { err, type Result } from "@/shared/result"
+import {
+  createEmailVerificationError,
+  type EmailVerificationError,
+} from "../../domain/errors/auth-error"
+import type { VerifyEmailSearchParams } from "../../domain/models/email-verification"
 import { parseVerifyEmailParams } from "../../domain/services/email-verification"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import { authGateway as defaultAuthGateway } from "../../infrastructure/adapters/http-auth-gateway"
@@ -23,15 +25,15 @@ export class VerifyEmailUseCase {
 
   public async execute(
     rawParams: VerifyEmailSearchParams | Record<string, unknown>
-  ): Promise<EmailVerificationResult> {
+  ): Promise<Result<void, EmailVerificationError>> {
     const validParams = parseVerifyEmailParams(rawParams)
     if (!validParams) {
-      return { status: "failed", reason: "invalid_link" }
+      return err(createEmailVerificationError("invalid_link"))
     }
 
     const result = await this.gateway.verifyEmail(validParams)
 
-    if (result.status === "verified") {
+    if (result.ok) {
       await this.queryClientInstance.invalidateQueries({
         queryKey: authKeys.currentUser(),
       })

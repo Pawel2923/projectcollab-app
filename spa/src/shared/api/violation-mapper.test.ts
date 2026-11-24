@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest"
 import { baseLocale, setLocale } from "@/paraglide/runtime"
 import { m } from "@/paraglide/messages"
-import { ApiError } from "./api-error"
+import { createApiError } from "./api-error"
 import { SYMFONY_VIOLATION_CODES } from "./symfony-violation-codes"
 import {
   mapApiPlatformValidationError,
@@ -540,10 +540,10 @@ describe("violation-mapper", () => {
 
   describe("mapApiPlatformValidationError", () => {
     it("returns null for non-422 ApiError, regular Error, null, undefined, and plain objects", () => {
-      expect(mapApiPlatformValidationError(new ApiError(400, {}))).toBeNull()
-      expect(mapApiPlatformValidationError(new ApiError(401, {}))).toBeNull()
-      expect(mapApiPlatformValidationError(new ApiError(403, {}))).toBeNull()
-      expect(mapApiPlatformValidationError(new ApiError(500, {}))).toBeNull()
+      expect(mapApiPlatformValidationError(createApiError(400, {}))).toBeNull()
+      expect(mapApiPlatformValidationError(createApiError(401, {}))).toBeNull()
+      expect(mapApiPlatformValidationError(createApiError(403, {}))).toBeNull()
+      expect(mapApiPlatformValidationError(createApiError(500, {}))).toBeNull()
       expect(mapApiPlatformValidationError(new Error("Boom"))).toBeNull()
       expect(mapApiPlatformValidationError(null)).toBeNull()
       expect(mapApiPlatformValidationError(undefined)).toBeNull()
@@ -553,7 +553,7 @@ describe("violation-mapper", () => {
     it("maps 422 ApiError with violations into a translated MappedValidationResult", () => {
       setLocale("pl", { reload: false })
 
-      const error = new ApiError(422, {
+      const error = createApiError(422, {
         status: 422,
         violations: [
           {
@@ -586,7 +586,7 @@ describe("violation-mapper", () => {
     it("maps 422 ApiError with empty violations to empty result with generic summary", () => {
       setLocale("en", { reload: false })
 
-      const error = new ApiError(422, {
+      const error = createApiError(422, {
         detail: "Validation failed",
       })
 

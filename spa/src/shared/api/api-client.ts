@@ -1,4 +1,4 @@
-import { ApiError } from "./api-error"
+import { createApiError } from "./api-error"
 
 export interface ApiRequestOptions extends Omit<RequestInit, "body"> {
   readonly body?: unknown
@@ -200,7 +200,7 @@ export async function apiFetch<T = unknown>(
 
     notifyAuthFailure()
     handleAuthRedirection(skipAuthRedirect)
-    throw new ApiError(401, null, "Session expired")
+    throw createApiError(401, null, "Session expired")
   }
 
   if (response.status === 204) {
@@ -220,7 +220,7 @@ export async function apiFetch<T = unknown>(
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, responseData)
+    throw createApiError(response.status, responseData)
   }
 
   return responseData as T

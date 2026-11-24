@@ -17,8 +17,8 @@ import {
 import { GoogleLogoIcon, MicrosoftLogoIcon } from "@/assets/icons/icons"
 import { cn } from "@/shared/lib/utils"
 import { m } from "@/paraglide/messages"
-import { mapApiPlatformValidationError } from "@/shared/api"
-import { UserAlreadyExistsError } from "../../domain/errors/auth-error"
+import { mapApiPlatformViolations } from "@/shared/api"
+import { isAuthError, type SignUpError } from "../../domain/errors/auth-error"
 import {
   SignUpUseCase,
   signUpUseCase as defaultSignUpUseCase,
@@ -51,35 +51,37 @@ function resolveErrorMessage(error?: string): string | null {
 }
 
 export function applySignUpError(
-  err: unknown,
+  err: SignUpError | unknown,
   setError: UseFormSetError<SignUpFormData>
 ): void {
-  if (err instanceof UserAlreadyExistsError) {
-    setError("email", { message: m.auth_user_already_exists() })
-    return
-  }
-
-  const validationErrors = mapApiPlatformValidationError(err, {
-    fieldMap: { plainPassword: "password" },
-    allowedFields: ["email", "password"] as const,
-  })
-
-  if (validationErrors) {
-    const emailMessage = validationErrors.fieldErrors.email?.[0]
-    const passwordMessage = validationErrors.fieldErrors.password?.[0]
-
-    if (emailMessage) {
-      setError("email", { message: emailMessage })
+  if (isAuthError(err)) {
+    if (err.kind === "user_already_exists") {
+      setError("email", { message: m.auth_user_already_exists() })
+      return
     }
-    if (passwordMessage) {
-      setError("password", { message: passwordMessage })
-    }
-    if (!emailMessage && !passwordMessage) {
-      setError("root", {
-        message: validationErrors.formErrors[0] ?? validationErrors.summary,
+
+    if (err.kind === "validation_error") {
+      const validationErrors = mapApiPlatformViolations(err.violations, {
+        fieldMap: { plainPassword: "password" },
+        allowedFields: ["email", "password"] as const,
       })
+
+      const emailMessage = validationErrors.fieldErrors.email?.[0]
+      const passwordMessage = validationErrors.fieldErrors.password?.[0]
+
+      if (emailMessage) {
+        setError("email", { message: emailMessage })
+      }
+      if (passwordMessage) {
+        setError("password", { message: passwordMessage })
+      }
+      if (!emailMessage && !passwordMessage) {
+        setError("root", {
+          message: validationErrors.formErrors[0] ?? validationErrors.summary,
+        })
+      }
+      return
     }
-    return
   }
 
   setError("root", { message: m.auth_sign_up_general_error() })
@@ -118,7 +120,13 @@ export function SignUpForm({
     clearErrors()
     onSignUpStart?.()
     try {
-      await signUpUseCaseInstance.execute(data)
+      const result = await signUpUseCaseInstance.execute(data)
+      if (!result.ok) {
+        onSignUpError?.()
+        applySignUpError(result.error, setError)
+        return
+      }
+
       saveCreatedIdentityEmail(data.email)
       if (onSuccess) {
         onSuccess(data.email)

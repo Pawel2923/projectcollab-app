@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest"
-import { ApiError, isApiError } from "./api-error"
+import { createApiError, isApiError } from "./api-error"
 
 describe("ApiError", () => {
   it("extracts hydra:description when present", () => {
-    const error = new ApiError(400, {
+    const error = createApiError(400, {
       "@context": "/contexts/Error",
       "hydra:title": "An error occurred",
       "hydra:description": "Invalid credentials provided",
@@ -12,10 +12,11 @@ describe("ApiError", () => {
     expect(error.message).toBe("Invalid credentials provided")
     expect(error.status).toBe(400)
     expect(error.name).toBe("ApiError")
+    expect(Object.isFrozen(error)).toBe(true)
   })
 
   it("extracts detail when hydra:description is missing", () => {
-    const error = new ApiError(404, {
+    const error = createApiError(404, {
       detail: "Resource not found",
     })
 
@@ -24,7 +25,7 @@ describe("ApiError", () => {
   })
 
   it("extracts description when hydra:description and detail are missing", () => {
-    const error = new ApiError(422, {
+    const error = createApiError(422, {
       description: "Validation failed",
     })
 
@@ -33,7 +34,7 @@ describe("ApiError", () => {
   })
 
   it("extracts message when hydra:description and detail are missing", () => {
-    const error = new ApiError(500, {
+    const error = createApiError(500, {
       message: "Internal server error",
     })
 
@@ -41,7 +42,7 @@ describe("ApiError", () => {
   })
 
   it("extracts hydra:title as fallback title", () => {
-    const error = new ApiError(403, {
+    const error = createApiError(403, {
       "hydra:title": "Access Denied",
     })
 
@@ -49,12 +50,12 @@ describe("ApiError", () => {
   })
 
   it("falls back to generic status code message when data is empty or non-record", () => {
-    const error = new ApiError(502, null)
+    const error = createApiError(502, null)
     expect(error.message).toBe("Request failed with status 502")
   })
 
   it("parses validation violations correctly and freezes the list", () => {
-    const error = new ApiError(422, {
+    const error = createApiError(422, {
       violations: [
         {
           propertyPath: "email",
@@ -73,7 +74,7 @@ describe("ApiError", () => {
   })
 
   it("preserves violation codes when present, freezes violation items, and normalizes missing propertyPath", () => {
-    const error = new ApiError(422, {
+    const error = createApiError(422, {
       violations: [
         {
           propertyPath: "email",
@@ -114,12 +115,12 @@ describe("ApiError", () => {
   })
 
   it("handles empty violations safely", () => {
-    const error = new ApiError(400, {})
+    const error = createApiError(400, {})
     expect(error.violations).toEqual([])
   })
 
-  it("identifies ApiError instances with isApiError", () => {
-    const apiError = new ApiError(400, {})
+  it("identifies ApiError objects with isApiError", () => {
+    const apiError = createApiError(400, {})
     const regularError = new Error("Regular error")
 
     expect(isApiError(apiError)).toBe(true)

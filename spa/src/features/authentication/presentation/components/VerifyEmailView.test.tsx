@@ -2,8 +2,12 @@ import * as React from "react"
 import { describe, it, expect, vi } from "vitest"
 import { renderToString } from "react-dom/server"
 import { m } from "@/paraglide/messages"
-import { ApiError, SYMFONY_VIOLATION_CODES } from "@/shared/api"
-import { TooManyRequestsError } from "../../domain/errors/auth-error"
+import { SYMFONY_VIOLATION_CODES } from "@/shared/api"
+import {
+  createAuthValidationError,
+  createEmailRequiredError,
+  createTooManyRequestsError,
+} from "../../domain/errors/auth-error"
 import { UserContext } from "../context/UserContext"
 import { VerifyEmailView } from "./VerifyEmailView"
 import { resolveResendVerifyEmailError } from "./ResendVerifyEmailButton"
@@ -91,23 +95,27 @@ describe("VerifyEmailView & ResendVerifyEmailButton", () => {
 
   describe("resolveResendVerifyEmailError", () => {
     it("maps TooManyRequestsError to rate-limit message", () => {
-      expect(resolveResendVerifyEmailError(new TooManyRequestsError())).toBe(
+      expect(resolveResendVerifyEmailError(createTooManyRequestsError())).toBe(
         m.auth_verify_email_too_many_requests()
       )
     })
 
-    it("maps 422 ApiError email violation to translated message without leaking violation code", () => {
-      const apiError = new ApiError(422, {
-        violations: [
-          {
-            propertyPath: "email",
-            message: "This value is not a valid email address.",
-            code: SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT,
-          },
-        ],
-      })
+    it("maps EmailRequiredError to missing identity message", () => {
+      expect(resolveResendVerifyEmailError(createEmailRequiredError())).toBe(
+        m.auth_verify_email_missing_identity()
+      )
+    })
 
-      const message = resolveResendVerifyEmailError(apiError)
+    it("maps AuthValidationError email violation to translated message without leaking violation code", () => {
+      const validationError = createAuthValidationError([
+        {
+          propertyPath: "email",
+          message: "This value is not a valid email address.",
+          code: SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT,
+        },
+      ])
+
+      const message = resolveResendVerifyEmailError(validationError)
       expect(message).toBe(m.validation_invalid_email())
       expect(message).not.toContain(
         SYMFONY_VIOLATION_CODES.EMAIL_INVALID_FORMAT

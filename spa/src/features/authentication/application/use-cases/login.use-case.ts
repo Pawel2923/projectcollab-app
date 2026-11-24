@@ -1,4 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query"
+import { ok, type Result } from "@/shared/result"
+import type { LoginError } from "../../domain/errors/auth-error"
 import type { LoginCredentials } from "../../domain/models/credentials"
 import type { AuthGatewayPort } from "../../domain/ports/auth-gateway.port"
 import { queryClient as defaultQueryClient } from "@/shared/api"
@@ -17,11 +19,19 @@ export class LoginUseCase {
     this.queryClientInstance = queryClientInstance
   }
 
-  public async execute(credentials: LoginCredentials): Promise<void> {
-    await this.gateway.login(credentials)
+  public async execute(
+    credentials: LoginCredentials
+  ): Promise<Result<void, LoginError>> {
+    const result = await this.gateway.login(credentials)
+    if (!result.ok) {
+      return result
+    }
+
     await this.queryClientInstance.invalidateQueries({
       queryKey: authKeys.currentUser(),
     })
+
+    return ok()
   }
 }
 
