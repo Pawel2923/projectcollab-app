@@ -31,7 +31,7 @@ readonly class EmailVerifier implements EmailVerifierInterface
     public function send(User $user): void
     {
         $signatureComponents = $this->helper->generateSignature(
-            '_api_/verify-email_post',
+            '_api_/core-api/verify-email_post',
             (string)$user->getId(),
             $user->getEmail(),
             [

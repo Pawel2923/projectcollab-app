@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 final readonly class VerifyEmailProvider implements ProviderInterface
 {
@@ -51,7 +52,17 @@ final readonly class VerifyEmailProvider implements ProviderInterface
             $this->logger->info("Parameter $param: " . ($value ? 'present (' . strlen($value) . ' chars)' : 'missing'));
         }
 
-        $this->emailVerifier->handleConfirmation($request, $user);
+        try {
+            $this->emailVerifier->handleConfirmation($request, $user);
+        } catch (VerifyEmailExceptionInterface $e) {
+            $this->logger->warning('Email verification link invalid or expired', [
+                'user_id' => $user->getId(),
+                'reason' => $e->getReason(),
+            ]);
+
+            return new VerifyEmailResponse('EMAIL_NOT_VERIFIED', false);
+        }
+
         $this->entityManager->flush();
 
         $this->logger->info('Email verification successful');
