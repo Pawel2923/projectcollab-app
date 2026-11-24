@@ -254,4 +254,70 @@ describe("HttpAuthGateway", () => {
       gateway.resendVerificationEmail("invalid-email")
     ).rejects.toThrow(apiError)
   })
+
+  it("calls verify-email POST endpoint with query params and maps verified response", async () => {
+    mockApiFetch.mockResolvedValueOnce({
+      code: "EMAIL_VERIFIED",
+      isVerified: true,
+    })
+
+    const result = await gateway.verifyEmail({
+      id: "42",
+      expires: "1799999999",
+      signature: "sig+abc=",
+      token: "tok/xyz",
+    })
+
+    expect(result).toEqual({ status: "verified" })
+    expect(mockApiFetch).toHaveBeenCalledWith(
+      "/core-api/verify-email?expires=1799999999&id=42&signature=sig%2Babc%3D&token=tok%2Fxyz",
+      {
+        method: "POST",
+        skipAuthRefresh: true,
+        skipAuthRedirect: true,
+      }
+    )
+  })
+
+  it("maps USER_NOT_FOUND verify-email response to user_not_found result", async () => {
+    mockApiFetch.mockResolvedValueOnce({
+      code: "USER_NOT_FOUND",
+      isVerified: false,
+    })
+
+    const result = await gateway.verifyEmail({
+      id: "999",
+      expires: "1799999999",
+      signature: "sig",
+      token: "tok",
+    })
+
+    expect(result).toEqual({ status: "failed", reason: "user_not_found" })
+  })
+
+  it("maps verify-email ApiError and network failures into EmailVerificationResult", async () => {
+    mockApiFetch.mockRejectedValueOnce(
+      new ApiError(422, { detail: "Missing param" })
+    )
+
+    await expect(
+      gateway.verifyEmail({
+        id: "42",
+        expires: "1799999999",
+        signature: "sig",
+        token: "tok",
+      })
+    ).resolves.toEqual({ status: "failed", reason: "invalid_link" })
+
+    mockApiFetch.mockRejectedValueOnce(new Error("Network error"))
+
+    await expect(
+      gateway.verifyEmail({
+        id: "42",
+        expires: "1799999999",
+        signature: "sig",
+        token: "tok",
+      })
+    ).resolves.toEqual({ status: "failed", reason: "server_error" })
+  })
 })

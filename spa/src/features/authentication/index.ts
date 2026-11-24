@@ -4,6 +4,12 @@ export type {
   LoginCredentials,
   SignUpCredentials,
 } from "./domain/models/credentials"
+export type {
+  EmailVerificationFailureReason,
+  EmailVerificationResult,
+  VerifyEmailParams,
+  VerifyEmailSearchParams,
+} from "./domain/models/email-verification"
 export type { AuthGatewayPort } from "./domain/ports/auth-gateway.port"
 export {
   AuthError,
@@ -21,6 +27,11 @@ export {
   getPostLoginRedirect,
   DEFAULT_POST_LOGIN_REDIRECT,
 } from "./domain/services/auth-navigation"
+export {
+  getVerifyEmailKey,
+  normalizeVerifyEmailSearchParams,
+  parseVerifyEmailParams,
+} from "./domain/services/email-verification"
 
 // Application use cases, validation, and query keys
 import { logoutUseCase } from "./application/use-cases/logout.use-case"
@@ -38,6 +49,10 @@ export {
   ResendVerificationEmailUseCase,
   resendVerificationEmailUseCase,
 } from "./application/use-cases/resend-verification-email.use-case"
+export {
+  VerifyEmailUseCase,
+  verifyEmailUseCase,
+} from "./application/use-cases/verify-email.use-case"
 export {
   LogoutUseCase,
   logoutUseCase,
@@ -58,6 +73,10 @@ export {
   signUpSchema,
   type SignUpFormData,
 } from "./application/validation/sign-up.schema"
+export {
+  resendVerificationEmailSchema,
+  type ResendVerificationEmailFormData,
+} from "./application/validation/resend-verification-email.schema"
 
 // Infrastructure
 export {
@@ -65,10 +84,12 @@ export {
   authGateway,
 } from "./infrastructure/adapters/http-auth-gateway"
 export { UserMapper } from "./infrastructure/mappers/user.mapper"
+export { VerifyEmailMapper } from "./infrastructure/mappers/verify-email.mapper"
 export type {
   ApiUserDto,
   ApiOAuthProvidersDto,
 } from "./infrastructure/dto/user-api.dto"
+export type { ApiVerifyEmailResponseDto } from "./infrastructure/dto/verify-email-api.dto"
 
 // Presentation
 export {
@@ -111,6 +132,11 @@ export {
   VerifyEmailView,
   type VerifyEmailViewProps,
 } from "./presentation/components/VerifyEmailView"
+export {
+  VerifyEmailConfirmView,
+  type VerifyEmailConfirmViewProps,
+  type VerifyEmailConfirmState,
+} from "./presentation/components/VerifyEmailConfirmView"
 export {
   requireAuth,
   requireGuest,

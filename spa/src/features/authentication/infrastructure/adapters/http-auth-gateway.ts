@@ -3,6 +3,10 @@ import type {
   LoginCredentials,
   SignUpCredentials,
 } from "../../domain/models/credentials"
+import type {
+  EmailVerificationResult,
+  VerifyEmailParams,
+} from "../../domain/models/email-verification"
 import type { User } from "../../domain/models/user"
 import {
   InvalidCredentialsError,
@@ -19,7 +23,9 @@ import {
   type AuthFailureCallback,
 } from "@/shared/api"
 import type { ApiUserDto } from "../dto/user-api.dto"
+import type { ApiVerifyEmailResponseDto } from "../dto/verify-email-api.dto"
 import { UserMapper } from "../mappers/user.mapper"
+import { VerifyEmailMapper } from "../mappers/verify-email.mapper"
 
 interface HttpAuthGatewayDependencies {
   readonly apiClient?: typeof defaultApiClient
@@ -114,6 +120,31 @@ export class HttpAuthGateway implements AuthGatewayPort {
         throw new TooManyRequestsError()
       }
       throw error
+    }
+  }
+
+  public async verifyEmail(
+    params: VerifyEmailParams
+  ): Promise<EmailVerificationResult> {
+    const query = new URLSearchParams({
+      expires: params.expires,
+      id: params.id,
+      signature: params.signature,
+      token: params.token,
+    })
+
+    try {
+      const response = await this.fetcher<ApiVerifyEmailResponseDto>(
+        `/core-api/verify-email?${query.toString()}`,
+        {
+          method: "POST",
+          skipAuthRefresh: true,
+          skipAuthRedirect: true,
+        }
+      )
+      return VerifyEmailMapper.toDomain(response)
+    } catch (error: unknown) {
+      return VerifyEmailMapper.fromError(error)
     }
   }
 

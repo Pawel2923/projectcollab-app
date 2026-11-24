@@ -27,6 +27,7 @@ import {
   signUpSchema,
   type SignUpFormData,
 } from "../../application/validation/sign-up.schema"
+import { saveCreatedIdentityEmail } from "../../infrastructure/storage/created-identity.storage"
 import { PasswordToggle } from "./PasswordToggle"
 
 export interface SignUpFormProps extends Omit<
@@ -118,9 +119,7 @@ export function SignUpForm({
     onSignUpStart?.()
     try {
       await signUpUseCaseInstance.execute(data)
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem("auth_created_identity", data.email)
-      }
+      saveCreatedIdentityEmail(data.email)
       if (onSuccess) {
         onSuccess(data.email)
       } else {

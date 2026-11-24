@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { VerifyEmailView } from "@/features/authentication"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/verify-email")({
-  component: VerifyEmailView,
+  component: VerifyEmailLayout,
 })
+
+function VerifyEmailLayout() {
+  return <Outlet />
+}

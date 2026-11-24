@@ -1,7 +1,9 @@
 import * as React from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, MailCheck, MailX } from "lucide-react"
 
-import { Button } from "@/shared/ui"
+import { Button, Input, Label } from "@/shared/ui"
 import { mapApiPlatformValidationError } from "@/shared/api"
 import { m } from "@/paraglide/messages"
 import { TooManyRequestsError } from "../../domain/errors/auth-error"
@@ -9,10 +11,17 @@ import {
   ResendVerificationEmailUseCase,
   resendVerificationEmailUseCase as defaultResendVerificationEmailUseCase,
 } from "../../application/use-cases/resend-verification-email.use-case"
+import {
+  resendVerificationEmailSchema,
+  type ResendVerificationEmailFormData,
+} from "../../application/validation/resend-verification-email.schema"
+import {
+  readCreatedIdentityEmail,
+  saveCreatedIdentityEmail,
+} from "../../infrastructure/storage/created-identity.storage"
 import { useUserContext } from "../context/UserContext"
 
 const DEFAULT_COOLDOWN_SECONDS = 30
-const CREATED_IDENTITY_STORAGE_KEY = "auth_created_identity"
 
 export interface ResendVerifyEmailButtonProps {
   email?: string | null
@@ -44,31 +53,34 @@ export function resolveResendVerifyEmailError(err: unknown): string {
   return m.auth_verify_email_send_failed()
 }
 
-function readStoredIdentityEmail(): string | null {
-  if (typeof window === "undefined") {
-    return null
-  }
-  try {
-    const stored = window.sessionStorage.getItem(CREATED_IDENTITY_STORAGE_KEY)
-    if (!stored || stored === "null") {
-      return null
-    }
-    const trimmed = stored.trim()
-    return trimmed.length > 0 ? trimmed : null
-  } catch {
-    return null
-  }
-}
-
 export function ResendVerifyEmailButton({
   email: propEmail,
   resendUseCaseInstance = defaultResendVerificationEmailUseCase,
   cooldownSeconds = DEFAULT_COOLDOWN_SECONDS,
 }: ResendVerifyEmailButtonProps) {
   const userContext = useUserContext()
+  const [storedEmail, setStoredEmail] = React.useState<string | null>(() =>
+    readCreatedIdentityEmail()
+  )
   const [isPending, setIsPending] = React.useState(false)
   const [cooldown, setCooldown] = React.useState(0)
   const [feedback, setFeedback] = React.useState<ResendFeedback | null>(null)
+
+  const knownEmail =
+    propEmail?.trim() || storedEmail || userContext?.user?.email?.trim() || null
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    clearErrors,
+  } = useForm<ResendVerificationEmailFormData>({
+    resolver: zodResolver(resendVerificationEmailSchema),
+    defaultValues: {
+      email: "",
+    },
+    mode: "onSubmit",
+  })
 
   React.useEffect(() => {
     if (cooldown <= 0) {
@@ -84,14 +96,12 @@ export function ResendVerifyEmailButton({
     }
   }, [cooldown])
 
-  const handleClick = async () => {
-    const targetEmail =
-      propEmail?.trim() ||
-      readStoredIdentityEmail() ||
-      userContext?.user?.email?.trim() ||
-      ""
-
-    if (!targetEmail) {
+  const sendVerificationEmail = async (
+    targetEmail: string,
+    persistIdentity: boolean
+  ) => {
+    const trimmed = targetEmail.trim()
+    if (!trimmed) {
       setFeedback({
         kind: "error",
         message: m.auth_verify_email_missing_identity(),
@@ -103,7 +113,11 @@ export function ResendVerifyEmailButton({
     setFeedback(null)
 
     try {
-      await resendUseCaseInstance.execute(targetEmail)
+      await resendUseCaseInstance.execute(trimmed)
+      if (persistIdentity) {
+        saveCreatedIdentityEmail(trimmed)
+        setStoredEmail(trimmed)
+      }
       setFeedback({
         kind: "success",
         message: m.auth_verify_email_sent(),
@@ -122,24 +136,88 @@ export function ResendVerifyEmailButton({
     }
   }
 
+  const handleDirectClick = async () => {
+    const targetEmail =
+      propEmail?.trim() ||
+      readCreatedIdentityEmail() ||
+      userContext?.user?.email?.trim() ||
+      ""
+    await sendVerificationEmail(targetEmail, false)
+  }
+
+  const handleManualSubmit = async (data: ResendVerificationEmailFormData) => {
+    clearErrors()
+    await sendVerificationEmail(data.email, true)
+  }
+
   return (
     <div className="flex w-full flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          type="button"
-          onClick={handleClick}
-          disabled={isPending || cooldown > 0}
-          className="gap-2"
+      {knownEmail ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            onClick={handleDirectClick}
+            disabled={isPending || cooldown > 0}
+            className="gap-2"
+          >
+            {m.auth_verify_email_resend_button()}
+            {isPending && <Loader2 className="size-4 animate-spin" />}
+          </Button>
+          {cooldown > 0 && (
+            <span className="text-sm text-muted-foreground">
+              {m.auth_verify_email_cooldown({ seconds: cooldown })}
+            </span>
+          )}
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit(handleManualSubmit)}
+          noValidate
+          className="flex w-full flex-col gap-3"
         >
-          {m.auth_verify_email_resend_button()}
-          {isPending && <Loader2 className="size-4 animate-spin" />}
-        </Button>
-        {cooldown > 0 && (
-          <span className="text-sm text-muted-foreground">
-            {m.auth_verify_email_cooldown({ seconds: cooldown })}
-          </span>
-        )}
-      </div>
+          <p className="text-sm text-muted-foreground">
+            {m.auth_verify_email_enter_email_hint()}
+          </p>
+          <div className="grid gap-2">
+            <Label htmlFor="resend-verify-email">{m.auth_field_email()}</Label>
+            <Input
+              id="resend-verify-email"
+              type="email"
+              autoComplete="email"
+              disabled={isPending || cooldown > 0}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={
+                errors.email ? "resend-verify-email-error" : undefined
+              }
+              {...register("email")}
+            />
+            {errors.email?.message && (
+              <span
+                id="resend-verify-email-error"
+                className="text-sm text-destructive"
+                role="alert"
+              >
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              type="submit"
+              disabled={isPending || cooldown > 0}
+              className="gap-2"
+            >
+              {m.auth_verify_email_resend_button()}
+              {isPending && <Loader2 className="size-4 animate-spin" />}
+            </Button>
+            {cooldown > 0 && (
+              <span className="text-sm text-muted-foreground">
+                {m.auth_verify_email_cooldown({ seconds: cooldown })}
+              </span>
+            )}
+          </div>
+        </form>
+      )}
 
       {feedback && (
         <div

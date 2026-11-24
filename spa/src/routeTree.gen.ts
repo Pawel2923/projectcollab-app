@@ -18,6 +18,8 @@ import { Route as AuthenticatedOrganizationsRouteImport } from './routes/_authen
 import { Route as PolicyIndexRouteImport } from './routes/policy.index'
 import { Route as PolicyPrivacyRouteImport } from './routes/policy.privacy'
 import { Route as PolicyTermsRouteImport } from './routes/policy.terms'
+import { Route as VerifyEmailIndexRouteImport } from './routes/verify-email.index'
+import { Route as VerifyEmailVerifyRouteImport } from './routes/verify-email.verify'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,26 +66,39 @@ const PolicyTermsRoute = PolicyTermsRouteImport.update({
   path: '/policy/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyEmailIndexRoute = VerifyEmailIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VerifyEmailRoute,
+} as any)
+const VerifyEmailVerifyRoute = VerifyEmailVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => VerifyEmailRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/verify-email': typeof VerifyEmailRoute
+  '/verify-email': typeof VerifyEmailRouteWithChildren
   '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy/': typeof PolicyIndexRoute
+  '/verify-email/': typeof VerifyEmailIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/verify-email': typeof VerifyEmailRoute
   '/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy': typeof PolicyIndexRoute
+  '/verify-email': typeof VerifyEmailIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -91,11 +106,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
-  '/verify-email': typeof VerifyEmailRoute
+  '/verify-email': typeof VerifyEmailRouteWithChildren
   '/_authenticated/organizations': typeof AuthenticatedOrganizationsRoute
   '/policy/privacy': typeof PolicyPrivacyRoute
   '/policy/terms': typeof PolicyTermsRoute
+  '/verify-email/verify': typeof VerifyEmailVerifyRoute
   '/policy/': typeof PolicyIndexRoute
+  '/verify-email/': typeof VerifyEmailIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,17 +124,20 @@ export interface FileRouteTypes {
     | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy/'
+    | '/verify-email/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/signin'
     | '/signup'
-    | '/verify-email'
     | '/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy'
+    | '/verify-email'
   id:
     | '__root__'
     | '/'
@@ -128,7 +148,9 @@ export interface FileRouteTypes {
     | '/_authenticated/organizations'
     | '/policy/privacy'
     | '/policy/terms'
+    | '/verify-email/verify'
     | '/policy/'
+    | '/verify-email/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,7 +158,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
-  VerifyEmailRoute: typeof VerifyEmailRoute
+  VerifyEmailRoute: typeof VerifyEmailRouteWithChildren
   PolicyPrivacyRoute: typeof PolicyPrivacyRoute
   PolicyTermsRoute: typeof PolicyTermsRoute
   PolicyIndexRoute: typeof PolicyIndexRoute
@@ -207,6 +229,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PolicyTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify-email/': {
+      id: '/verify-email/'
+      path: '/'
+      fullPath: '/verify-email/'
+      preLoaderRoute: typeof VerifyEmailIndexRouteImport
+      parentRoute: typeof VerifyEmailRoute
+    }
+    '/verify-email/verify': {
+      id: '/verify-email/verify'
+      path: '/verify'
+      fullPath: '/verify-email/verify'
+      preLoaderRoute: typeof VerifyEmailVerifyRouteImport
+      parentRoute: typeof VerifyEmailRoute
+    }
   }
 }
 
@@ -222,12 +258,26 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface VerifyEmailRouteChildren {
+  VerifyEmailVerifyRoute: typeof VerifyEmailVerifyRoute
+  VerifyEmailIndexRoute: typeof VerifyEmailIndexRoute
+}
+
+const VerifyEmailRouteChildren: VerifyEmailRouteChildren = {
+  VerifyEmailVerifyRoute: VerifyEmailVerifyRoute,
+  VerifyEmailIndexRoute: VerifyEmailIndexRoute,
+}
+
+const VerifyEmailRouteWithChildren = VerifyEmailRoute._addFileChildren(
+  VerifyEmailRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
-  VerifyEmailRoute: VerifyEmailRoute,
+  VerifyEmailRoute: VerifyEmailRouteWithChildren,
   PolicyPrivacyRoute: PolicyPrivacyRoute,
   PolicyTermsRoute: PolicyTermsRoute,
   PolicyIndexRoute: PolicyIndexRoute,
